@@ -60,4 +60,5 @@ const getTopicById = asyncWrapper(async (req, res, next) => {
 
 module.exports = {
     createTopic,
+    getTopicById
 };

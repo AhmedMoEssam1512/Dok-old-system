@@ -18,7 +18,7 @@ const checkSemester = asyncWrapper(async (req, res, next) => {
     if(toLow!== "june" && toLow !== "november"){
         return next(new AppError("Semester must be either 'June' or 'November'", httpStatus.BAD_REQUEST));
     }
-    nextt();
+    next();
 });
 
 const checkSubject = asyncWrapper(async (req, res, next) => {

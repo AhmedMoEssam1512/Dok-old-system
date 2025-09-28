@@ -20,4 +20,15 @@ router.route('/getMaterialByTopicId/:topicId')
     .get(auth.protect, findTopicById, canSeeTopic,
          materialControllers.getMaterialByTopicId);
 
+router.route('/updateMaterial/:id')
+    .patch(auth.adminProtect, materialMiddleWare.findMaterialById,
+           materialMiddleWare.AdminViewMaterial,
+           materialMiddleWare.checkInputData,
+           materialControllers.updateMaterial);
+
+router.route('/deleteMaterial/:id')
+    .delete(auth.adminProtect, materialMiddleWare.findMaterialById,
+            materialMiddleWare.AdminViewMaterial,
+            materialControllers.deleteMaterial);
+
 module.exports = router;

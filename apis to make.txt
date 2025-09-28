@@ -55,8 +55,8 @@ get by id {ESSAM} [done]
 
 
 get by topic {A.Essam}
-update {A.Essam}
-delete {A.Essam}
+update material {Y.Essam}
+delete material {Y.Essam}
 
 
 generate reports by admin

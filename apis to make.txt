@@ -41,10 +41,12 @@ show my submissions(student) {A.Essam} [done]
 show submission {A.Essam} [done]
 leaderboard {Mustafa} [done]
 data analysis {Tamer} [done]    
-forget password {Mustafa}
+forget password {Mustafa}[done]
+login me {A.Essam}
+create topic {both Essam}
+get topic {both Essam}
 
-create topic
-get topic
+
 get all topics
 update topic
 delete topic
@@ -65,7 +67,7 @@ generate report by student
 
 clear database {A.Essam}
 
-login me
+
 
 add the mailing functions
 

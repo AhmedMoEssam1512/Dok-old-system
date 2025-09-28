@@ -5,7 +5,7 @@ const adminControllers = require('../controllers/admin_controller');
 const adminMiddleWare = require('../middleware/admin_middleware');
 const { establishAdminConnection } = require('../controllers/SSE_connection');
 const subMiddleWare = require('../middleware/submission_middleware');
-
+const report = require('../controllers/admin_report');
 
 router.route('/adminRegister')
     .post(adminMiddleWare.adminFound,adminMiddleWare.passwordEncryption,adminControllers.TARegister);
@@ -52,5 +52,8 @@ router.route('/showAllSubmissions')
 router.route('/markSubmission/:id')
     .patch(auth.adminProtect,subMiddleWare.subExist,subMiddleWare.canSeeSubmission,
         subMiddleWare.marked,subMiddleWare.checkData, adminControllers.markSubmission );
+
+router.route('/createReport/:topicId')
+    .get(auth.adminProtect, report.createReport);
 
 module.exports = router;

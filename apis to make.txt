@@ -51,16 +51,17 @@ delete topic {A.Essam} [done]
 create material {A.Essam} [done]
 get all {A.Essam}[done]
 get by id {ESSAM} [done]
-
-
-
-get by topic {A.Essam}
-update {A.Essam}
-delete {A.Essam}
+get by topic {A.Essam} [done]
 
 
 generate reports by admin
 generate report by student
+
+
+
+
+update {A.Essam}
+delete {A.Essam}
 
 clear database {A.Essam}
 

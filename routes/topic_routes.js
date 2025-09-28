@@ -10,6 +10,7 @@ router.route('/createTopic')
 router.route('/getTopicById/:topicId')
     .get(auth.protect, topicMiddleWare.findTopicById,topicMiddleWare.canSeeTopic ,topicControllers.getTopicById);
 
-    
+router.route('/getAllTopics')
+    .get(auth.protect, topicControllers.getAllTopics);
 
 module.exports = router;

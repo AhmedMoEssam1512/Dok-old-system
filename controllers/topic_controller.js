@@ -19,7 +19,7 @@ const createTopic = asyncWrapper(async (req, res) => {
     const group = req.admin.group;
     console.log("publisher id:", publisher)
     console.log("Creating topic with data:", { topicName, semester, subject });
-    const newTopic = await topic.createTopic( topicName, semester, publisher, subject,group );
+    const newTopic = await topic.createTopic( topicName, semester, publisher, subject );
     return res.status(201).json({
         status: "success",
        message: "Topic created successfully",
@@ -41,7 +41,7 @@ const getTopicById = asyncWrapper(async (req, res, next) => {
     const plain = q.get({ plain: true });
     return { ...plain, type: 'quiz' };
   });
-  console.log("Found topic:", topicFound);
+
     const assignments = (await assignment.getAssignmentsByTopicId(topicId))
   .map(a => {
     const plain = a.get({ plain: true }); // turn Sequelize model into plain object
@@ -60,7 +60,23 @@ const getTopicById = asyncWrapper(async (req, res, next) => {
     })
 });
 
+const getAllTopics = asyncWrapper(async (req, res, next) => {
+    const group = req.user.group;
+    const topics = (req.user.type === 'admin' && req.user.id === 1) ? 
+        await topic.getAllTopics()   :
+     await topic.getAllTopicsByGroup(group);
+    console.log("All topics for group", group, ":", topics);
+    return res.status(200).json({
+        status: "success",
+        message: `Retrieved ${topics.length} topics for group ${group}`,
+        data: {
+            topics : topics
+        }
+    })
+});
+
 module.exports = {
     createTopic,
-    getTopicById
+    getTopicById,
+    getAllTopics
 };

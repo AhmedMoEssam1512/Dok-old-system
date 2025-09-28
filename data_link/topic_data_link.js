@@ -11,7 +11,17 @@ function getTopicById(topicId) {
     return Topic.findOne({ where: { topicId } });
 }
 
+async function getAllTopicsByGroup(group) {
+    return await Topic.findAll({ where: { publisher: { [Op.in]: sequelize.literal(`(SELECT id FROM admin WHERE \`group\` = '${group}')`) } } });
+}
+
+function getAllTopics() {
+    return Topic.findAll();
+}
+
 module.exports = {
     createTopic,
-    getTopicById
+    getTopicById,
+    getAllTopicsByGroup,
+    getAllTopics
 };

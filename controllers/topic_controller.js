@@ -14,11 +14,12 @@ const topic = require('../data_link/topic_data_link.js');
 const { Op } = require("sequelize");
 
 const createTopic = asyncWrapper(async (req, res) => {
-    const { topicName, topicStartDate, topicEndDate, semester, subject } = req.body;
+    const { topicName, semester, subject } = req.body;
     const publisher = req.admin.id;
+    const group = req.admin.group;
     console.log("publisher id:", publisher)
-    console.log("Creating topic with data:", { topicName, topicStartDate, topicEndDate, semester, subject });
-    const newTopic = await topic.createTopic( topicName, topicStartDate, topicEndDate, semester, publisher, subject );
+    console.log("Creating topic with data:", { topicName, semester, subject });
+    const newTopic = await topic.createTopic( topicName, semester, publisher, subject,group );
     return res.status(201).json({
         status: "success",
        message: "Topic created successfully",
@@ -26,6 +27,7 @@ const createTopic = asyncWrapper(async (req, res) => {
                  topicName: newTopic.topicName,
                  subject: newTopic.subject,
                  semester: newTopic.semester,
+                 group: newTopic.group
          }
         
     });

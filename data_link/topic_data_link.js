@@ -3,6 +3,8 @@ const { Op } = require("sequelize");
 const Admin = require('../models/admin_model');
 const Topic = require('../models/topic_model');
 
+Topic.belongsTo(Admin, { foreignKey: 'publisher', as: 'publisherAdmin' });
+
 function createTopic(topicName, semester, publisher,subject) {
     return Topic.create({ topicName, semester, publisher, subject});
 }
@@ -12,8 +14,16 @@ function getTopicById(topicId) {
 }
 
 async function getAllTopicsByGroup(group) {
-    return await Topic.findAll({ where: { publisher: { [Op.in]: sequelize.literal(`(SELECT id FROM admin WHERE \`group\` = '${group}')`) } } });
+  return await Topic.findAll({
+    include: [{
+      model: Admin,
+      as: "publisherAdmin",   // make sure you define the alias in associations
+      where: { group: group },
+      attributes: []          // don’t pull extra admin fields unless needed
+    }]
+  });
 }
+
 
 function getAllTopics() {
     return Topic.findAll();

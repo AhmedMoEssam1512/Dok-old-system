@@ -41,7 +41,7 @@ const getTopicById = asyncWrapper(async (req, res, next) => {
     const plain = q.get({ plain: true });
     return { ...plain, type: 'quiz' };
   });
-
+  console.log("Found topic:", topicFound);
     const assignments = (await assignment.getAssignmentsByTopicId(topicId))
   .map(a => {
     const plain = a.get({ plain: true }); // turn Sequelize model into plain object

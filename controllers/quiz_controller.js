@@ -28,6 +28,7 @@ const createQuiz = asyncWrapper(async (req, res) => {
 
 const getAllQuizzes = asyncWrapper(async (req, res) => {
     const group = req.user.group;
+    console.log("Fetching quizzes for group:", group);
 
     // Get all quizzes based on group
     const quizzes = group === 'all'
@@ -35,13 +36,13 @@ const getAllQuizzes = asyncWrapper(async (req, res) => {
         : await quiz.getAllQuizzesForGroup(group);
 
     // Filter only quizzes that have already passed
-    const now = new Date();
-    const passedQuizzes = quizzes.filter(q => new Date(q.date) < now);
+    // const now = new Date();
+    // const passedQuizzes = quizzes.filter(q => new Date(q.date) < now);
 
     return res.status(200).json({
         status: "success",
-        results: passedQuizzes.length,
-        data: { quizzes: passedQuizzes }
+        results: quizzes.length,
+        data: { quizzes: quizzes }
     })
 });
 

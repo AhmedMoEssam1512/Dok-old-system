@@ -23,6 +23,8 @@ const logIn = asyncWrapper(async (req, res, next) => {
       return next(AppError.create("Email not verified", 403, httpStatus.Error));
     }
 
+    const role = adminUser.adminId === 1 ? "dok" : "admin";
+
     const adminToken = jwt.sign(
       {
         id: adminUser.adminId,
@@ -39,6 +41,12 @@ const logIn = asyncWrapper(async (req, res, next) => {
       status: "success",
       message: "Login successful",
       token: adminToken,
+      data : { id: adminUser.adminId,
+         email: adminUser.email,
+          group: adminUser.group,
+        name : adminUser.name,
+      role : role,
+     }
     });
   }
 
@@ -75,6 +83,12 @@ const logIn = asyncWrapper(async (req, res, next) => {
       status: "success",
       message: "Login successful",
       token: studentToken,
+      data : { id: studentUser.studentId, 
+          email: studentUser.studentEmail,
+          group: studentUser.group,
+          name : studentUser.studentName,
+          role : "student",
+         }
     });
   }
 

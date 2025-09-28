@@ -10,8 +10,8 @@ const Admin = require('../models/admin_model.js');
 const Student = require('../models/student_model.js');
 
 const checkField = asyncWrapper(async (req, res, next) => {
-    const {mark, document, startDate, endDate, semester}= req.body;
-    if (mark == null || document == null || startDate == null || semester == null || endDate == null) {
+    const {mark, document, endDate, semester}= req.body;
+    if (mark == null || document == null || semester == null || endDate == null) {
         return next(new AppError("All fields are required", httpStatus.BAD_REQUEST));
     }
     console.log("chack 1 done, all fields present")
@@ -28,20 +28,13 @@ const checkField = asyncWrapper(async (req, res, next) => {
     }
     console.log("chack 3 done, pdf valid")
 
-    // allow any date format that JS Date can parse
-    const parsedDate = new Date(startDate);
-    if (parsedDate.toString() === "Invalid Date") {
-        return next(new AppError("Invalid date format", httpStatus.BAD_REQUEST));
-    }
-    console.log("chack 4 done, start date valid")
-
     const parsedDate2 = new Date(endDate);
     if (parsedDate2.toString() === "Invalid Date") {
         return next(new AppError("Invalid date format", httpStatus.BAD_REQUEST));
     }
     console.log("chack 5 done, end date valid")
 
-    if (parsedDate2 <= parsedDate) {
+    if (parsedDate2 <= Date()) {
         return next(new AppError("End date must be after start date", httpStatus.BAD_REQUEST));
     }
     console.log("check 6 done, end date is after start date");

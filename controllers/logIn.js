@@ -19,6 +19,9 @@ const logIn = asyncWrapper(async (req, res, next) => {
         AppError.create("Invalid email or password", 400, httpStatus.Error)
       );
     }
+    if (adminUser.verified === false) {
+      return next(AppError.create("Email not verified", 403, httpStatus.Error));
+    }
 
     const adminToken = jwt.sign(
       {

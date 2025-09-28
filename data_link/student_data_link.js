@@ -115,13 +115,19 @@ async function getStudentRank(id) {
 }
 
 async function findAllStudentsForProfile(assistantId) {
-  const whereClause = assistantId === 1 ? {} : { assistantId: String(assistantId) }; // cast to string if your DB stores it as STRING
+  // Base conditions: verified and not banned
+  const whereClause = {
+    verified: true,
+    banned: false,
+    ...(assistantId !== 1 && { assistantId: String(assistantId) }) // only filter by assistantId if not 1
+  };
 
-  return Student.findAll({
+  return await Student.findAll({
     where: whereClause,
     attributes: ['studentId', 'studentName', 'totalScore']
   });
 }
+
 
 
 

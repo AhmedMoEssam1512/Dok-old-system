@@ -126,20 +126,29 @@ const rejectStudent = asyncWrapper(async (req, res) => {
 
 const showMyProfile = asyncWrapper(async (req, res) => {
   const adminId = req.admin.id;
+
+  // Fetch admin profile
   const adminProfile = await admin.findAdminById(adminId);
+  if (!adminProfile) {
+    return res.status(404).json({ status: "Error", data: { message: "Admin not found" } });
+  }
+
+  // Fetch verified, not banned students for this admin/assistant
   const myStudents = await student.findAllStudentsForProfile(adminId);
+
   return res.status(200).json({
     status: "success",
     data: {
-      id : adminProfile.adminId,
+      id: adminProfile.adminId,
       adminName: adminProfile.name,
       adminEmail: adminProfile.email,
-      PhoneNumber: adminProfile.phoneNumber,
-      group : adminProfile.group,
+      phoneNumber: adminProfile.phoneNumber,
+      group: adminProfile.group,
       students: myStudents
     }
   });
 });
+
 
 const showStudentProfile= asyncWrapper(async (req, res) => {
   const studentProfile = req.student; // must be set earlier by studentFound

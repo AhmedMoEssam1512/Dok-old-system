@@ -15,7 +15,7 @@ const Student = sequelize.define('Student', {
   parentPhoneNumber: {type: DataTypes.STRING, allowNull: false},
   studentPhoneNumber: {type: DataTypes.STRING, allowNull: false},
   birthDate: {type: DataTypes.DATE, allowNull: false},
-  totalScore: {type: DataTypes.INTEGER, defaultValue: 0},
+  totalScore: {type: DataTypes.FLOAT, defaultValue: 0},
   createdAt: {type: DataTypes.DATE, defaultValue: DataTypes.NOW },
   verified: {type: DataTypes.BOOLEAN, defaultValue: false},
   banned: {type: DataTypes.BOOLEAN, defaultValue: false}

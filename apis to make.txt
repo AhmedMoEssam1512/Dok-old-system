@@ -51,7 +51,16 @@ delete topic {A.Essam} [done]
 create material {A.Essam} [done]
 get all {A.Essam}[done]
 get by id {ESSAM} [done]
+<<<<<<< HEAD
 get by topic {A.Essam} [done]
+=======
+
+
+
+get by topic {A.Essam}
+update material {Y.Essam}
+delete material {Y.Essam}
+>>>>>>> 1b4bb3ed00b1c914df8d36b5ceb004fb2797b648
 
 
 generate reports by admin

@@ -59,10 +59,37 @@ const getMaterialByTopicId = asyncWrapper(async (req, res, next) => {
     });
 });
 
+const updateMaterial = asyncWrapper(async (req, res, next) => {
+    const materialId = req.params.id;
+    const updateData = req.body;
+    const updatedRows = await material.updateMaterial(materialId, updateData);
+    if (updatedRows === 0) {
+        return next(new AppError(`Material with id ${materialId} not found or no changes made`, httpStatus.NOT_FOUND));
+    }
+    return res.status(200).json({
+        status: "success",
+        message: "Material updated successfully"
+    });
+});
+
+const deleteMaterial = asyncWrapper(async (req, res, next) => {
+    const materialId = req.params.id;
+    const deletedRows = await material.deleteMaterial(materialId);
+    if (deletedRows === 0) {
+        return next(new AppError(`Material with id ${materialId} not found`, httpStatus.NOT_FOUND));
+    }
+    return res.status(200).json({
+        status: "success",
+        message: "Material deleted successfully"
+    });
+});
+
 module.exports = {
     createMaterial,
     getAllMaterials,
     getMaterialById,
-    getMaterialByTopicId
+    getMaterialByTopicId,
+    updateMaterial,
+    deleteMaterial
 };
 

@@ -37,11 +37,21 @@ async function getAllMaterialsByGroup(group) {
 
 async function getMaterialsByTopicId(topicId) {
     return await Material.findAll({ where: { topicId } });
-}   
+}
+
+function updateMaterial(materialId, updateData) {
+    return Material.update(updateData, { where: { materialId } });
+}
+
+function deleteMaterial(materialId) {
+    return Material.destroy({ where: { materialId } });
+}
 
 module.exports = {
     createMaterial,
     getAllMaterialsByGroup,
     getMaterialById,
-    getMaterialsByTopicId
+    getMaterialsByTopicId,
+    updateMaterial,
+    deleteMaterial
 };

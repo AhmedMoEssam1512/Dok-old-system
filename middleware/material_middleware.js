@@ -53,9 +53,21 @@ const canSeeMaterial = asyncWrapper(async (req, res, next) => {
     next();
 });
 
+const AdminViewMaterial = asyncWrapper(async (req, res, next) => {
+    const materialf = req.found;
+    const userGroup = req.admin.group;
+    const publisher = await admin.getAdminById(materialf.publisher);
+    if (publisher.group !== 'all' && publisher.group !== userGroup) {
+        return next(new AppError("You do not have permission to view this material", httpStatus.FORBIDDEN));
+    }
+    console.log("User can see material");
+    next();
+});
+
 module.exports = {
     checkTopicExists,
     checkInputData,
     findMaterialById,
-    canSeeMaterial
+    canSeeMaterial,
+    AdminViewMaterial
 };

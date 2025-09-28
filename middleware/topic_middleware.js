@@ -49,7 +49,7 @@ const canSeeTopic= asyncWrapper(async (req, res, next) => {
     console.log("User can see topic");
     next();
 });
-
+//wah
 module.exports = {
     checkSemester,
     checkSubject,

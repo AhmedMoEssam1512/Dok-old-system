@@ -2,7 +2,7 @@ const sequelize = require('../config/database');
 const { Op } = require("sequelize");
 const Admin = require('../models/admin_model');
 const Topic = require('../models/topic_model');
-
+// wah
 Topic.belongsTo(Admin, { foreignKey: 'publisher', as: 'publisherAdmin' });
 
 function createTopic(topicName, semester, publisher,subject) {

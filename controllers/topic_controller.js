@@ -60,7 +60,7 @@ const getTopicById = asyncWrapper(async (req, res, next) => {
     })
 });
 
-const getAllTopics = asyncWrapper(async (req, res, next) => {
+const getAllTopics = asyncWrapper(async (req, res, next) => { //emsk
     const group = req.user.group;
     let topics = (req.user.type === 'admin' && req.user.id === 1) ? 
         await topic.getAllTopics() : null;

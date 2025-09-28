@@ -48,6 +48,13 @@ function findSubmissionByQuizAndStudent(quizId,studentId){
     return Submission.findOne({where :{quizId,studentId,type:"quiz"}})
 }
 
+async function getQuizzesByTopicId(topicId) {
+    return await Quiz.findAll({
+    where: { topicId },
+    attributes: ['id', 'name'], // only return id and name
+  });
+}
+
 
 module.exports = {
      createQuiz,
@@ -56,5 +63,6 @@ module.exports = {
     getQuizById,
     updateQuizDates,
     createSubmission,
-    findSubmissionByQuizAndStudent
+    findSubmissionByQuizAndStudent,
+    getQuizzesByTopicId
 };

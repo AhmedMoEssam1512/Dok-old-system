@@ -53,7 +53,7 @@ const getQuizById = asyncWrapper(async (req, res, next) => {
     });
 });
 
-const startQuiz = asyncWrapper(async (req, res, next) => {
+const startQuiz = asyncWrapper(async (req, res) => {
     const { quizId } = req.params;
     const adminGroup = req.admin.group;
 

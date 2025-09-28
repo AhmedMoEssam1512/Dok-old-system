@@ -4,9 +4,10 @@ const auth = require('../middleware/auth_middleware');
 const assignControllers = require('../controllers/assignment_controller');
 const assignMiddleWare = require('../middleware/assignment_middleware');
 const quizMiddleware = require('../middleware/quiz_middleware');
+const { checkSemester } = require('../middleware/topic_middleware');
 
 router.route('/createAssignment')
-    .post(auth.adminProtect, assignMiddleWare.checkField, assignControllers.createAssignment)
+    .post(auth.adminProtect, assignMiddleWare.checkField,checkSemester ,assignControllers.createAssignment)
 
 router.route('/getAllAssignments')
     .get(auth.protect, quizMiddleware.getGroup, assignControllers.getAllAssignments)

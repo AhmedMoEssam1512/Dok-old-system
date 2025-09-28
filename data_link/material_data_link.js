@@ -13,7 +13,7 @@ function createMaterial (title, description, document, topicId, publisher, uploa
     return Material.create({title, description, document, topicId, publisher, uploadDate});
 } 
 
-async function getAllAssignmentsByGroup(group) {
+async function getAllMaterialsByGroup(group) {
     return await Material.findAll({
         include: [
             {
@@ -33,5 +33,5 @@ async function getAllAssignmentsByGroup(group) {
 
 module.exports = {
     createMaterial,
-    getAllAssignmentsByGroup
+    getAllMaterialsByGroup,
 };

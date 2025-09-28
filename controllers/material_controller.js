@@ -38,9 +38,18 @@ const getAllMaterials = asyncWrapper(async (req, res, next) => {
 
 });
 
+const getMaterialById = asyncWrapper(async (req, res, next) => {
+    const found = req.found;
+    return res.status(200).json({
+        status: "success",
+        data: { found }
+    });
+});
+
 
 module.exports = {
     createMaterial,
-    getAllMaterials
+    getAllMaterials,
+    getMaterialById
 };
 

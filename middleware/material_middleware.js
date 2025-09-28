@@ -30,7 +30,31 @@ const checkInputData = asyncWrapper(async (req, res, next) => {
     next();
 });
 
+const findMaterialById = asyncWrapper(async (req, res, next) => {
+    const { id } = req.params;
+    const found = await material.getMaterialById(id);
+    if (!found) {
+        return next(new AppError(`Material with id ${id} not found`, httpStatus.NOT_FOUND));
+    }
+    req.found = found;
+    console.log("Found material:", found);
+    next();
+}); 
+
+const canSeeMaterial = asyncWrapper(async (req, res, next) => {
+    const material = req.found;
+    const userGroup = req.user.group;
+    const publisher = await admin.getAdminById(material.publisher);
+    if (publisher.group !== 'all' && publisher.group !== userGroup) {
+        return next(new AppError("You do not have permission to view this material", httpStatus.FORBIDDEN));
+    }
+    console.log("User can see material");
+    next();
+});
+
 module.exports = {
     checkTopicExists,
-    checkInputData
+    checkInputData,
+    findMaterialById,
+    canSeeMaterial
 };

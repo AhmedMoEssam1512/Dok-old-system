@@ -11,4 +11,8 @@ router.route('/createMaterial')
 router.route('/getAllMaterials')
     .get(auth.protect, materialControllers.getAllMaterials);
 
+router.route('/getMaterialById/:id')
+    .get(auth.protect, materialMiddleWare.findMaterialById,
+         materialMiddleWare.canSeeMaterial, materialControllers.getMaterialById);
+
 module.exports = router;

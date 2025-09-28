@@ -11,10 +11,10 @@ const Student = require('../models/student_model.js');
 const submission = require('../data_link/assignment_data_link.js');
 
 const createAssignment = asyncWrapper(async (req, res) => {
-    const {mark, document, startDate, endDate, semester, topicId}= req.body;
+    const {mark, document, startDate, endDate, semester, topicId, title, description}= req.body;
     const publisher = req.admin.id;
     const createdAssignment = await assignment.createAssignment
-    (mark, document, startDate, endDate, semester, publisher,topicId)
+    (mark, document, startDate, endDate, semester, publisher,topicId, title, description)
     return res.status(201).json({
         status: "success" ,
         data: { message: "assignment created successfully", assignmentId: createdAssignment.assignId },

@@ -13,6 +13,10 @@ function createMaterial (title, description, document, topicId, publisher, uploa
     return Material.create({title, description, document, topicId, publisher, uploadDate});
 } 
 
+function getMaterialById(materialId) {
+    return Material.findOne({where : {materialId}});
+}
+
 async function getAllMaterialsByGroup(group) {
     return await Material.findAll({
         include: [
@@ -34,4 +38,5 @@ async function getAllMaterialsByGroup(group) {
 module.exports = {
     createMaterial,
     getAllMaterialsByGroup,
+    getMaterialById
 };

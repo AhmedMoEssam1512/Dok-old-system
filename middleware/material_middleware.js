@@ -10,6 +10,7 @@ const assignment = require('../data_link/assignment_data_link.js');
 const Admin = require('../models/admin_model.js');
 const Student = require('../models/student_model.js');
 const Topic = require('../models/topic_model.js');
+const material = require('../data_link/material_data_link.js');
 const topic = require('../data_link/topic_data_link.js');
 const { Op } = require("sequelize");
 
@@ -42,9 +43,9 @@ const findMaterialById = asyncWrapper(async (req, res, next) => {
 }); 
 
 const canSeeMaterial = asyncWrapper(async (req, res, next) => {
-    const material = req.found;
+    const materialf = req.found;
     const userGroup = req.user.group;
-    const publisher = await admin.getAdminById(material.publisher);
+    const publisher = await admin.getAdminById(materialf.publisher);
     if (publisher.group !== 'all' && publisher.group !== userGroup) {
         return next(new AppError("You do not have permission to view this material", httpStatus.FORBIDDEN));
     }

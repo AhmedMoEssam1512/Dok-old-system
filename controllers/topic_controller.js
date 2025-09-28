@@ -98,8 +98,10 @@ const updateTopic = asyncWrapper(async (req, res, next) => {
 });
 
 const deleteTopic = asyncWrapper(async (req, res, next) => {
-    // Implementation for deleting a topic would go here
-    res.status(501).json({ status: "error", message: "Not implemented" });
+    const found = req.found;  
+    await found.destroy();
+    res.status(200).json({ status: "success", 
+        message: `topic with id: ${req.params.topicId} is deleted` });
 });
 
 
@@ -108,4 +110,5 @@ module.exports = {
     getTopicById,
     getAllTopics,
     updateTopic,
+    deleteTopic
 };

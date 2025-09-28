@@ -17,4 +17,8 @@ router.route('/updateTopic/:topicId')
     .patch(auth.adminProtect, topicMiddleWare.findTopicById, topicMiddleWare.canUpdateTopic, 
         topicMiddleWare.checkData, topicControllers.updateTopic);
 
+router.route('/deleteTopic/:topicId')
+    .delete(auth.adminProtect, topicMiddleWare.findTopicById, 
+        topicMiddleWare.canUpdateTopic, topicControllers.deleteTopic);
+
 module.exports = router;

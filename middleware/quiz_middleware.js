@@ -149,14 +149,17 @@ const canAccessActiveQuiz = asyncWrapper(async (req, res, next) => {
 const verifySubmissionPDF = asyncWrapper(async (req, res, next) => {
     const { answers } = req.body;
 
-    const pdfRegex = /^https?:\/\/.+\.pdf$/i;
+    // allow query params after .pdf
+    const pdfRegex = /^https?:\/\/.+\.pdf(\?.*)?$/i;
+
     if (typeof answers !== 'string' || !pdfRegex.test(answers.trim())) {
         return next(new AppError("answers PDF must be a valid link ending with .pdf", httpStatus.BAD_REQUEST));
     }
-    console.log("valid Pdf")
-    // Further validation can be added here based on quiz structure
+
+    console.log("valid Pdf");
     next();
 });
+
 
 const verifySubmissionTiming = asyncWrapper(async (req, res, next) => {
     const activeQuiz = req.quizData;

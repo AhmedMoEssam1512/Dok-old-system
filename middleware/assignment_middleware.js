@@ -61,6 +61,7 @@ const assignExists = asyncWrapper(async (req, res, next) => {
     }
     console.log("Assignment found:", assignData);
     req.assignData = assignData;
+    console.log("1 done")
     next();
 });
 
@@ -75,17 +76,18 @@ const canSeeAssign = asyncWrapper(async (req, res, next) => {
     if (publisher.group !== 'all' && publisher.group !== userGroup&& userGroup !== 'all') {
         return next(new AppError("You do not have permission to view this Assignment", httpStatus.FORBIDDEN));
     }
-    console.log("User has permission to view the quiz");
+    console.log("User has permission to view the assignment");
     next();
 });
 
 const submittedBefore = asyncWrapper(async (req, res, next) => {
     const assId = req.params.assignId;
     const studentId= req.user.id;
-    const submission = await assignment.findSubmissionByQuizAndStudent(assId,studentId);
+    const submission = await assignment.findSubmissionByAssignmentAndStudent(assId,studentId);
     if(submission){
         return next(new AppError("You cannot submit same assignment twice", httpStatus.FORBIDDEN));
     }
+    console.log("User has not submitted this assignment before");
     next();
 })
 

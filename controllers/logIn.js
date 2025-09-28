@@ -94,7 +94,7 @@ const logIn = asyncWrapper(async (req, res, next) => {
   return next(AppError.create("Email not found", 404, httpStatus.Error));
 });
 
-
+ 
 const me = asyncWrapper(async (req, res, next) => {
   const userId = req.user.id;
   // name id role group assid 

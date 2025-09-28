@@ -54,6 +54,13 @@ function findSubmissionByAssignmentAndStudent(assignId, studentId) {
   });
 }
 
+async function getAssignmentsByTopicId(topicId) {
+  return await Assignment.findAll({
+    where: { topicId },
+    attributes: ['id', 'name'], // only return id and name
+  });
+}
+
 module.exports={
     createAssignment,
     getAllAssignments,
@@ -61,5 +68,6 @@ module.exports={
     getAssignmentById,
     createSubmission,
     findSubmissionByQuizAndStudent,
-    findSubmissionByAssignmentAndStudent
+    findSubmissionByAssignmentAndStudent,
+    getAssignmentsByTopicId
 }

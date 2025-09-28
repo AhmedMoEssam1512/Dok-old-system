@@ -4,9 +4,10 @@ const Quiz = sequelize.define('Quiz', {
   quizId: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   title: DataTypes.STRING,
   mark: DataTypes.INTEGER,
+  createdAt : DataTypes.DATE,
   publisher: DataTypes.INTEGER,
   quizPdf: DataTypes.STRING,
-  date: DataTypes.DATE,
+  startDate: DataTypes.DATE,
   semester: DataTypes.STRING,
   durationInMin: DataTypes.INTEGER,
   topicId: DataTypes.INTEGER

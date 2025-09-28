@@ -1,0 +1,47 @@
+const sequelize = require('../config/database');
+const AppError = require('../utils/app.error');
+const httpStatus = require('../utils/http.status');
+const asyncWrapper = require('../middleware/asyncwrapper');
+const Quiz = require('../models/quiz_model.js');
+const quiz = require('../data_link/quiz_data_link.js');
+const admin = require('../data_link/admin_data_link.js');
+const student = require('../data_link/student_data_link.js');
+const Admin = require('../models/admin_model.js');
+const Student = require('../models/student_model.js');
+const Topic = require('../models/topic_model.js');
+const topic = require('../data_link/topic_data_link.js');
+const { Op } = require("sequelize");
+
+const checkSemester = asyncWrapper(async (req, res, next) => {
+    const { semester } = req.body;
+    const toLow= semester.toLowerCase();
+    if(toLow!== "june" && toLow !== "november"){
+        return next(new AppError("Semester must be either 'June' or 'November'", httpStatus.BAD_REQUEST));
+    }
+    nextt();
+});
+
+const checkSubject = asyncWrapper(async (req, res, next) => {
+    const { subject } = req.body;
+    const toLow= subject.toLowerCase();
+    if(toLow!== "biology" && toLow !== "physics" && toLow !== "chemistry"){
+        return next(new AppError("Subject must be either 'Biology', 'Physics' or 'Chemistry'", httpStatus.BAD_REQUEST));
+    }
+    next();
+});
+
+const findTopicById = asyncWrapper(async (req, res, next) => {
+    const { topicId } = req.params;
+    const found = await topic.getTopicById(topicId );
+    if (!found) {
+        return next(new AppError("Topic not found", httpStatus.NOT_FOUND));
+    }
+    req.found = found;
+    next();
+})
+
+module.exports = {
+    checkSemester,
+    checkSubject,
+    findTopicById
+};

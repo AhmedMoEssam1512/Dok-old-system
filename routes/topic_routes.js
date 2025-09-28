@@ -7,4 +7,9 @@ const topicMiddleWare = require('../middleware/topic_middleware');
 router.route('/createTopic')
     .post(auth.adminProtect, topicMiddleWare.checkSemester,topicMiddleWare.checkSubject ,topicControllers.createTopic);
 
+router.route('/getTopicById/:topicId')
+    .get(auth.protect, topicMiddleWare.findTopicById, topicControllers.getTopicById);
+
+    
+
 module.exports = router;

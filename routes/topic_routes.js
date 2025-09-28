@@ -8,7 +8,7 @@ router.route('/createTopic')
     .post(auth.adminProtect, topicMiddleWare.checkSemester,topicMiddleWare.checkSubject ,topicControllers.createTopic);
 
 router.route('/getTopicById/:topicId')
-    .get(auth.protect, topicMiddleWare.findTopicById, topicControllers.getTopicById);
+    .get(auth.protect, topicMiddleWare.findTopicById,topicMiddleWare.canSeeTopic ,topicControllers.getTopicById);
 
     
 

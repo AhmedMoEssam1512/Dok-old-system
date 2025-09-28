@@ -40,8 +40,19 @@ const findTopicById = asyncWrapper(async (req, res, next) => {
     next();
 })
 
+const canSeeTopic= asyncWrapper(async (req, res, next) => {
+    const found = req.found;
+    const admin = await admin.getAdminById(found.publisher);
+    if(req.user.group !== admin.group){
+        return next(new AppError("You do not have permission to view this topic", httpStatus.FORBIDDEN));
+    }
+    console.log("User can see topic");
+    next();
+});
+
 module.exports = {
     checkSemester,
     checkSubject,
-    findTopicById
+    findTopicById,
+    canSeeTopic
 };

@@ -7,8 +7,8 @@ const Submission = require('../models/submission_model');
 Quiz.belongsTo(Admin, { foreignKey: "publisher" });
 
 
-function createQuiz(mark,publisher,quizPdf,date,semester,durationInMin) {
-    return Quiz.create({mark,publisher,quizPdf,date,semester,durationInMin});
+function createQuiz(mark,publisher,quizPdf,date,semester,durationInMin,topicId){
+    return Quiz.create({mark,publisher,quizPdf,date,semester,durationInMin, topicId});
 };
 
 function getAllQuizzes(){

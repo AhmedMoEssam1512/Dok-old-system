@@ -6,9 +6,9 @@ const Submission = require('../models/submission_model');
 
 Assignment.belongsTo(Admin, { foreignKey: "publisher" });
 
-function createAssignment(mark, document, startDate, endDate, semester, publisher){
+function createAssignment(mark, document, startDate, endDate, semester, publisher,topicId){
     return Assignment.create(
-        {mark, document, startDate, endDate, semester,publisher})
+        {mark, document, startDate, endDate, semester,publisher,topicId})
 }
 
 function getAllAssignments() {

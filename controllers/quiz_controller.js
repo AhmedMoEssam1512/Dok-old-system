@@ -14,11 +14,11 @@ const { setCache } = require("../utils/cache");
 const { Op } = require("sequelize");
 
 const createQuiz = asyncWrapper(async (req, res) => {
-    const {mark,quizPdf,date,semester,durationInMin} = req.body;
+    const {mark,quizPdf,date,semester,durationInMin, topicId} = req.body;
     const publisher = req.admin.id; 
     console.log("publisher id:", publisher)
     console.log("Creating quiz with data:", {mark,quizPdf,date,semester,durationInMin});
-    const newQuiz = await quiz.createQuiz(mark,publisher,quizPdf,date,semester,durationInMin);  
+    const newQuiz = await quiz.createQuiz(mark,publisher,quizPdf,date,semester,durationInMin, topicId);  
     return res.status(201).json({
         status: "success" ,
         data: { message: "Quiz created successfully", quizId: newQuiz.quizId }

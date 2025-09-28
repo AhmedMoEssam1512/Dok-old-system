@@ -5,8 +5,8 @@ const Topic = sequelize.define('Topic', {
     primaryKey: true,
     autoIncrement: true  },
   topicName: { type: DataTypes.STRING, allowNull: false },
-  topicStartDate: { type: DataTypes.DATE, allowNull: false },
-  topicEndDate: { type: DataTypes.DATE, allowNull: false },
+  // topicStartDate: { type: DataTypes.DATE, allowNull: false },
+  // topicEndDate: { type: DataTypes.DATE, allowNull: false },
   semester: { type: DataTypes.STRING, allowNull: false },
   publisher: { type: DataTypes.INTEGER, allowNull: false },
   subject: { type: DataTypes.STRING, allowNull: false }

@@ -28,7 +28,7 @@ const logIn = asyncWrapper(async (req, res, next) => {
     const adminToken = jwt.sign(
       {
         id: adminUser.adminId,
-        email: adminUser.email,
+        
         group: adminUser.group,
         type: "admin",
       },
@@ -69,7 +69,7 @@ const logIn = asyncWrapper(async (req, res, next) => {
     const studentToken = jwt.sign(
       {
         id: studentUser.studentId,
-        email: studentUser.studentEmail,
+      
         group: studentUser.group,
         type: "student",
       },

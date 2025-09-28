@@ -37,6 +37,7 @@ const findTopicById = asyncWrapper(async (req, res, next) => {
         return next(new AppError("Topic not found", httpStatus.NOT_FOUND));
     }
     req.found = found;
+    console.log("Topic found:", found);
     next();
 })
 
@@ -52,17 +53,36 @@ const canSeeTopic= asyncWrapper(async (req, res, next) => {
 
 const canUpdateTopic = asyncWrapper(async (req, res, next) => {
     const group = req.admin.group;
+    console.log("Admin group:", group);
     const found = req.found;
     const adminf = await admin.getAdminById(found.publisher);
-    if(req.user.group !== adminf.group){
+    if(group !== adminf.group){
         return next(new AppError("You do not have permission to update this topic", httpStatus.FORBIDDEN));
     }
+    next();
 })
+
+const checkData = asyncWrapper(async (req, res, next) => {
+    const {  semester, subject } = req.body;
+    if(semester){ 
+        const toLow= semester.toLowerCase();
+    if(toLow!== "june" && toLow !== "november"){
+        return next(new AppError("Semester must be either 'June' or 'November'", httpStatus.BAD_REQUEST));
+    }}
+
+    if(subject){
+        const toLow= subject.toLowerCase();
+    if(toLow!== "biology" && toLow !== "physics" && toLow !== "chemistry"){
+        return next(new AppError("Subject must be either 'Biology', 'Physics' or 'Chemistry'", httpStatus.BAD_REQUEST));
+    }}
+    next();
+});
 
 module.exports = {
     checkSemester,
     checkSubject,
     findTopicById,
     canSeeTopic,
-    canUpdateTopic
+    canUpdateTopic,
+    checkData
 };

@@ -15,6 +15,6 @@ router.route('/getAllTopics')
 
 router.route('/updateTopic/:topicId')
     .patch(auth.adminProtect, topicMiddleWare.findTopicById, topicMiddleWare.canUpdateTopic, 
-        topicMiddleWare.checkSemester, topicMiddleWare.checkSubject, topicControllers.updateTopic);
+        topicMiddleWare.checkData, topicControllers.updateTopic);
 
 module.exports = router;

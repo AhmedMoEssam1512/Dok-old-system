@@ -9,6 +9,7 @@ const student = require('../data_link/student_data_link.js');
 const Admin = require('../models/admin_model.js');
 const Student = require('../models/student_model.js');
 const submission = require('../data_link/assignment_data_link.js');
+const Submission = require('../models/submission_model.js');
 const Topic = require('../models/topic_model.js');
 const topic = require('../data_link/topic_data_link.js');
 
@@ -25,18 +26,56 @@ const createAssignment = asyncWrapper(async (req, res) => {
 });
 
 const getAllAssignments = asyncWrapper(async (req, res) => {
-    const group = req.user.group;
-    // Get all quizzes based on group
-    const assignments = (group === 'all'
-    ? await assignment.getAllAssignments()
-    : await assignment.getAllAssignmentsByGroup(group)) ;
+  const group = req.user.group;
+  const studentId = req.user.id; // adjust if different in your auth payload
 
-    return res.status(200).json({
-        status: "success",
-        results: assignments.length,
-        data: { Assignments: assignments }
+  const assignments = (group === 'all'
+    ? await assignment.getAllAssignments()
+    : await assignment.getAllAssignmentsByGroup(group));
+
+  const now = new Date();
+
+  // Pull all submissions of this student (only assId column)
+  const submissions = await Submission.findAll({
+    where: { studentId },
+    attributes: ['assId']
+  });
+  const submittedIds = new Set(submissions.map(s => s.assId));
+
+  const assignmentMap = new Map(
+    assignments.map(a => {
+      const plain = a.get({ plain: true });
+
+      let state;
+      if (submittedIds.has(plain.assignId)) {
+        // case 1: already submitted
+        state = "submitted";
+      } else if (new Date(plain.endDate) < now) {
+        // case 2: deadline passed, no submission
+        state = "missing";
+      } else {
+        // case 3: not submitted yet, still open
+        state = "unsubmitted";
+      }
+
+      return [
+        a.assignId,
+        {
+          ...plain,
+          subject: a.Topic?.subject || null,
+          state
+        }
+      ];
     })
-})
+  );
+
+  return res.status(200).json({
+    status: "success",
+    results: assignments.length,
+    data: { Assignments: Array.from(assignmentMap.values()) }
+  });
+});
+
 
 const getAssignmentById = asyncWrapper(async (req, res) => {
     const assignData = req.assignData;

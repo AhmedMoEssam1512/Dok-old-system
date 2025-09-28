@@ -3,18 +3,22 @@ const { Op } = require("sequelize");
 const Assignment = require('../models/assignment_model');
 const Admin = require('../models/admin_model');
 const Submission = require('../models/submission_model');
+const Topic = require('../models/topic_model.js');
 
 Assignment.belongsTo(Admin, { foreignKey: "publisher" });
+
+Assignment.belongsTo(Topic, { foreignKey: 'topicId' });
 
 function createAssignment(mark, document, startDate, endDate, semester, publisher,topicId, title, description){
     return Assignment.create(
         {mark, document, startDate, endDate, semester,publisher,topicId, title, description}) //7aga
 }
 
-function getAllAssignments() {
-    return Assignment.findAll();
+async function getAllAssignments() {
+  return Assignment.findAll({
+    include: { model: Topic, attributes: ['subject'] }
+  });
 }
-
 async function getAllAssignmentsByGroup(group) {
     return await Assignment.findAll({
         include: [
@@ -27,7 +31,8 @@ async function getAllAssignmentsByGroup(group) {
                         { group: "all" }
                     ]
                 }
-            }
+            },
+            { model: Topic, attributes: ['subject'] }
         ]
     });
 }
@@ -61,6 +66,13 @@ async function getAssignmentsByTopicId(topicId) {
   });
 }
 
+// async function getAllAssignmentsByGroup(group) {
+//   return Assignment.findAll({
+//     where: { group },
+//     include: { model: Topic, attributes: ['subject'] }
+//   });
+// }
+
 module.exports={
     createAssignment,
     getAllAssignments,
@@ -69,5 +81,6 @@ module.exports={
     createSubmission,
     findSubmissionByQuizAndStudent,
     findSubmissionByAssignmentAndStudent,
-    getAssignmentsByTopicId
+    getAssignmentsByTopicId,
+    
 }

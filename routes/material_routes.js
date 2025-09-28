@@ -8,4 +8,7 @@ router.route('/createMaterial')
     .post(auth.adminProtect, materialMiddleWare.checkInputData,
          materialMiddleWare.checkTopicExists, materialControllers.createMaterial);
 
+router.route('/getAllMaterials')
+    .get(auth.protect, materialControllers.getAllMaterials);
+
 module.exports = router;

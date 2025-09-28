@@ -28,8 +28,19 @@ const createMaterial = asyncWrapper(async (req, res, next) => {
     })
 });
 
+const getAllMaterials = asyncWrapper(async (req, res, next) => {
+    const materials = await material.getAllMaterialsByGroup(req.user.group);
+    return res.status(200).json({
+        status: "success",
+        results: materials.length,
+        data: { materials }
+    });
+
+});
+
 
 module.exports = {
-    createMaterial
+    createMaterial,
+    getAllMaterials
 };
 

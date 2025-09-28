@@ -6,10 +6,32 @@ const Material = require('../models/material_model');
 const Topic = require('../models/topic_model');
 const { Op } = require("sequelize");
 
+Material.belongsTo(Admin, { foreignKey: "publisher" });
+Material.belongsTo(Topic, { foreignKey: 'topicId' });
+
 function createMaterial (title, description, document, topicId, publisher, uploadDate) {
     return Material.create({title, description, document, topicId, publisher, uploadDate});
 } 
 
+async function getAllAssignmentsByGroup(group) {
+    return await Material.findAll({
+        include: [
+            {
+                model: Admin,
+                attributes: ["group"],
+                where: {
+                    [Op.or]: [
+                        { group: group },
+                        { group: "all" }
+                    ]
+                }
+            },
+            { model: Topic, attributes: ['subject'] }
+        ]
+    });
+}
+
 module.exports = {
-    createMaterial
+    createMaterial,
+    getAllAssignmentsByGroup
 };

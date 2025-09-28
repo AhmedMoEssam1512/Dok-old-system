@@ -11,7 +11,8 @@ const Student = require('../models/student_model.js');
 const submission = require('../data_link/assignment_data_link.js');
 
 const createAssignment = asyncWrapper(async (req, res) => {
-    const {mark, document, startDate, endDate, semester, topicId, title, description}= req.body;
+    const {mark, document,  endDate, semester, topicId, title, description}= req.body;
+    const startDate = new Date(); // current date
     const publisher = req.admin.id;
     const createdAssignment = await assignment.createAssignment
     (mark, document, startDate, endDate, semester, publisher,topicId, title, description) //7aga

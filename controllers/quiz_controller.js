@@ -18,8 +18,7 @@ const createQuiz = asyncWrapper(async (req, res) => {
     const publisher = req.admin.id; 
     console.log("publisher id:", publisher)
     console.log("Creating quiz with data:", {mark,quizPdf,date,semester,durationInMin});
-    const newQuiz = await quiz.createQuiz(mark,publisher,quizPdf,date,semester,durationInMin, topicId, title); 
-    newQuiz.createdAt = Date.now(); 
+    const newQuiz = await quiz.createQuiz(mark,publisher,quizPdf,date,semester,durationInMin, topicId, title);  
     return res.status(201).json({
         status: "success" ,
         data: { message: "Quiz created successfully", quizId: newQuiz.quizId }

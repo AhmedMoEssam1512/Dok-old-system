@@ -9,7 +9,7 @@ Quiz.belongsTo(Admin, { foreignKey: "publisher" });
 
 function createQuiz(mark,publisher,quizPdf,date,semester,durationInMin,topicId, title){
     return Quiz.create({mark,publisher,quizPdf,date,semester,durationInMin, topicId, title, createdAt: Date.now()});
-};
+}; // nice comment
 
 function getAllQuizzes(){
     return Quiz.findAll();

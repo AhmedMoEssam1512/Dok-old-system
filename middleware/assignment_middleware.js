@@ -10,8 +10,8 @@ const Admin = require('../models/admin_model.js');
 const Student = require('../models/student_model.js');
 
 const checkField = asyncWrapper(async (req, res, next) => {
-    const {mark, document, endDate, semester}= req.body;
-    if (mark == null || document == null || semester == null || endDate == null) {
+    const {mark, document,  endDate, semester, topicId, title, description}= req.body;
+    if (mark == null || document == null || semester == null || endDate == null || topicId == null || title == null || description == null) {
         return next(new AppError("All fields are required", httpStatus.BAD_REQUEST));
     }
     console.log("chack 1 done, all fields present")

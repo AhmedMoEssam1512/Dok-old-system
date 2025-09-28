@@ -37,7 +37,7 @@ function getQuizById(quizId) {
 }
 
 function updateQuizDates(quizId, newDate) {
-    return Quiz.update({ date: newDate }, { where: { quizId } });
+    return Quiz.update({ startDate: newDate }, { where: { quizId } });
 }
 
 function createSubmission(quizId, studentId,assistantId ,answers, semester) {

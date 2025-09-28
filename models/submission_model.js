@@ -4,7 +4,7 @@ const Submission = sequelize.define('Submission', {
   subId: {  type: DataTypes.INTEGER, 
     primaryKey: true, 
     autoIncrement: true },
-  score: DataTypes.INTEGER,
+  score: DataTypes.FLOAT,
   answers: DataTypes.STRING,
   marked:  DataTypes.STRING,
   subDate: {type: DataTypes.DATE , defaultValue: DataTypes.NOW},

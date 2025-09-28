@@ -8,7 +8,7 @@ Assignment.belongsTo(Admin, { foreignKey: "publisher" });
 
 function createAssignment(mark, document, startDate, endDate, semester, publisher,topicId, title, description){
     return Assignment.create(
-        {mark, document, startDate, endDate, semester,publisher,topicId, title, description})
+        {mark, document, startDate, endDate, semester,publisher,topicId, title, description}) //7aga
 }
 
 function getAllAssignments() {

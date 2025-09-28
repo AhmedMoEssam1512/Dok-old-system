@@ -14,7 +14,7 @@ const createAssignment = asyncWrapper(async (req, res) => {
     const {mark, document, startDate, endDate, semester, topicId, title, description}= req.body;
     const publisher = req.admin.id;
     const createdAssignment = await assignment.createAssignment
-    (mark, document, startDate, endDate, semester, publisher,topicId, title, description)
+    (mark, document, startDate, endDate, semester, publisher,topicId, title, description) //7aga
     return res.status(201).json({
         status: "success" ,
         data: { message: "assignment created successfully", assignmentId: createdAssignment.assignId },

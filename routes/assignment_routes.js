@@ -21,4 +21,6 @@ router.route('/submitAssignment/:assignId')
 router.route('/getUnsubmittedAssignments')
     .get(auth.studentProtect, assignControllers.getUnsubmittedAssignments)
 
+// get by topic id
+
 module.exports = router;

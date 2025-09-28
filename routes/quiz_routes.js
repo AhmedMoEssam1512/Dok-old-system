@@ -27,4 +27,6 @@ router.route('/submitQuiz/:quizId')
         .post(auth.protect, quizMiddleWare.quizExists, quizMiddleWare.canSeeQuiz ,
         quizMiddleWare.submittedBefore, quizMiddleWare.verifySubmissionPDF ,quizControllers.submitQuiz)
 
+// get by topic id
+
 module.exports = router;

@@ -57,6 +57,8 @@ const getGroup = asyncWrapper(async (req, res, next) => {
     next();
 });
 
+// check topic exist
+
 const quizExists = asyncWrapper(async (req, res, next) => {
     const { quizId } = req.params;
     const quizData = await quiz.getQuizById(quizId);

@@ -124,6 +124,9 @@ const submitQuiz = asyncWrapper(async (req, res, next) => {
     });
 });
 
+
+// get by topic id
+
 module.exports = {
     createQuiz  ,
     getAllQuizzes,

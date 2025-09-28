@@ -48,6 +48,8 @@ get topic
 get all topics
 update topic
 delete topic
+get all quizes by topic
+get all ass by topic 
 
 
 create material

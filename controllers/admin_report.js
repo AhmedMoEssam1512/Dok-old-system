@@ -22,7 +22,7 @@ const createReport = async (req, res) => {
     const { topicId } = req.params;
 
     // 🔒 Authorization: Only assistants allowed
-    if (!req.admin || req.admin.role !== 'assistant') {
+    if (!req.admin || req.admin.type !== 'admin') {
       return res.status(403).json({ error: 'Access denied. Assistants only.' });
     }
     const assistantId = req.admin.id;

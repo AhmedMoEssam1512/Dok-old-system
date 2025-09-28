@@ -115,13 +115,14 @@ async function getStudentRank(id) {
 }
 
 async function findAllStudentsForProfile(assistantId) {
-  const whereClause = assistantId === 1 ? {} : { assistantId };
+  const whereClause = assistantId === 1 ? {} : { assistantId: String(assistantId) }; // cast to string if your DB stores it as STRING
 
   return Student.findAll({
     where: whereClause,
     attributes: ['studentId', 'studentName', 'totalScore']
   });
 }
+
 
 
 module.exports={

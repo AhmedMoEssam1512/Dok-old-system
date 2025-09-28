@@ -79,7 +79,7 @@ async function updateStudentPassByEmail(studentEmail,newPassword){
 
 
 async function addOTP(email,otp){
-  const expiresAt = new Date(Date.now() + 0.2 * 60 * 1000);
+  const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
     await OTP.create({
       email,
       otp,

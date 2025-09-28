@@ -6,66 +6,86 @@ const asyncWrapper = require('../middleware/asyncwrapper');
 const { json } = require("sequelize");
 
 const otpController = asyncWrapper(async (req, res, next) => {
-    // Get the data from the requeset
-    const otp = req.body.otp;
-    // const password = req.body.password;
-    const email = req.body.email;
+  const { otp, email } = req.body;
 
-    const found = await OTP.findOTP(email,otp);
-    const expired = OTP.expired(otp);
-    console.log(expired);
-    
-    // check if the otp and email are in the same record 
-    if (found) {
-        // check if the otp is not expired
-        if (expired) {
-            res.json({
-                status: "This OTP is expired",
-            });
-        }
-        OTP.verifyOTP(email,otp);
-        res.json({
-            status: "WORKED"
-        }) 
-        
-    }
+  // Check if OTP exists
+  const found = await OTP.findOTP(email, otp);
+  if (!found) {
+    return res.status(400).json({
+      status: "error",
+      code: "OTP_INVALID",
+      message: "This OTP is not valid"
+    });
+  }
+
+  // Check if OTP is expired
+  const expired = await OTP.expired(found.otp);
+  if (expired) {
+    return res.status(400).json({
+      status: "error",
+      code: "OTP_EXPIRED",
+      message: "This OTP has expired"
+    });
+  }
+
+  // Verify OTP
+  await OTP.verifyOTP(email, otp);
+
+  return res.status(200).json({
+    status: "success",
+    code: "OTP_VERIFIED",
+    message: "OTP verified successfully"
+  });
 });
 
+
 const resetPassword = asyncWrapper(async (req, res, next) => {
-    const email = req.params.email;
-    const password = req.body.password;
+  const email = req.params.email;
+  const password = req.body.password;
 
-    const verified = await OTP.findOTPByEmail(email);
-    if(!verified.verified){
-        res.json({
-            status:"OTP not verified"
-        })
-    }
-        // admin requested this otp ?
-        const isAdmin = await Admin.findAdminByEmail(email);
-        if (isAdmin) {
-            await OTP.updateAdminPassByEmail(email,password);
-            await OTP.deleteOTP(email,verified.otp);
-            res.json({
-                status:"success",
-                info: "Admin password updated"
-            });
-        }
-        
-        // Student requested otp ?
-        const isStudent = await Student.findStudentByEmail(email);
-        if (isStudent) {
-            await OTP.updateStudentPassByEmail(email,password);
-            await OTP.deleteOTP(email,verified.otp);
-            res.json({
-                status:"success",
-                info: "Student password updated"
-            });
-        }
+  // Check if OTP is verified
+  const verified = await OTP.findOTPByEmail(email);
+  if (!verified || !verified.verified) {
+    return res.status(400).json({
+      status: "error",
+      code: "OTP_NOT_VERIFIED",
+      message: "OTP not verified"
+    });
+  }
 
-})
+  // Check if user is admin
+  const isAdmin = await Admin.findAdminByEmail(email);
+  if (isAdmin) {
+    await OTP.updateAdminPassByEmail(email, password);
+    await OTP.deleteOTP(email, verified.otp);
 
+    return res.status(200).json({
+      status: "success",
+      code: "ADMIN_PASSWORD_UPDATED",
+      message: "Admin password updated successfully"
+    });
+  }
 
+  // Check if user is student
+  const isStudent = await Student.findStudentByEmail(email);
+  if (isStudent) {
+    await OTP.updateStudentPassByEmail(email, password);
+    await OTP.deleteOTP(email, verified.otp);
+
+    return res.status(200).json({
+      status: "success",
+      code: "STUDENT_PASSWORD_UPDATED",
+      message: "Student password updated successfully"
+    });
+  }
+
+  // If user not found
+  return res.status(404).json({
+    status: "error",
+    code: "USER_NOT_FOUND",
+    message: "No admin or student found with this email"
+  });
+});
 
 
 module.exports = {

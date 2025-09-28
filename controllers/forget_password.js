@@ -29,8 +29,7 @@ const forgetPassword = asyncwrapper(async (req, res, next) => {
             res.json({
                 status: "success",
                 data: {
-                    email: email,
-                    role: user.email,
+                    email: email
                 }
             });
         }

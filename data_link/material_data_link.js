@@ -35,8 +35,13 @@ async function getAllMaterialsByGroup(group) {
     });
 }
 
+async function getMaterialsByTopicId(topicId) {
+    return await Material.findAll({ where: { topicId } });
+}   
+
 module.exports = {
     createMaterial,
     getAllMaterialsByGroup,
-    getMaterialById
+    getMaterialById,
+    getMaterialsByTopicId
 };

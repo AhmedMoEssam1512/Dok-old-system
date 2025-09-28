@@ -46,10 +46,23 @@ const getMaterialById = asyncWrapper(async (req, res, next) => {
     });
 });
 
+const getMaterialByTopicId = asyncWrapper(async (req, res, next) => {
+    const { topicId } = req.params;
+    const materials = await material.getMaterialsByTopicId(topicId);
+    if (materials.length === 0) {
+        return next(new AppError(`No materials found for topicId ${topicId}`, httpStatus.NOT_FOUND));
+    }
+    return res.status(200).json({
+        status: "success",
+        results: materials.length,
+        data: { materials }
+    });
+});
 
 module.exports = {
     createMaterial,
     getAllMaterials,
-    getMaterialById
+    getMaterialById,
+    getMaterialByTopicId
 };
 

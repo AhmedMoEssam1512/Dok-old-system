@@ -21,13 +21,15 @@ const createReport = async (req, res) => {
   try {
     const { topicId } = req.params;
 
-    // 🔒 Authorization: Only assistants allowed
+    // 🔒 Authorization: EXACTLY as requested
     if (!req.admin || req.admin.type !== 'admin') {
       return res.status(403).json({ error: 'Access denied. Assistants only.' });
     }
+
+    // We assume req.admin.id is the assistant's ID (publisher)
     const assistantId = req.admin.id;
 
-    // 🔍 Validate topic exists and is owned by this assistant
+    // 🔍 Validate topic exists and belongs to this assistant
     const topic = await Topic.findOne({
       where: { topicId: parseInt(topicId, 10), publisher: assistantId }
     });
@@ -39,8 +41,9 @@ const createReport = async (req, res) => {
     }
 
     // 👥 Get all students assigned to this assistant
+    // Note: your Student.assistantId is STRING, so convert assistantId to string
     const students = await Student.findAll({
-      where: { assistantId: String(assistantId) }, // your model uses STRING
+      where: { assistantId: String(assistantId) },
       attributes: ['studentId', 'studentName', 'totalScore']
     });
 
@@ -60,7 +63,7 @@ const createReport = async (req, res) => {
     const assignmentIds = assignments.map(a => a.assignId);
     const quizIds = quizzes.map(q => q.quizId);
 
-    // 📤 Fetch all relevant submissions
+    // 📤 Build submission query conditions
     let submissionConditions = [];
     if (assignmentIds.length > 0) {
       submissionConditions.push({
@@ -85,45 +88,61 @@ const createReport = async (req, res) => {
       });
     }
 
-    // 🗂️ Group submissions by student for fast lookup
+    // 🗂️ Create a lookup map for O(1) access
     const submissionsMap = {};
     submissions.forEach(sub => {
       const key = `${sub.studentId}-${sub.type}-${sub.type === 'assignment' ? sub.assId : sub.quizId}`;
-      submissionsMap[key] = sub.score;
+      submissionsMap[key] = sub.score; // may be number, null, or undefined
     });
 
     const grading = getGradingSystem();
 
-    // 👨‍🎓 Build student reports
+    // 👨‍🎓 Generate report for each student
     const studentReports = students.map(student => {
       // Process assignments
       const assignmentResults = assignments.map(ass => {
-        const score = submissionsMap[`${student.studentId}-assignment-${ass.assignId}`] ?? null;
+        const rawScore = submissionsMap[`${student.studentId}-assignment-${ass.assignId}`];
         const maxMark = ass.mark || 0;
-        const percentage = (score !== null && maxMark > 0) ? (score / maxMark) * 100 : 0;
+
+        const displayedScore = (rawScore === null || rawScore === undefined)
+          ? "unmarked"
+          : rawScore;
+
+        const percentage = (rawScore !== null && rawScore !== undefined && maxMark > 0)
+          ? parseFloat(((rawScore / maxMark) * 100).toFixed(2))
+          : 0;
+
         return {
           type: 'assignment',
           id: ass.assignId,
           title: ass.title,
           maxMark: maxMark,
-          score: score,
-          percentage: parseFloat(percentage.toFixed(2)),
+          score: displayedScore,
+          percentage: percentage,
           grade: grading.calculateGrade(percentage)
         };
       });
 
       // Process quizzes
       const quizResults = quizzes.map(quiz => {
-        const score = submissionsMap[`${student.studentId}-quiz-${quiz.quizId}`] ?? null;
+        const rawScore = submissionsMap[`${student.studentId}-quiz-${quiz.quizId}`];
         const maxMark = quiz.mark || 0;
-        const percentage = (score !== null && maxMark > 0) ? (score / maxMark) * 100 : 0;
+
+        const displayedScore = (rawScore === null || rawScore === undefined)
+          ? "unmarked"
+          : rawScore;
+
+        const percentage = (rawScore !== null && rawScore !== undefined && maxMark > 0)
+          ? parseFloat(((rawScore / maxMark) * 100).toFixed(2))
+          : 0;
+
         return {
           type: 'quiz',
           id: quiz.quizId,
           title: quiz.title,
           maxMark: maxMark,
-          score: score,
-          percentage: parseFloat(percentage.toFixed(2)),
+          score: displayedScore,
+          percentage: percentage,
           grade: grading.calculateGrade(percentage)
         };
       });
@@ -135,17 +154,15 @@ const createReport = async (req, res) => {
       };
     });
 
-    // 📤 Final response structure
-    const response = {
+    // 📤 Final response: topic first, then students
+    return res.json({
       topicId: topic.topicId,
       topicName: topic.topicName,
       semester: topic.semester,
       publisher: assistantId,
       role: 'assistant',
       students: studentReports
-    };
-
-    return res.json(response);
+    });
 
   } catch (error) {
     console.error('Report generation error:', error);

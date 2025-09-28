@@ -3,8 +3,8 @@ const { Op } = require("sequelize");
 const Admin = require('../models/admin_model');
 const Topic = require('../models/topic_model');
 
-function createTopic(topicName, topicStartDate, topicEndDate, semester, publisher, subject) {
-    return Topic.create({ topicName, topicStartDate, topicEndDate, semester, publisher, subject});
+function createTopic(topicName, semester, publisher, group) {
+    return Topic.create({ topicName, semester, publisher, subject, group});
 }
 
 function getTopicById(topicId) {

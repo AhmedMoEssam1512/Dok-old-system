@@ -43,14 +43,31 @@ leaderboard {Mustafa} [done]
 data analysis {Tamer} [done]    
 forget password {Mustafa}
 
-topic apis
-material apis
-generate reports {Tamer}
+create topic
+get topic
+get all topics
+update topic
+delete topic
+
+
+create material
+get by id
+get all
+get by topic
+update 
+delete
+
+
+generate reports by admin
+generate report by student
+
+clear database {A.Essam}
+
+login me
 
 add the mailing functions
 
-clear database {A.Essam}
-delete account {Y.Essam}
-1 api for each delete 
+
+
 
 any extra api asked by the frontend

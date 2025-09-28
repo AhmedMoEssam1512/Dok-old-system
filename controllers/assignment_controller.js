@@ -9,6 +9,8 @@ const student = require('../data_link/student_data_link.js');
 const Admin = require('../models/admin_model.js');
 const Student = require('../models/student_model.js');
 const submission = require('../data_link/assignment_data_link.js');
+const Topic = require('../models/topic_model.js');
+const topic = require('../data_link/topic_data_link.js');
 
 const createAssignment = asyncWrapper(async (req, res) => {
     const {mark, document,  endDate, semester, topicId, title, description}= req.body;
@@ -38,9 +40,12 @@ const getAllAssignments = asyncWrapper(async (req, res) => {
 
 const getAssignmentById = asyncWrapper(async (req, res) => {
     const assignData = req.assignData;
+    const topicf = await topic.getTopicById(assignData.topicId);
     return res.status(200).json({
         status: "success",
-        data: { assignData }
+        data: { assignData,
+          subject: topicf.subject
+         }
     });
 })
 

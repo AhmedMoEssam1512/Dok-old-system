@@ -13,6 +13,7 @@ const assignmentRoutes = require('./routes/assignment_routes');
 const sessionRoutes = require('./routes/session_routes');
 const topicRoutes = require('./routes/topic_routes');
 const leaderBoard = require('./routes/leader_board');
+const materialRoutes = require('./routes/material_routes');
 
 const app = express();
 
@@ -55,6 +56,7 @@ app.use('/login', logInRoute);
 app.use('/feed', feedRoute);
 app.use('/quiz', quizRoutes);
 app.use('/assignment', assignmentRoutes);
+app.use('/material', materialRoutes);
 //app.use('/submission', submissionRoutes);
 app.use('/session', sessionRoutes);
 app.use('/topic', topicRoutes);

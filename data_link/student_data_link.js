@@ -114,9 +114,19 @@ async function getStudentRank(id) {
   }
 }
 
+async function findAllStudentsForProfile(assistantId) {
+  const whereClause = assistantId === 1 ? {} : { assistantId };
+
+  return Student.findAll({
+    where: whereClause,
+    attributes: ['studentId', 'studentName', 'totalScore']
+  });
+}
+
 
 module.exports={
     findStudentByEmail,
+    findAllStudentsForProfile,
     createStudent,
     registerStudent,
     findStudentById,

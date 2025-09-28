@@ -27,7 +27,7 @@ const createTopic = asyncWrapper(async (req, res) => {
                  topicName: newTopic.topicName,
                  subject: newTopic.subject,
                  semester: newTopic.semester,
-                 group: newTopic.group
+                 group: group
          }
         
     });
@@ -60,7 +60,7 @@ const getTopicById = asyncWrapper(async (req, res, next) => {
     })
 });
 
-const getAllTopics = asyncWrapper(async (req, res, next) => { //emsk
+const getAllTopics = asyncWrapper(async (req, res, next) => {
     const group = req.user.group;
     let topics = (req.user.type === 'admin' && req.user.id === 1) ? 
         await topic.getAllTopics() : null;
@@ -78,8 +78,34 @@ const getAllTopics = asyncWrapper(async (req, res, next) => { //emsk
     })
 });
 
+const updateTopic = asyncWrapper(async (req, res, next) => {
+    const found = req.found;
+    const { topicName, semester, subject } = req.body;
+    found.topicName = topicName || found.topicName;
+    found.semester = semester || found.semester;
+    found.subject = subject || found.subject;
+    await found.save();
+    res.status(200).json({ status: "success", 
+        message: `topic ${topicName} updated successfully `,
+        data : { topicId: found.topicId,
+                 topicName: found.topicName,
+                 subject: found.subject,
+                 semester: found.semester,
+                 publisher: found.publisher,
+                 group: req.admin.group
+                 }
+    });
+});
+
+const deleteTopic = asyncWrapper(async (req, res, next) => {
+    // Implementation for deleting a topic would go here
+    res.status(501).json({ status: "error", message: "Not implemented" });
+});
+
+
 module.exports = {
     createTopic,
     getTopicById,
-    getAllTopics
+    getAllTopics,
+    updateTopic,
 };

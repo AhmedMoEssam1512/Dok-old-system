@@ -49,10 +49,20 @@ const canSeeTopic= asyncWrapper(async (req, res, next) => {
     console.log("User can see topic");
     next();
 });
-//wah
+
+const canUpdateTopic = asyncWrapper(async (req, res, next) => {
+    const group = req.admin.group;
+    const found = req.found;
+    const adminf = await admin.getAdminById(found.publisher);
+    if(req.user.group !== adminf.group){
+        return next(new AppError("You do not have permission to update this topic", httpStatus.FORBIDDEN));
+    }
+})
+
 module.exports = {
     checkSemester,
     checkSubject,
     findTopicById,
-    canSeeTopic
+    canSeeTopic,
+    canUpdateTopic
 };

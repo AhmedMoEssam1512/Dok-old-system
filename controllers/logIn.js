@@ -94,4 +94,41 @@ const logIn = asyncWrapper(async (req, res, next) => {
   return next(AppError.create("Email not found", 404, httpStatus.Error));
 });
 
-module.exports = { logIn };
+ 
+const me = asyncWrapper(async (req, res, next) => {
+  const userId = req.user.id;
+  // name id role group assid 
+  const userType = req.user.type;
+  
+  if (userType === "admin") {
+    const adminUser = await admin.findAdminById(userId);
+    if (!adminUser) {
+      return next(AppError.create("Admin not found", 404, httpStatus.Error));
+    }
+    return res.status(200).json({
+      status: "success",
+      data: { id: adminUser.adminId,
+              group: adminUser.group,
+              name : adminUser.name,
+              role : adminUser.role,
+           }
+    });
+  }
+  else if (userType === "student") {
+    const studentUser = await student.findStudentById(userId);
+    if (!studentUser) {
+      return next(AppError.create("Student not found", 404, httpStatus.Error));
+    }
+    return res.status(200).json({
+      status: "success",
+      data: { id: studentUser.studentId, 
+          group: studentUser.group,
+          name : studentUser.studentName,
+          role : "student",
+          assistantId : studentUser.assistantId
+         }
+    });
+  }
+});
+
+module.exports = { logIn , me};

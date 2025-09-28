@@ -12,6 +12,10 @@ const adminProtect = async (req, res, next) => {
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     token = req.headers.authorization.split(' ')[1];
   }
+  else {
+    console.log("No authorization header found");
+    return next(new AppError('Not authorized, no token', 401));
+  }
 
   // 2. Support for ?token=abc in query (for EventSource)
   if (!token && req.query.token) {
@@ -41,6 +45,9 @@ const studentProtect = async (req, res, next) => {
   // 1. Support for "Authorization: Bearer <token>"
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     token = req.headers.authorization.split(' ')[1];
+  }else {
+    console.log("No authorization header found");
+    return next(new AppError('Not authorized, no token', 401));
   }
 
   // 2. Support for ?token=abc in query (for EventSource)
@@ -73,6 +80,9 @@ const protect = asyncWrapper(async (req, res, next) => {
   // 1. Support for "Authorization: Bearer <token>"
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     token = req.headers.authorization.split(' ')[1];
+  }else {
+    console.log("No authorization header found");
+    return next(new AppError('Not authorized, no token', 401));
   }
 
   // 2. Support for ?token=abc in query (for EventSource)

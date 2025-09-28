@@ -74,6 +74,12 @@ function removeAssistant(email){
     });
 }
 
+function getAdminById(adminId){
+    return Admin.findOne({
+        where: { adminId }
+    });
+}
+
 function createSession(number, semester, dateAndTime, adminId, link) {
     return Session.create({
         number,
@@ -165,5 +171,6 @@ module.exports={
     getAllUnmarkedSubmissions,
     findSubmissionById,
     getAllSubmissions,
-    getAllSubmissionsById
+    getAllSubmissionsById,
+    getAdminById
 }

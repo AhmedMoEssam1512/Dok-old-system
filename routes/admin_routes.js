@@ -22,7 +22,7 @@ router.route('/verifyStudent/:studentEmail')
 router.route('/rejectStudent/:studentEmail')
     .patch(auth.adminProtect, adminMiddleWare.studentFound,adminMiddleWare.canReject ,adminControllers.rejectStudent);
 
-router.route('/checkStudentInGroup/:group')
+router.route('/checkStudentInGroup')
     .get(auth.adminProtect, adminControllers.showStudentInGroup);   
     
 router.route('/removeStudent/:studentEmail')

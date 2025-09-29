@@ -16,7 +16,7 @@ function createAssignment(mark, document, startDate, endDate, semester, publishe
 
 async function getAllAssignments() {
   return Assignment.findAll({
-    include: { model: Topic, attributes: ['subject'] }
+    include: { model: Topic, attributes: ['subject',['assignId', 'id']] }
   });
 }
 

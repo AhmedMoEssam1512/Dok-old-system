@@ -156,7 +156,7 @@ const createReport = async (req, res) => {
 
     // 📤 Final response: topic first, then students
     return res.json({
-      topicId: topic.topicId,
+      id: topic.topicId,
       topicName: topic.topicName,
       semester: topic.semester,
       publisher: assistantId,

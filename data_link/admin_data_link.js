@@ -137,10 +137,16 @@ function getAllUnmarkedSubmissions(){
     return Submission.findAll({where: { score : null}})
 }
 
-function findSubmissionById(subId){
-    return Submission.findOne({where : {subId}});
+function findSubmissionById(subId) {
+    return Submission.findOne({
+        where: { subId },
+        attributes: {
+            include: [
+                ['subId', 'id'] // Rename subId → id
+            ]
+        }
+    });
 }
-
 function getAllSubmissions(){
     return Submission.findAll({})
 }

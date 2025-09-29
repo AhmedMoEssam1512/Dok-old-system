@@ -37,6 +37,7 @@ const showPendingRegistration = asyncWrapper(async (req, res) => {
         message: `Pending registration from students`,
         data: { 
   data: students.map(student => ({
+      id : student.studentId,
       name: student.studentName,
       email: student.studentEmail,
       group: student.group
@@ -65,6 +66,7 @@ const showStudentInGroup = asyncWrapper(async (req, res) => {
         message: `Students in group ${TAGroup}`,
         data: { 
   data: students.map(student => ({
+      id : student.studentId,
       name: student.studentName,
       email: student.studentEmail,
     }))
@@ -77,7 +79,7 @@ const removeStudent = asyncWrapper(async (req, res) => {
   return res.status(200).json({
     status: "success",
     message: `Student ${student.studentName} deleted successfully`,
-    data: { studentEmail: student.studentEmail }
+    data: { id : student.studentId,studentEmail: student.studentEmail }
   });
 });
 
@@ -89,7 +91,7 @@ const banStudent = asyncWrapper(async (req, res) => {
     return res.status(200).json({
       status: "success",
       message: `Student ${student.studentName} unbanned successfully`,
-      data: { studentEmail: student.studentEmail }
+      data: { id : student.studentId, studentEmail: student.studentEmail }
     });
   }else{
     student.banned = true;
@@ -97,7 +99,7 @@ const banStudent = asyncWrapper(async (req, res) => {
     return res.status(200).json({
       status: "success",
       message: `Student ${student.studentName} banned successfully`,
-      data: { studentEmail: student.studentEmail }
+      data: { id : student.studentId, studentEmail: student.studentEmail }
     });
   }
 });
@@ -122,8 +124,7 @@ const rejectStudent = asyncWrapper(async (req, res) => {
   return res.status(200).json({
     status: "success",
     message: `Student ${student.studentName} rejected successfully`,
-    data: { studentEmail: student.studentEmail }
-  });
+    data: { id : student.studentId, studentEmail: student.studentEmail }  });
 });
 
 const showMyProfile = asyncWrapper(async (req, res) => {

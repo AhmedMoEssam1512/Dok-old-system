@@ -15,6 +15,7 @@ const Submission = sequelize.define('Submission', {
   quizId: DataTypes.INTEGER,
   assId: DataTypes.INTEGER,
   markedAt: {type: DataTypes.DATE , defaultValue: DataTypes.NOW}, 
+  feedback: DataTypes.STRING,
 }, { tableName: 'submission', timestamps: false });
 
 module.exports = Submission;

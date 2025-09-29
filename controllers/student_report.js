@@ -43,7 +43,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
     const { topicId } = req.params;
     const studentId = req.student.id;
     
-    try {
+
         // Get student data
         const studentData = await student.findStudentById(studentId);
         if (!studentData) {
@@ -71,14 +71,13 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
         
         // Get assignments in this topic
         const assignments = await Assignment.findAll({
-            where: { topicId },
+            where: { topicId : topic.topicId },
             order: [['startDate', 'DESC']]
         });
         
         // Get quizzes in this topic
-        const Quiz = require('../models/quiz_model');
         const quizzes = await Quiz.findAll({
-            where: { topicId },
+            where: { topicId: topic.topicId },
             order: [['createdAt', 'DESC']]
         });
         
@@ -99,7 +98,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
                 type: 'assignment',
                 columnName: `Hw${index + 1}`,
                 title: assignment.title,
-                maxPoints: assignment.maxPoints,
+                maxPoints: assignment.mark,
                 status: (submission && submission.marked === 'yes') ? 'Done' : 'Missing',
                 score: submission ? submission.score : "N/A",
                 feedback: submission ? submission.feedback : "N/A"
@@ -110,7 +109,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
         
         // Process quizzes
         
-        const quiz = await Quiz.findOne({ where: topicId });
+        const quiz = await Quiz.findOne({ where: { topicId: topic.topicId } });
         const submission = await getStudentSubmissionForQuiz(studentId, quiz.quizId);     
         let percentage = 0;
         let grade = 'U'; 
@@ -131,9 +130,8 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
             
         const quizData = {
             type: 'quiz',
-            columnName: quizColumnName,
             title: quiz.title,
-            maxPoints: quiz.maxPoints,
+            maxPoints: quiz.mark,
             score: submission ? submission.score : 'N/A',
             percentage: submission ? percentage : 'N/A',
             grade: submission ? grade : 'N/A',
@@ -149,15 +147,8 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
             data: reportData
         });
         
-    } catch (error) {
-        console.error('Error generating weekly report:', error);
-        return res.status(500).json({
-            status: "error",
-            message: "Internal server error",
-            error: error.message
-        });
-    }
-});
+    } 
+);
 
 module.exports = {
     getMyWeeklyReport

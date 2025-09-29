@@ -71,7 +71,7 @@ const getAllAssignments = asyncWrapper(async (req, res) => {
   return res.status(200).json({
     status: "success",
     results: assignments.length,
-    data: { Assignments: Array.from(assignmentMap.values()) }
+    data: { assignments: Array.from(assignmentMap.values()) }
   });
 });
 

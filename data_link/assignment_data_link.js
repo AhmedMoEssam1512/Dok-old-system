@@ -1,5 +1,5 @@
 const sequelize = require('../config/database');
-const { Op } = require("sequelize");
+const { Op, col } = require("sequelize");
 const Assignment = require('../models/assignment_model');
 const Admin = require('../models/admin_model');
 const Submission = require('../models/submission_model');

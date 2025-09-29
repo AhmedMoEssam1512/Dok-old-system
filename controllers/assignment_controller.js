@@ -41,7 +41,9 @@ const getAllAssignments = asyncWrapper(async (req, res) => {
     attributes: ['assId']
   });
   const submittedIds = new Set(submissions.map(s => s.assId));
-
+  let submittedCount =0;
+  let submittedLateCount =0;
+  let missedCount =0;
   const assignmentMap = new Map(
     assignments.map(a => {
       const plain = a.get({ plain: true });
@@ -50,12 +52,16 @@ const getAllAssignments = asyncWrapper(async (req, res) => {
       if (submittedIds.has(plain.assignId)) {
         // case 1: already submitted
         state = "submitted";
+        submittedCount++;
       } else if (new Date(plain.endDate) < now) {
         // case 2: deadline passed, no submission
         state = "missing";
+        missedCount++;
       } else {
         // case 3: not submitted yet, still open
         state = "unsubmitted";
+        let submittedLateCount =0;
+
       }
 
       return [
@@ -70,7 +76,11 @@ const getAllAssignments = asyncWrapper(async (req, res) => {
 
   return res.status(200).json({
     status: "success",
-    results: assignments.length,
+    results: {count : assignments.length,
+      submitted: submittedCount,
+      submittedLate: submittedLateCount,
+      missed: missedCount
+    },
     data: { assignments: Array.from(assignmentMap.values()) }
   });
 });

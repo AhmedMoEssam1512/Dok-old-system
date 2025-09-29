@@ -13,7 +13,7 @@ const Student = sequelize.define('Student', {
   group: {type: DataTypes.STRING, allowNull: false},
   semester: {type: DataTypes.STRING, allowNull: false},
   parentPhoneNumber: {type: DataTypes.STRING, allowNull: false},
-  studentPhoneNumber: {type: DataTypes.STRING, allowNull: false},
+  studentPhoneNumber: {type: DataTypes.STRING, allowNull: false, unique: true},
   birthDate: {type: DataTypes.DATE, allowNull: false},
   totalScore: {type: DataTypes.FLOAT, defaultValue: 0},
   createdAt: {type: DataTypes.DATE, defaultValue: DataTypes.NOW },

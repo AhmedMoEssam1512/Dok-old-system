@@ -31,9 +31,6 @@ router.route('/removeStudent/:studentEmail')
 router.route('/banStudent/:studentEmail')
     .patch(auth.adminProtect, adminMiddleWare.checkAuthurity, adminControllers.banStudent);
 
-router.route('/unBanStudent/:studentEmail')
-    .patch(auth.adminProtect, adminMiddleWare.checkAuthurity, adminControllers.unBanStudent);
-
 router.route('/showMyProfile')
     .get(auth.adminProtect, adminControllers.showMyProfile);
 

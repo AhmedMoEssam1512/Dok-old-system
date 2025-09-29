@@ -82,26 +82,27 @@ const removeStudent = asyncWrapper(async (req, res) => {
 });
 
 const banStudent = asyncWrapper(async (req, res) => {
-  const student = req.student; // must be set earlier by studentFound
-  student.banned = true; // assuming you have a banned field
-  await student.save();
-  return res.status(200).json({
-    status: "success",
-    message: `Student ${student.studentName} banned successfully`,
-    data: { studentEmail: student.studentEmail }
-  });
+  const student = req.student; 
+  if (student.banned){
+    student.banned = false;
+    await student.save();
+    return res.status(200).json({
+      status: "success",
+      message: `Student ${student.studentName} unbanned successfully`,
+      data: { studentEmail: student.studentEmail }
+    });
+  }else{
+    student.banned = true;
+    await student.save();
+    return res.status(200).json({
+      status: "success",
+      message: `Student ${student.studentName} banned successfully`,
+      data: { studentEmail: student.studentEmail }
+    });
+  }
 });
 
-const unBanStudent = asyncWrapper(async (req, res) => {
-  const student = req.student; // must be set earlier by studentFound
-  student.banned = false; // assuming you have a banned field
-  await student.save();
-  return res.status(200).json({
-    status: "success",
-    message: `Student ${student.studentName} unbanned successfully`,
-    data: { studentEmail: student.studentEmail }
-  });
-});
+
 
 const rejectStudent = asyncWrapper(async (req, res) => {
   const student = req.student; // must be set earlier by studentFound
@@ -254,7 +255,6 @@ module.exports = {
     verifyStudent,
     removeStudent,
     banStudent,
-    unBanStudent,
     rejectStudent,
     showMyProfile,
     showStudentProfile,

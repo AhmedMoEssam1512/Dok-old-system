@@ -12,6 +12,7 @@ const Student = require('../models/student_model.js');
 const Topic = require('../models/topic_model.js');
 const topic = require('../data_link/topic_data_link.js');
 const { Op } = require("sequelize");
+const material = require('../data_link/material_data_link.js'); 
 
 const createTopic = asyncWrapper(async (req, res) => {
     const { topicName, semester, subject } = req.body;
@@ -48,6 +49,12 @@ const getTopicById = asyncWrapper(async (req, res, next) => {
     return { ...plain, type: 'pdf' };     // add new field
   });
 
+   const materials = (await material.getMaterialByTopicId(topicId))
+  .map(a => {
+    const plain = a.get({ plain: true }); // turn Sequelize model into plain object
+    return { ...plain, type: 'pdf' };     // add new field
+  });
+
     return res.status(200).json({
         status: "success",
         data: {id :topicId,
@@ -55,7 +62,8 @@ const getTopicById = asyncWrapper(async (req, res, next) => {
             subject: topicFound.subject,
             semester: topicFound.semester,
             quizzes: quizzes,
-            assignments: assignments 
+            assignments: assignments ,
+            materials: materials
         }    
     })
 });

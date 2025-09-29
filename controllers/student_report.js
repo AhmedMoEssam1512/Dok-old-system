@@ -88,6 +88,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
 
     // Create report data
     const reportData = {
+      id:topic.topicId,
       topicTitle: topic.topicName, // adjust if it's actually "title" in your DB
       studentName: studentData.studentName,
       semester: topic.semester,
@@ -116,6 +117,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
 
       const assignmentData = {
         type: 'assignment',
+        id: assignment.assignId,
         columnName: `Hw${index + 1}`,
         title: assignment.title,
         maxPoints: assignment.mark, // your Assignment model uses "mark"
@@ -160,6 +162,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
 
       const quizData = {
         type: 'quiz',
+        id: quiz.quizId,
         columnName: `Quiz${index + 1}`,
         title: quiz.title,
         maxPoints: quiz.mark,

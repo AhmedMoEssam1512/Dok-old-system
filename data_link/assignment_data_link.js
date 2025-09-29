@@ -24,17 +24,16 @@ async function getAllAssignments() {
 async function getAllAssignmentsByGroup(group) {
     return await Assignment.findAll({
         attributes: {
-            // Explicitly map 'assignId' → 'id', and include other Assignment fields as needed
             include: [
-                ['assignId', 'id'],                // Rename assignId to id
-                [col('Admin.group'), 'group'],     // Flatten Admin.group → 'group'
-                [col('Topic.subject'), 'subject']  // Flatten Topic.subject → 'subject'
+                ['assignId', 'id'],                // rename assignId → id
+                [col('Admin.group'), 'group'],     // flatten group
+                [col('Topic.subject'), 'subject']  // flatten subject
             ]
         },
         include: [
             {
                 model: Admin,
-                attributes: [], // Exclude Admin nested object
+                attributes: [],
                 where: {
                     [Op.or]: [
                         { group: group },
@@ -44,9 +43,10 @@ async function getAllAssignmentsByGroup(group) {
             },
             {
                 model: Topic,
-                attributes: [] // Exclude Topic nested object
+                attributes: []
             }
-        ]
+        ],
+        order: [['startDate', 'DESC']] 
     });
 }
 function getAssignmentById(assignId){

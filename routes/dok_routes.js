@@ -25,4 +25,7 @@ router.route('/checkAssistantInGroup/:group')
 router.route('/assignGroupToAssistant/:id')
     .patch(auth.adminProtect, dokmiddleware.checkRole, DOK.assignGroupToAssistant);
 
+router.route('/createNewGroup')
+    .post(auth.adminProtect, dokmiddleware.checkRole, DOK.createNewGroup);
+
 module.exports = router;

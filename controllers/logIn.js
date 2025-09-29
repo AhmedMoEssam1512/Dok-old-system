@@ -6,6 +6,7 @@ const httpStatus = require("../utils/http.status"); // adjust path
 const asyncWrapper = require("../middleware/asyncwrapper");
 const admin = require('../data_link/admin_data_link.js');
 const student = require('../data_link/student_data_link.js');
+const Group = require('../models/group_model.js');
 
 const logIn = asyncWrapper(async (req, res, next) => {
   const { email, password } = req.body;
@@ -131,4 +132,18 @@ const me = asyncWrapper(async (req, res, next) => {
   }
 });
 
-module.exports = { logIn , me};
+
+const getAllGroups= asyncWrapper(async (req, res, next) => {
+  const groups = await Group.findAll();
+  return res.status(200).json({
+    status: "success",
+    data: {
+      data: groups.map(group => ({
+        groupId: group.groupId,
+        groupName: group.groupName
+      }))
+    }
+  });
+});
+
+module.exports = { logIn , me , getAllGroups };

@@ -17,6 +17,7 @@ const sse = require('../utils/sseClients.js');
 
 const TARegister = asyncWrapper(async (req, res) => {
     const { email, name, password, phoneNumber, group} = req.body;
+    const groupl=group.tolowerCase();
     const encryptedPassword = await bcrypt.hash(String(password), 10);
     await admin.create(email,name,password,phoneNumber,group);
 

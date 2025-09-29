@@ -72,7 +72,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
         // Get assignments in this topic
         const assignments = await Assignment.findAll({
             where: { topicId },
-            order: [['createdAt', 'DESC']]
+            order: [['startDate', 'DESC']]
         });
         
         // Get quizzes in this topic
@@ -93,7 +93,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
         // Process assignments
         for (let index = 0; index < assignments.length; index++) {
             const assignment = assignments[index];
-            const submission = await getStudentSubmissionForAssignment(studentId, assignment.assignmentId);
+            const submission = await getStudentSubmissionForAssignment(studentId, assignment.assignId);
             
             const assignmentData = {
                 type: 'assignment',

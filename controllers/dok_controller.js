@@ -49,7 +49,6 @@ const rejectAssistant = asyncWrapper(async (req, res) => {
 
 const acceptAssistant = asyncWrapper(async (req, res) => {
     const { email } = req.params;
-    const assistant = await admins.findAdminByEmail( email );
     await admins.verifyAssistant( email );
     return res.status(200).json({
         status: "success",

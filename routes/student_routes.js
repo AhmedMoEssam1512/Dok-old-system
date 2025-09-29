@@ -8,6 +8,7 @@ const feedMiddleware = require('../middleware/feed_middleware');
 const auth = require('../middleware/auth_middleware');
 const submissionMiddleware = require('../middleware/submission_middleware');
 const { establishStudentConnection } = require('../controllers/SSE_connection');
+const { getMyWeeklyReport } = require('../controllers/student_report');
 
 router.route('/studentRegister')
     .post(studentMiddleWare.studentFound,adminMiddleWare.passwordEncryption,studentControllers.studentRegister);
@@ -31,6 +32,9 @@ router.route('/showSubmission/:id')
     .get(auth.studentProtect,submissionMiddleware.subExist ,studentMiddleWare.canSeeSubmission,studentControllers.showASubmission);
 
 router.route('/getQuizTrend')
-    .get(auth.studentProtect,studentControllers.getQuizTrend)   
+    .get(auth.studentProtect,studentControllers.getQuizTrend);   
+
+router.get('/getMyWeeklyReport/:topicId',auth.studentProtect,getMyWeeklyReport);
+
 
 module.exports = router;

@@ -47,11 +47,20 @@ function deleteMaterial(materialId) {
     return Material.destroy({ where: { materialId } });
 }
 
+async function getMaterialByTopicId(topicId) {
+    return await Material.findAll({
+    where: { topicId },
+    attributes: [['materialId', 'id'], 'title'], // only return id and name
+  });
+}
+
+
 module.exports = {
     createMaterial,
     getAllMaterialsByGroup,
     getMaterialById,
     getMaterialsByTopicId,
     updateMaterial,
-    deleteMaterial
+    deleteMaterial,
+    getMaterialByTopicId
 };

@@ -62,7 +62,6 @@ const getAllAssignments = asyncWrapper(async (req, res) => {
         a.assignId,
         {
           ...plain,
-          subject: a.Topic?.subject || null,
           state
         }
       ];

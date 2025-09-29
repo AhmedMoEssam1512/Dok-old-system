@@ -19,12 +19,19 @@ async function getAllAssignments() {
     include: { model: Topic, attributes: ['subject'] }
   });
 }
+
 async function getAllAssignmentsByGroup(group) {
     return await Assignment.findAll({
+        attributes: {
+            include: [
+                [col('Admin.group'), 'group'],     // Flatten Admin.group → 'group'
+                [col('Topic.subject'), 'subject']  // Flatten Topic.subject → 'subject'
+            ]
+        },
         include: [
             {
                 model: Admin,
-                attributes: ["group"],
+                attributes: [], // Don't include Admin as a nested object
                 where: {
                     [Op.or]: [
                         { group: group },
@@ -32,7 +39,10 @@ async function getAllAssignmentsByGroup(group) {
                     ]
                 }
             },
-            { model: Topic, attributes: ['subject'] }
+            {
+                model: Topic,
+                attributes: [] // Don't include Topic as a nested object
+            }
         ]
     });
 }

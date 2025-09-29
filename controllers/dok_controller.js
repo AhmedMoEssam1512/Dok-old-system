@@ -12,6 +12,7 @@ const admins = require('../data_link/admin_data_link');
 const bcrypt = require('bcrypt');
 const AppError = require('../utils/app.error');
 const asyncWrapper = require('../middleware/asyncwrapper');
+const Group = require('../models/group_model.js');
 
 const DOK_signUp= asyncWrapper( async (req, res) => {
     const { email, name, password, phonenumber, role = "teacher", permission = "all" } = req.body;
@@ -108,6 +109,24 @@ const assignGroupToAssistant = asyncWrapper(async (req, res) => {
     });
 });
 
+const createNewGroup = asyncWrapper(async (req, res) => {
+    const { groupName } = req.body;
+    const groupl=groupName.toLowerCase();
+    const existingGroup = await Group.findOne({ where: { groupName:  groupl } });
+    if (existingGroup) {
+        return next(new AppError('Group name already exists', 400));
+    }
+    const newGroup = await Group.create({groupName : groupl });
+    return res.status(201).json({
+        status: "success",
+        message: `Group ${groupName} created successfully`,
+        data: {
+            groupId: newGroup.groupId,
+            groupName: newGroup.groupName
+        }
+    });
+});
+
 module.exports = {
     DOK_signUp, 
     rejectAssistant,
@@ -115,5 +134,6 @@ module.exports = {
     showPendingRegistration,
     removeAssistant,
     checkAssistantGroup,
-    assignGroupToAssistant
+    assignGroupToAssistant,
+    createNewGroup
 }

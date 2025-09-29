@@ -1,5 +1,5 @@
 const sequelize = require('../config/database');
-const { Op, col } = require("sequelize");
+const { Op, col, literal } = require("sequelize");
 const Assignment = require('../models/assignment_model');
 const Admin = require('../models/admin_model');
 const Submission = require('../models/submission_model');
@@ -20,10 +20,13 @@ async function getAllAssignments() {
   });
 }
 
+
 async function getAllAssignmentsByGroup(group) {
     return await Assignment.findAll({
         attributes: {
+            // Explicitly map 'assignId' → 'id', and include other Assignment fields as needed
             include: [
+                ['assignId', 'id'],                // Rename assignId to id
                 [col('Admin.group'), 'group'],     // Flatten Admin.group → 'group'
                 [col('Topic.subject'), 'subject']  // Flatten Topic.subject → 'subject'
             ]
@@ -31,7 +34,7 @@ async function getAllAssignmentsByGroup(group) {
         include: [
             {
                 model: Admin,
-                attributes: [], // Don't include Admin as a nested object
+                attributes: [], // Exclude Admin nested object
                 where: {
                     [Op.or]: [
                         { group: group },
@@ -41,12 +44,11 @@ async function getAllAssignmentsByGroup(group) {
             },
             {
                 model: Topic,
-                attributes: [] // Don't include Topic as a nested object
+                attributes: [] // Exclude Topic nested object
             }
         ]
     });
 }
-
 function getAssignmentById(assignId){
     return Assignment.findOne({where : {assignId}});
 }

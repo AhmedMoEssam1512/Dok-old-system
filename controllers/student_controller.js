@@ -28,7 +28,7 @@ const studentRegister = asyncWrapper(async (req, res) => {
     group,
     semester
   } = req.body;
-
+  const groupl=group.toLowerCase();
   // Create the student
   await student.createStudent(
     studentName,
@@ -38,7 +38,7 @@ const studentRegister = asyncWrapper(async (req, res) => {
     birthDate,
     studentPhoneNumber,
     parentPhoneNumber,
-    group,
+    groupl,
     semester
   );
   await student.registerStudent(studentEmail, group);

@@ -75,7 +75,7 @@ function findSubmissionByAssignmentAndStudent(assId, studentId) {
 async function getAssignmentsByTopicId(topicId) {
   return await Assignment.findAll({
     where: { topicId },
-    attributes: [['assignId', 'id'], 'title'], // only return id and name
+    attributes: ['assignId',['assignId', 'id'], 'title'], // only return id and name
     order: [['startDate', 'DESC']]
   });
 }

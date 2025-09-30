@@ -14,7 +14,12 @@ function createMaterial (title, description, document, topicId, publisher, uploa
 } 
 
 function getMaterialById(materialId) {
-    return Material.findOne({where : {materialId}});
+    return Material.findOne({where : {materialId},
+    include: [
+        { model: Admin, attributes: ["group"] },
+        { model: Topic, attributes: ['subject'] }
+    ],
+    attributes: {include : [['materialId', 'id']]}});
 }
 
 async function getAllMaterialsByGroup(group) {
@@ -31,12 +36,17 @@ async function getAllMaterialsByGroup(group) {
                 }
             },
             { model: Topic, attributes: ['subject'] }
-        ]
-    });
-}
+        ],
+        attributes:{include : [['materialId', 'id']]} });
+    }
 
 async function getMaterialsByTopicId(topicId) {
-    return await Material.findAll({ where: { topicId } });
+    return await Material.findAll({ where: { topicId },
+    include: [
+        { model: Admin, attributes: ["group"] },
+        { model: Topic, attributes: ['subject'] }
+    ],
+     attributes:{include : [['materialId', 'id']]} });
 }
 
 function updateMaterial(materialId, updateData) {

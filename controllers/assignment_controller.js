@@ -26,7 +26,7 @@ const createAssignment = asyncWrapper(async (req, res) => {
         data: { message: "assignment created successfully", id: createdAssignment.assignId },
     });
 });
-////// start fixing responses from here
+
 const getAllAssignments = asyncWrapper(async (req, res) => {
   const group = req.user.group;
   const studentId = req.user.id; // adjust if different in your auth payload
@@ -111,7 +111,7 @@ const submitAssignment = asyncWrapper(async (req, res) => {
     return res.status(200).json({
         status: "success",
         data: { message: "Assignment submitted successfully" ,
-            submissionId: newSub.id
+            id: newSub.id
         }
     });
 })
@@ -134,7 +134,7 @@ const getUnsubmittedAssignments = asyncWrapper(async (req, res, next) => {
       studentId
     );
     if (!existingSubmission) {
-      unsubmittedAssignments.push(assignment);
+      unsubmittedAssignments.push({ id: assignment.assignId, ...assignment });
     }
   }
 

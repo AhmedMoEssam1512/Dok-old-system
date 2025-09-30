@@ -12,7 +12,9 @@ function createQuiz(mark,publisher,quizPdf,date,semester,durationInMin,topicId, 
 }; // nice comment
 
 function getAllQuizzes(){
-    return Quiz.findAll();
+    return Quiz.findAll({attributes : {include: [
+        ['quizId', 'id'],
+    ]}});
 };
 
 async function getAllQuizzesForGroup(group) {
@@ -28,14 +30,18 @@ async function getAllQuizzesForGroup(group) {
           ]
         }
       }
-    ]
+    ],
+    attributes: {include : [['quizId', 'id']] }
   });
 }
 
 function getQuizById(quizId) {
-    return Quiz.findByPk(quizId);
+    return Quiz.findByPk(quizId, {
+        attributes: {
+            include: [['quizId', 'id']] // adds 'id' (aliased from 'quizId') alongside all original fields
+        }
+    });
 }
-
 function updateQuizDates(quizId, newDate) {
     return Quiz.update({ startDate: newDate }, { where: { quizId } });
 }

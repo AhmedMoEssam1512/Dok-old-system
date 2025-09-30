@@ -26,7 +26,7 @@ const createTopic = asyncWrapper(async (req, res) => {
     return res.status(201).json({
         status: "success",
        message: "Topic created successfully",
-        data: {  topicId: newTopic.topicId,
+        data: {  id: newTopic.topicId,
                  topicName: newTopic.topicName,
                  subject: newTopic.subject,
                  semester: newTopic.semester,
@@ -99,7 +99,7 @@ const updateTopic = asyncWrapper(async (req, res, next) => {
     await found.save();
     res.status(200).json({ status: "success", 
         message: `topic ${topicName} updated successfully `,
-        data : { topicId: found.topicId,
+        data : { id: found.topicId,
                  topicName: found.topicName,
                  subject: found.subject,
                  semester: found.semester,

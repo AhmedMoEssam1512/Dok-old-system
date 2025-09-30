@@ -50,7 +50,8 @@ async function getAllAssignmentsByGroup(group) {
     });
 }
 function getAssignmentById(assignId){
-    return Assignment.findOne({where : {assignId}});
+    return Assignment.findOne({where : {assignId},
+        attributes: { include : [['assignId' , 'id']]}});
 }
 
 function createSubmission(assId, studentId,assistantId,answers, semester){

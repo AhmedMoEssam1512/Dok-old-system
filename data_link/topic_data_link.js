@@ -26,7 +26,8 @@ async function getAllTopicsByGroup(group) {
       as: "publisherAdmin",   // make sure you define the alias in associations
       where: { group: group },
       attributes: []          // don’t pull extra admin fields unless needed
-    }]
+    }],
+    attributes: {include : [['topicId', 'id']]}
   });
 }
 
@@ -38,7 +39,9 @@ async function getTopicByAssistantId(topicId,assistantId) {
 
 
 function getAllTopics() {
-    return Topic.findAll();
+    return Topic.findAll(
+        { attributes: {include : [['topicId', 'id']]} }
+    );
 }
 
 module.exports = {

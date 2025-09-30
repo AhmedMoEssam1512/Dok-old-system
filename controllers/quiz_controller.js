@@ -25,7 +25,7 @@ const createQuiz = asyncWrapper(async (req, res) => {
     const newQuiz = await quiz.createQuiz(nmark,publisher,date,semester,ndurationInMin, topicId, title);  
     return res.status(201).json({
         status: "success" ,
-        data: { message: "Quiz created successfully", quizId: newQuiz.quizId }
+        data: { message: "Quiz created successfully", id: newQuiz.quizId }
     });
 });
 
@@ -111,7 +111,7 @@ const submitActiveQuiz = asyncWrapper(async (req, res, next) => {
     return res.status(200).json({
         status: "success",
         data: { message: "Quiz submitted successfully" ,
-        submissionId: newSub.id  
+        id: newSub.id  
         }
     });
 });
@@ -128,7 +128,7 @@ const submitQuiz = asyncWrapper(async (req, res, next) => {
     return res.status(200).json({
         status: "success",
         data: { message: "Quiz submitted successfully" ,
-        submissionId: newSub.id  
+        id: newSub.id  
         }
     });
 });

@@ -12,9 +12,12 @@ const jwt = require("jsonwebtoken");
 const { notifyAssistants } = require('../utils/sseClients');
 const Registration = require('../models/registration_model.js');
 const Submission = require('../models/submission_model');
+const submission = require('../data_link/submission_data_link.js');
 const Assignment = require('../models/assignment_model');
+const assignment = require('../data_link/assignment_data_link.js');
 const Quiz = require('../models/quiz_model.js');
 const Topic = require('../models/topic_model');
+const topicDl = require('../data_link/topic_data_link.js');
 const { sanitizeInput } = require('../utils/sanitize.js');
 
 // Helper: normalize null/undefined values to "N/A"
@@ -22,24 +25,12 @@ const normalize = (value) => (value === null || value === undefined ? "N/A" : va
 
 // Helper function to get student submission for assignment
 const getStudentSubmissionForAssignment = async (studentId, assignmentId) => {
-  return await Submission.findOne({
-    where: {
-      studentId,
-      assId: assignmentId,
-      type: 'assignment'
-    }
-  });
+  return await submission.getSubmissionForAssignment(studentId,assignmentId);
 };
 
 // Helper function to get student submission for quiz
 const getStudentSubmissionForQuiz = async (studentId, quizId) => {
-  return await Submission.findOne({
-    where: {
-      studentId,
-      quizId,
-      type: 'quiz'
-    }
-  });
+  return submission.getSubmissionForQuiz(studentId,quizId);
 };
 
 const getMyWeeklyReport = asyncWrapper(async (req, res) => {
@@ -60,9 +51,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
     // Get topic details
     let topic;
     if (topicId) {
-      topic = await Topic.findOne({
-        where: { topicId }
-      });
+      topic = await topicDl.getTopicById(topicId);
     } else {
       topic = await Topic.findOne({
         order: [['createdAt', 'DESC']]
@@ -77,10 +66,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
     }
 
     // Get assignments in this topic
-    const assignments = await Assignment.findAll({
-      where: { topicId: topic.topicId },
-      order: [['startDate', 'DESC']]
-    });
+    const assignments = await assignment.getAssignmentsByTopicId(topic.topicId);
 
     // Get quizzes in this topic
     const quizzes = await Quiz.findAll({

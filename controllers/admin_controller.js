@@ -15,7 +15,6 @@ const student = require('../data_link/student_data_link.js');
 const feed = require('../data_link/admin_data_link.js');
 const sse = require('../utils/sseClients.js');
 const {sanitizeInput}= require('../utils/sanitize.js');
-const { sanitize } = require('dompurify');
 
 const TARegister = asyncWrapper(async (req, res) => {
     sanitizeInput(req.body);
@@ -28,20 +27,6 @@ const TARegister = asyncWrapper(async (req, res) => {
         data: { message: "Assistant created successfully" }
     });
 });
-
-// const TARegister = asyncWrapper(async (req, res) => {
-//     sanitizeInput(req.body);
-//     const groupl = req.body.group.toLowerCase();
-//     console.log(req.body);
-//     await admin.create(req.body.email,req.body.name,req.body.password,req.body.phoneNumber,groupl);
-
-//     return res.status(201).json({
-//         status: "success" ,
-//         data: { message: "Assistant created successfully" }
-//     });
-// });
-
-
 
 const showPendingRegistration = asyncWrapper(async (req, res) => {
   const TAGroup = req.admin.group;

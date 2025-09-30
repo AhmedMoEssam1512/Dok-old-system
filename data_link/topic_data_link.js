@@ -13,6 +13,10 @@ function getTopicById(topicId) {
     return Topic.findOne({ where: { topicId } });
 }
 
+function getTopicById(topicId) {
+    return Topic.findOne({ where: { topicId } });
+}
+
 async function getAllTopicsByGroup(group) {
   return await Topic.findAll({
     include: [{

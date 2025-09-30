@@ -11,8 +11,10 @@ const { getCache } = require("../utils/cache");
 const { setCache } = require("../utils/cache");
 const jwt = require("jsonwebtoken");
 const sse = require('../utils/sseClients.js');
+const {sanitizeInput} = require('../utils/sanitize.js');
 
 const createSession = asyncWrapper(async (req, res) => {
+    sanitizeInput(req.body);
   const { number, semester, dateAndTime, link } = req.body;
   const adminId = req.admin.id;
   const adminGroup = req.admin.group; // 👈 "all" or specific group
@@ -36,6 +38,7 @@ const createSession = asyncWrapper(async (req, res) => {
   })});
 
 const attendSession = asyncWrapper(async (req, res, next) => {
+    sanitizeInput(req.params);
     const sessionId = req.activeSession?.sessionId || req.params.sessionId;
     if (!sessionId) {
         return next(new AppError("Session ID missing", httpStatus.BAD_REQUEST));
@@ -61,6 +64,7 @@ const attendSession = asyncWrapper(async (req, res, next) => {
 
 
 const startSession = asyncWrapper(async (req, res) => {
+    sanitizeInput(req.params);
     const { sessionId } = req.params;
     const adminGroup = req.admin.group;
     

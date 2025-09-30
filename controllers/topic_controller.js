@@ -13,8 +13,10 @@ const Topic = require('../models/topic_model.js');
 const topic = require('../data_link/topic_data_link.js');
 const { Op } = require("sequelize");
 const material = require('../data_link/material_data_link.js'); 
+const { sanitizeInput } = require('../utils/sanitize.js');
 
 const createTopic = asyncWrapper(async (req, res) => {
+    sanitizeInput(req.body);
     const { topicName, semester, subject } = req.body;
     const publisher = req.admin.id;
     const group = req.admin.group;
@@ -35,6 +37,7 @@ const createTopic = asyncWrapper(async (req, res) => {
 });
 
 const getTopicById = asyncWrapper(async (req, res, next) => {
+    sanitizeInput(req.params);
     const { topicId } = req.params;
     const topicFound = await topic.getTopicById(topicId );
     const quizzes = (await quiz.getQuizzesByTopicId(topicId))
@@ -87,6 +90,7 @@ const getAllTopics = asyncWrapper(async (req, res, next) => {
 });
 
 const updateTopic = asyncWrapper(async (req, res, next) => {
+    sanitizeInput(req.body);
     const found = req.found;
     const { topicName, semester, subject } = req.body;
     found.topicName = topicName || found.topicName;

@@ -8,8 +8,10 @@ const admin = require('../data_link/admin_data_link.js');
 const student = require('../data_link/student_data_link.js');
 const Admin = require('../models/admin_model.js');
 const Student = require('../models/student_model.js');
+const { sanitizeInput } = require('../utils/sanitize.js');
 
 const checkField = asyncWrapper(async (req, res, next) => {
+    sanitizeInput(req.body);
     const {mark, document,  endDate, semester, topicId, title, description}= req.body;
     if (mark == null || document == null || semester == null || endDate == null || topicId == null || title == null || description == null) {
         return next(new AppError("All fields are required", httpStatus.BAD_REQUEST));

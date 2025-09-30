@@ -6,6 +6,7 @@ const Feed = require('../models/feed_model.js');
 const feed = require('../data_link/feed_data_link.js');
 const admin = require('../data_link/admin_data_link.js');
 const sse = require('../utils/sseClients.js');
+const {sanitizeInput} = require('../utils/sanitize.js'); 
 
 const getFeed = asyncWrapper(async (req, res, next) => {
   const feeds = await feed.getAllFeeds();
@@ -20,6 +21,7 @@ const getFeed = asyncWrapper(async (req, res, next) => {
 })
 
 const postOnFeed = asyncWrapper(async (req, res) => {
+  sanitizeInput(req.body);
   const { text, semester } = req.body;
   const adminId = req.admin.id;
   const adminRecord = await admin.findAdminById(adminId);

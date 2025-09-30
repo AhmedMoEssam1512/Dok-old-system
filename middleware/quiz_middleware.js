@@ -9,8 +9,10 @@ const student = require('../data_link/student_data_link.js');
 const Admin = require('../models/admin_model.js');
 const Student = require('../models/student_model.js');
 const { getCache } = require("../utils/cache");
+const { sanitizeInput } = require('../utils/sanitize.js');
 
 const checkFields = asyncWrapper(async (req, res, next) => {
+    sanitizeInput(req.body);
     const {mark,quizPdf,date,semester,durationInMin} = req.body;
 
     if (mark == null || quizPdf == null || date == null || semester == null || durationInMin == null) {
@@ -60,6 +62,7 @@ const getGroup = asyncWrapper(async (req, res, next) => {
 // check topic exist
 
 const quizExists = asyncWrapper(async (req, res, next) => {
+    sanitizeInput(req.params);
     const { quizId } = req.params;
     const quizData = await quiz.getQuizById(quizId);
     if (!quizData) {
@@ -147,6 +150,7 @@ const canAccessActiveQuiz = asyncWrapper(async (req, res, next) => {
 });
 
 const verifySubmissionPDF = asyncWrapper(async (req, res, next) => {
+    sanitizeInput(req.body);
     const { answers } = req.body;
 
     // allow query params after .pdf

@@ -12,8 +12,10 @@ const sse = require('../utils/sseClients.js');
 const { getCache } = require("../utils/cache");
 const { setCache } = require("../utils/cache");
 const { Op } = require("sequelize");
+const {sanitizeInput} = require('../utils/sanitize.js');
 
 const createQuiz = asyncWrapper(async (req, res) => {
+    sanitizeInput(req.body);
     const {mark,quizPdf,date,semester,durationInMin, topicId, title} = req.body;
     const publisher = req.admin.id; 
     console.log("publisher id:", publisher)
@@ -55,6 +57,7 @@ const getQuizById = asyncWrapper(async (req, res, next) => {
 });
 
 const startQuiz = asyncWrapper(async (req, res) => {
+    sanitizeInput(req.params);
     const { quizId } = req.params;
     const adminGroup = req.admin.group;
 
@@ -96,6 +99,7 @@ const getActiveQuiz = asyncWrapper(async (req, res, next) => {
 
 
 const submitActiveQuiz = asyncWrapper(async (req, res, next) => {
+    sanitizeInput(req.body);
     const { answers } = req.body;
     const studentId = req.user.id;
     const found = await student.findStudentById(studentId);
@@ -111,6 +115,8 @@ const submitActiveQuiz = asyncWrapper(async (req, res, next) => {
 });
 
 const submitQuiz = asyncWrapper(async (req, res, next) => {
+    sanitizeInput(req.params);
+    sanitizeInput(req.body);
     const { answers } = req.body;
     const studentId = req.user.id;
     const found = await student.findStudentById(studentId);

@@ -4,8 +4,10 @@ const Admin = require('../data_link/admin_data_link');
 const Student =  require('../data_link/student_data_link');
 const asyncWrapper = require('../middleware/asyncwrapper');
 const { json } = require("sequelize");
+const {sanitizeInput} = require('../utils/sanitize');
 
 const otpController = asyncWrapper(async (req, res, next) => {
+  sanitizeInput(req.body);
   const { otp, email } = req.body;
 
   // Check if OTP exists
@@ -40,6 +42,8 @@ const otpController = asyncWrapper(async (req, res, next) => {
 
 
 const resetPassword = asyncWrapper(async (req, res, next) => {
+  sanitizeInput(req.body);
+  sanitizeInput(req.params);
   const email = req.params.email;
   const password = req.body.password;
 

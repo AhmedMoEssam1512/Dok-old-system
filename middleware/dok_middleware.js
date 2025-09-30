@@ -4,9 +4,11 @@ const bcrypt = require('bcrypt');
 const AppError = require('../utils/app.error');
 const asyncWrapper = require('./asyncwrapper');
 const admin = require('../data_link/admin_data_link');
+const { sanitizeInput } = require('../utils/sanitize.js');
 
 
 const findAdmin = asyncWrapper(async (req, res, next) => {
+  sanitizeInput(req.params);
   const { email } = req.params;
   const assistant = await admin.findAdminByEmail(email);
   if (!assistant) {

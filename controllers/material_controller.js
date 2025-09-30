@@ -14,8 +14,10 @@ const topic = require('../data_link/topic_data_link.js');
 const Material = require('../models/material_model');
 const material = require('../data_link/material_data_link');
 const { Op } = require("sequelize");
+const { sanitizeInput } = require('../utils/sanitize.js');
 
 const createMaterial = asyncWrapper(async (req, res, next) => {
+    sanitizeInput(req.body);
     const {title, description, document, topicId} = req.body;
     const publisher = req.admin.id;
     const uploadDate = new Date();
@@ -47,6 +49,7 @@ const getMaterialById = asyncWrapper(async (req, res, next) => {
 });
 
 const getMaterialByTopicId = asyncWrapper(async (req, res, next) => {
+    sanitizeInput(req.params);
     const { topicId } = req.params;
     const materials = await material.getMaterialsByTopicId(topicId);
     if (materials.length === 0) {
@@ -60,6 +63,8 @@ const getMaterialByTopicId = asyncWrapper(async (req, res, next) => {
 });
 
 const updateMaterial = asyncWrapper(async (req, res, next) => {
+    sanitizeInput(req.body);
+    sanitizeInput(req.params);
     const materialId = req.params.id;
     const updateData = req.body;
     const updatedRows = await material.updateMaterial(materialId, updateData);
@@ -73,6 +78,7 @@ const updateMaterial = asyncWrapper(async (req, res, next) => {
 });
 
 const deleteMaterial = asyncWrapper(async (req, res, next) => {
+    sanitizeInput(req.params);
     const materialId = req.params.id;
     const deletedRows = await material.deleteMaterial(materialId);
     if (deletedRows === 0) {

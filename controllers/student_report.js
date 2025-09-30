@@ -15,6 +15,7 @@ const Submission = require('../models/submission_model');
 const Assignment = require('../models/assignment_model');
 const Quiz = require('../models/quiz_model.js');
 const Topic = require('../models/topic_model');
+const { sanitizeInput } = require('../utils/sanitize.js');
 
 // Helper: normalize null/undefined values to "N/A"
 const normalize = (value) => (value === null || value === undefined ? "N/A" : value);
@@ -42,6 +43,7 @@ const getStudentSubmissionForQuiz = async (studentId, quizId) => {
 };
 
 const getMyWeeklyReport = asyncWrapper(async (req, res) => {
+  sanitizeInput(req.params);
   const { topicId } = req.params;
   const studentId = req.student.id;
 

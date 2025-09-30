@@ -7,8 +7,10 @@ const admin = require('../data_link/admin_data_link.js');
 const Submission = require('../models/submission_model.js');
 const quiz = require('../data_link/quiz_data_link.js');
 const assignment = require('../data_link/assignment_data_link.js');
+const { sanitizeInput } = require('../utils/sanitize.js');
 
 const subExist = asyncWrapper(async (req,res ,next) => {
+    sanitizeInput(req.params);
     const subId = req.params.id;
     const found = await admin.findSubmissionById(subId)
     if (!found) {
@@ -41,6 +43,7 @@ const marked = asyncWrapper(async (req,res, next) => {
 })
 
 const checkData = asyncWrapper(async (req,res, next) => {
+    sanitizeInput(req.body);
     const {marked,score } = req.body
     if(!marked || !score){
         return next(new AppError("All fields are required", httpStatus.BAD_REQUEST));

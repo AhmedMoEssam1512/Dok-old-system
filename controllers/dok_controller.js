@@ -13,8 +13,10 @@ const bcrypt = require('bcrypt');
 const AppError = require('../utils/app.error');
 const asyncWrapper = require('../middleware/asyncwrapper');
 const Group = require('../models/group_model.js');
+const {sanitizeInput} = require('../utils/sanitize.js');
 
 const DOK_signUp= asyncWrapper( async (req, res) => {
+    sanitizeInput(req.body);
     const { email, name, password, phonenumber, role = "teacher", permission = "all" } = req.body;
 
     // hash password
@@ -39,6 +41,7 @@ const DOK_signUp= asyncWrapper( async (req, res) => {
 })
 
 const rejectAssistant = asyncWrapper(async (req, res) => {
+    sanitizeInput(req.params);
     const { email } = req.params;
     const assistant = await admins.findAdminByEmail(email);
     await admins.removeAssistant( email  );
@@ -49,6 +52,7 @@ const rejectAssistant = asyncWrapper(async (req, res) => {
 });
 
 const acceptAssistant = asyncWrapper(async (req, res) => {
+    sanitizeInput(req.params);
     const { email } = req.params;
     await admins.verifyAssistant( email );
     return res.status(200).json({
@@ -71,6 +75,7 @@ const showPendingRegistration = asyncWrapper(async (req, res) => {
 }})})
 
 const removeAssistant = asyncWrapper(async (req, res) => {
+    sanitizeInput(req.params);
     const { email } = req.params;
     const deleted = await admins.removeAssistant(email);
     return res.status(200).json({
@@ -80,6 +85,7 @@ const removeAssistant = asyncWrapper(async (req, res) => {
 })
 
 const checkAssistantGroup = asyncWrapper(async (req, res) => {
+    sanitizeInput(req.params);
     const { group } = req.params;
     const admin = await admins.checkAssistantGroup( group );
     return res.status(200).json({
@@ -94,6 +100,8 @@ const checkAssistantGroup = asyncWrapper(async (req, res) => {
 });
 
 const assignGroupToAssistant = asyncWrapper(async (req, res) => {
+    sanitizeInput(req.body);
+    sanitizeInput(req.params);
     const { id } = req.params;
     const { group } = req.body;
     const assistant = await admins.findAdminById(id);
@@ -109,6 +117,7 @@ const assignGroupToAssistant = asyncWrapper(async (req, res) => {
 });
 
 const createNewGroup = asyncWrapper(async (req, res) => {
+    sanitizeInput(req.body);
     const { groupName } = req.body;
     const groupl=groupName.toLowerCase();
     const existingGroup = await Group.findOne({ where: { groupName:  groupl } });

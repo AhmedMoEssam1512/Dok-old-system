@@ -9,9 +9,11 @@ const Session = require('../models/session_model.js');
 const student = require('../data_link/student_data_link.js');
 const admin = require('../data_link/admin_data_link.js');
 const { getCache } = require("../utils/cache");
-const { Op } = require("sequelize")
+const { Op } = require("sequelize");
+const { sanitizeInput } = require('../utils/sanitize.js');
 
 const sessionFound = asyncWrapper(async (req, res, next) => {
+    sanitizeInput(req.params);
     const { sessionId } = req.params;
 
     const sessFound = await session.findSessionById(sessionId);
@@ -55,6 +57,7 @@ const sessionStarted = asyncWrapper(async (req, res, next) => {
 });
 
 const canAccessSession = asyncWrapper(async (req, res, next) => {
+    sanitizeInput(req.params);
     const userGroup = req.admin.group;
     const sessionData = await session.findSessionById(req.params.sessionId);
     const publisher = await admin.findAdminById(sessionData.adminId);

@@ -62,7 +62,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
         where: { topicId }
       });
     } else {
-      topic = await Topic.findOne({
+      topic = await Topic.findOne({where:{group: req.user.group},
         order: [['createdAt', 'DESC']]
       });
     }

@@ -13,8 +13,8 @@ function getTopicById(topicId) {
     return Topic.findOne({ where: { topicId } });
 }
 
-function getStudentLastTopic() {
-    return Topic.findOne({where:{group: req.student.group},
+function getStudentLastTopic(group) {
+    return Topic.findOne({where:{group},
         order: [['createdAt', 'DESC']]
     });
 }

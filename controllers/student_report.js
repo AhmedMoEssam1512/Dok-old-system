@@ -52,7 +52,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
     // Get topic details
     let topic;
     if(topicId === '0') {
-      topic = await topicDl.getStudentLastTopic();
+      topic = await topicDl.getStudentLastTopic(req.student.group);
     }
     else{
     if (topicId) {

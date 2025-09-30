@@ -78,6 +78,10 @@ async function getAssignmentsByTopicId(topicId) {
   });
 }
 
+function findAssignmentAndDelete(assignId){
+    return Assignment.destroy({where: {assignId}});
+}
+
 // async function getAllAssignmentsByGroup(group) {
 //   return Assignment.findAll({
 //     where: { group },
@@ -94,5 +98,5 @@ module.exports={
     findSubmissionByQuizAndStudent,
     findSubmissionByAssignmentAndStudent,
     getAssignmentsByTopicId,
-    
+    findAssignmentAndDelete
 }

@@ -45,6 +45,10 @@ const createReport = async (req, res) => {
       });
     }
 
+    if (topic.group !== req.admin.group) {
+      return res.status(403).json({ error: 'You are not authorized to access this topic.' });
+    }  
+
     // 👥 Get all students assigned to this assistant
     // Note: your Student.assistantId is STRING, so convert assistantId to string
     const students = await student.getStudentsByAssistant(assistantId);

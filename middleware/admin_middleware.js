@@ -82,6 +82,7 @@ const checkAuthurityByID = asyncWrapper(async (req, res, next) => {
     return next(new AppError('You are not allowed to access this student', 403));
   }
   req.student = found;
+  req.student.id = studentId;
   console.log("student found : ", studentId)
     next();
 });

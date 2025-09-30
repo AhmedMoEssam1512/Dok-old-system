@@ -53,18 +53,24 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
     let topic;
     if (topicId) {
       topic = await topicDl.getTopicById(topicId);
+      if (!topic) {
+        return res.status(404).json({
+          status: "error",
+          message: "Topic not found"
+        });
+      }
+      if (topic.group !== studentData.group) {
+        return res.status(403).json({
+          status: "error",
+          message: "You are not authorized to access this topic"
+        });
+      }
 
     } else {
       topic = await topicDl.getStudentLastTopic();
     }
 
-    if (!topic) {
-      return res.status(404).json({
-        status: "error",
-        message: "Topic not found"
-      });
-    }
-
+    
     // Get assignments in this topic
     const assignments = await assignment.getAssignmentsByTopicId(topic.topicId);
 

@@ -6,6 +6,7 @@ const adminMiddleWare = require('../middleware/admin_middleware');
 const { establishAdminConnection } = require('../controllers/SSE_connection');
 const subMiddleWare = require('../middleware/submission_middleware');
 const report = require('../controllers/admin_report');
+const {getMyWeeklyReport} = require('../controllers/student_report');
 
 router.route('/adminRegister')
     .post(adminMiddleWare.adminFound,adminMiddleWare.passwordEncryption,adminControllers.TARegister);
@@ -52,5 +53,8 @@ router.route('/markSubmission/:id')
 
 router.route('/createReport/:topicId')
     .get(auth.adminProtect, report.createReport);
+
+router.route('/makeReportForStudent/:studentId/:topicId')
+    .get(auth.adminProtect, adminMiddleWare.checkAuthurityByID, getMyWeeklyReport);
 
 module.exports = router;

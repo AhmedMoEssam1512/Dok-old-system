@@ -13,7 +13,7 @@ const { sanitizeInput } = require('../utils/sanitize.js');
 
 const checkFields = asyncWrapper(async (req, res, next) => {
     sanitizeInput(req.body);
-    const {mark,date,semester,durationInMin} = req.body;
+    const {mark,date,semester,durationInMin,} = req.body;
     const nmark = parseFloat(mark);
     const ndurationInMin = parseInt(durationInMin);
     if (nmark == null  || date == null || semester == null || ndurationInMin == null) {

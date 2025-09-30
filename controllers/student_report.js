@@ -16,6 +16,7 @@ const submission = require('../data_link/submission_data_link.js');
 const Assignment = require('../models/assignment_model');
 const assignment = require('../data_link/assignment_data_link.js');
 const Quiz = require('../models/quiz_model.js');
+const quiz = require('../data_link/quiz_data_link.js');
 const Topic = require('../models/topic_model');
 const topicDl = require('../data_link/topic_data_link.js');
 const { sanitizeInput } = require('../utils/sanitize.js');
@@ -54,9 +55,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
       topic = await topicDl.getTopicById(topicId);
 
     } else {
-      topic = await Topic.findOne({where:{group: req.student.group},
-        order: [['createdAt', 'DESC']]
-      });
+      topic = await topicDl.getStudentLastTopic();
     }
 
     if (!topic) {
@@ -70,10 +69,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
     const assignments = await assignment.getAssignmentsByTopicId(topic.topicId);
 
     // Get quizzes in this topic
-    const quizzes = await Quiz.findAll({
-      where: { topicId: topic.topicId },
-      order: [['createdAt', 'DESC']]
-    });
+    const quizzes = await quiz.getQuizzesByTopicId(topic.topicId);
 
     // Create report data
     const reportData = {

@@ -14,9 +14,10 @@ const Registration = require('../models/registration_model.js');
 const assignment = require('../data_link/assignment_data_link.js');
 const submission = require('../data_link/assignment_data_link.js');
 const Assignment = require('../models/assignment_model.js');
-
+const { sanitizeInput } = require('../utils/sanitize.js');
 
 const studentRegister = asyncWrapper(async (req, res) => {
+  sanitizeInput(req.body);
   const {
     studentEmail,
     studentName,

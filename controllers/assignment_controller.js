@@ -12,8 +12,10 @@ const submission = require('../data_link/assignment_data_link.js');
 const Submission = require('../models/submission_model.js');
 const Topic = require('../models/topic_model.js');
 const topic = require('../data_link/topic_data_link.js');
+const {sanitizeInput}= require('../utils/sanitize.js');
 
 const createAssignment = asyncWrapper(async (req, res) => {
+    sanitizeInput(req.body);
     const {mark, document,  endDate, semester, topicId, title, description}= req.body;
     const startDate = new Date(); // current date
     const publisher = req.admin.id;
@@ -98,6 +100,8 @@ const getAssignmentById = asyncWrapper(async (req, res) => {
 })
 
 const submitAssignment = asyncWrapper(async (req, res) => {
+    sanitizeInput(req.body);
+    sanitizeInput(req.params);
     const { answers } = req.body;
     const studentId = req.user.id;
     const found = await student.findStudentById(studentId);

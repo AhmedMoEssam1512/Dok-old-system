@@ -13,8 +13,10 @@ const Topic = require('../models/topic_model.js');
 const material = require('../data_link/material_data_link.js');
 const topic = require('../data_link/topic_data_link.js');
 const { Op } = require("sequelize");
+const { sanitizeInput } = require('../utils/sanitize.js');
 
 const checkTopicExists = asyncWrapper(async (req, res, next) => {
+    sanitizeInput(req.body);
     const { topicId } = req.body;
     const found = await topic.getTopicById(topicId);
     if (!found) {
@@ -24,6 +26,7 @@ const checkTopicExists = asyncWrapper(async (req, res, next) => {
 });
 
 const checkInputData = asyncWrapper(async (req, res, next) => {
+    sanitizeInput(req.body);
     const { title, description, document, topicId } = req.body; 
     if (!title || !description || !document || !topicId) {
         return next(new AppError("Missing required fields: title, description, document, topicId", httpStatus.BAD_REQUEST));
@@ -32,6 +35,7 @@ const checkInputData = asyncWrapper(async (req, res, next) => {
 });
 
 const findMaterialById = asyncWrapper(async (req, res, next) => {
+    sanitizeInput(req.params);
     const { id } = req.params;
     const found = await material.getMaterialById(id);
     if (!found) {

@@ -11,8 +11,10 @@ const Student = require('../models/student_model.js');
 const Topic = require('../models/topic_model.js');
 const topic = require('../data_link/topic_data_link.js');
 const { Op } = require("sequelize");
+const { sanitizeInput } = require('../utils/sanitize.js');
 
 const checkSemester = asyncWrapper(async (req, res, next) => {
+    sanitizeInput(req.body);
     const { semester } = req.body;
     const toLow= semester.toLowerCase();
     if(toLow!== "june" && toLow !== "november"){
@@ -22,6 +24,7 @@ const checkSemester = asyncWrapper(async (req, res, next) => {
 });
 
 const checkSubject = asyncWrapper(async (req, res, next) => {
+    sanitizeInput(req.body);
     const { subject } = req.body;
     const toLow= subject.toLowerCase();
     if(toLow!== "biology" && toLow !== "physics" && toLow !== "chemistry"){
@@ -31,6 +34,7 @@ const checkSubject = asyncWrapper(async (req, res, next) => {
 });
 
 const findTopicById = asyncWrapper(async (req, res, next) => {
+    sanitizeInput(req.params);
     const { topicId } = req.params;
     const found = await topic.getTopicById(topicId );
     if (!found) {
@@ -63,6 +67,7 @@ const canUpdateTopic = asyncWrapper(async (req, res, next) => {
 })
 
 const checkData = asyncWrapper(async (req, res, next) => {
+    sanitizeInput(req.body);
     const {  semester, subject } = req.body;
     if(semester){ 
         const toLow= semester.toLowerCase();

@@ -7,8 +7,10 @@ const {where} = require("sequelize");
 const jwt = require("jsonwebtoken");
 const student = require('../data_link/student_data_link');
 const admin = require('../data_link/admin_data_link.js');
+const { sanitizeInput } = require('../utils/sanitize.js');
 
 const studentFound= asyncWrapper(async (req, res, next) => {
+    sanitizeInput(req.body);
     const {studentEmail } = req.body;
     const adFound = await admin.findAdminByEmail(studentEmail);
     if (adFound) {
@@ -24,6 +26,7 @@ const studentFound= asyncWrapper(async (req, res, next) => {
 })
 
 const attendedSessionBefore = asyncWrapper(async (req, res, next) => {
+    sanitizeInput(req.params);
     const { sessionId } = req.params;
     const decoded = jwt.verify(req.headers.authorization.split(' ')[1], process.env.JWT_SECRET);
     const studentId = decoded.id;  

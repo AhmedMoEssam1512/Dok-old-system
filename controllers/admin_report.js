@@ -4,6 +4,7 @@ const Assignment = require('../models/assignment_model');
 const Quiz = require('../models/quiz_model');
 const Submission = require('../models/submission_model');
 const Topic = require('../models/topic_model');
+const {sanitizeInput}= require('../utils/sanitize.js');
 
 const getGradingSystem = () => {
   return {
@@ -19,6 +20,7 @@ const getGradingSystem = () => {
 
 const createReport = async (req, res) => {
   try {
+    sanitizeInput(req.params);
     const { topicId } = req.params;
 
     // 🔒 Authorization: EXACTLY as requested

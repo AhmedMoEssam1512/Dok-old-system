@@ -3,8 +3,10 @@ const User = require('../data_link/forget_password');
 const asyncwrapper = require('../middleware/asyncwrapper');
 const sengGrid = require('../services/sendgird');
 const crypto = require('crypto');
+const {sanitizeInput} = require('../utils/sanitize');
 
 const forgetPassword = asyncwrapper(async (req, res, next) => {
+    sanitizeInput(req.body);
 
     // get the email from the user
     const email = req.body.email;

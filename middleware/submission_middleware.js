@@ -7,8 +7,10 @@ const admin = require('../data_link/admin_data_link.js');
 const Submission = require('../models/submission_model.js');
 const quiz = require('../data_link/quiz_data_link.js');
 const assignment = require('../data_link/assignment_data_link.js');
+const { sanitizeInput } = require('../utils/sanitize.js');
 
 const subExist = asyncWrapper(async (req,res ,next) => {
+    sanitizeInput(req.params);
     const subId = req.params.id;
     const found = await admin.findSubmissionById(subId)
     if (!found) {
@@ -41,7 +43,9 @@ const marked = asyncWrapper(async (req,res, next) => {
 })
 
 const checkData = asyncWrapper(async (req,res, next) => {
+    sanitizeInput(req.body);
     const {marked,score } = req.body
+    const nscore = Number(score); // Convert score to a number
     if(!marked || !score){
         return next(new AppError("All fields are required", httpStatus.BAD_REQUEST));
     }
@@ -52,7 +56,7 @@ const checkData = asyncWrapper(async (req,res, next) => {
         total = qfound.mark
     }
     else{
-        const afound = await assignment.getAssignmentById(found.assignmentId);
+        const afound = await assignment.getAssignmentById(found.assId);
         total = afound.mark
     }
     console.log("All fields checked");
@@ -63,7 +67,7 @@ const checkData = asyncWrapper(async (req,res, next) => {
     }
     console.log("chack 2 done, pdf valid")
 
-    if (typeof score !== 'number' || score <= 0 || score > total) {
+    if (typeof nscore !== 'number' || nscore <= 0 || nscore > total) {
         return next(new AppError("Score must be a positive number and less than the total score", httpStatus.BAD_REQUEST));
     }
     console.log("chack 3 done, duration valid")

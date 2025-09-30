@@ -7,8 +7,9 @@ const asyncWrapper = require("../middleware/asyncwrapper");
 const admin = require('../data_link/admin_data_link.js');
 const student = require('../data_link/student_data_link.js');
 const Group = require('../models/group_model.js');
-
+const {sanitizeInput} = require('../utils/sanitize.js');
 const logIn = asyncWrapper(async (req, res, next) => {
+  sanitizeInput(req.body);
   const { email, password } = req.body;
 
   // ------------------- ADMIN LOGIN -------------------

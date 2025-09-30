@@ -13,10 +13,10 @@ const { sanitizeInput } = require('../utils/sanitize.js');
 
 const checkFields = asyncWrapper(async (req, res, next) => {
     sanitizeInput(req.body);
-    const {mark,quizPdf,date,semester,durationInMin} = req.body;
+    const {mark,date,semester,durationInMin} = req.body;
     const nmark = parseFloat(mark);
     const ndurationInMin = parseInt(durationInMin);
-    if (nmark == null || quizPdf == null || date == null || semester == null || ndurationInMin == null) {
+    if (nmark == null  || date == null || semester == null || ndurationInMin == null) {
         return next(new AppError("All fields are required", httpStatus.BAD_REQUEST));
     }
     console.log("chack 1 done, all fields present")
@@ -25,11 +25,11 @@ const checkFields = asyncWrapper(async (req, res, next) => {
     }
     console.log("chack 2 done, mark valid")
      // quizPdf must be a valid URL ending with .pdf
-    const pdfRegex = /^https?:\/\/.+\.pdf$/i;
-    if (typeof quizPdf !== 'string' || !pdfRegex.test(quizPdf.trim())) {
-        return next(new AppError("Quiz PDF must be a valid link ending with .pdf", httpStatus.BAD_REQUEST));
-    }
-    console.log("chack 3 done, pdf valid")
+    // const pdfRegex = /^https?:\/\/.+\.pdf$/i;
+    // if (typeof quizPdf !== 'string' || !pdfRegex.test(quizPdf.trim())) {
+    //     return next(new AppError("Quiz PDF must be a valid link ending with .pdf", httpStatus.BAD_REQUEST));
+    // }
+    // console.log("chack 3 done, pdf valid")
 
     // allow any date format that JS Date can parse
     const parsedDate = new Date(date);

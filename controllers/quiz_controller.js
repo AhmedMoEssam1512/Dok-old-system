@@ -16,13 +16,13 @@ const {sanitizeInput} = require('../utils/sanitize.js');
 
 const createQuiz = asyncWrapper(async (req, res) => {
     sanitizeInput(req.body);
-    const {mark,quizPdf,date,semester,durationInMin, topicId, title} = req.body;
+    const {mark,date,semester,durationInMin, topicId, title} = req.body;
     const publisher = req.admin.id; 
     const nmark = parseFloat(mark);
     const ndurationInMin = parseInt(durationInMin);
     console.log("publisher id:", publisher)
-    console.log("Creating quiz with data:", {nmark,quizPdf,date,semester,ndurationInMin});
-    const newQuiz = await quiz.createQuiz(nmark,publisher,quizPdf,date,semester,ndurationInMin, topicId, title);  
+    console.log("Creating quiz with data:", {nmark,date,semester,ndurationInMin});
+    const newQuiz = await quiz.createQuiz(nmark,publisher,date,semester,ndurationInMin, topicId, title);  
     return res.status(201).json({
         status: "success" ,
         data: { message: "Quiz created successfully", quizId: newQuiz.quizId }

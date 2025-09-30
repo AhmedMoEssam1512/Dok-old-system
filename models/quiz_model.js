@@ -7,7 +7,6 @@ const Quiz = sequelize.define('Quiz', {
   mark: DataTypes.INTEGER,
   createdAt : DataTypes.DATE,
   publisher: DataTypes.INTEGER,
-  quizPdf: DataTypes.STRING,
   startDate: DataTypes.DATE,
   semester: DataTypes.STRING,
   durationInMin: DataTypes.INTEGER,

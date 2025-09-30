@@ -148,7 +148,6 @@ const getUnsubmittedAssignments = asyncWrapper(async (req, res, next) => {
 
 const deleteAssignment = asyncWrapper(async (req, res, next) => {
     const { assignId } = req.params;
-    const assignData = req.assignData;
     await assignment.findAssignmentAndDelete(assignId);
     return res.status(200).json({
         status: "success",

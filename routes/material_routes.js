@@ -12,7 +12,7 @@ router.route('/createMaterial')
 router.route('/getAllMaterials')
     .get(auth.protect, materialControllers.getAllMaterials);
 
-router.route('/getMaterialById/:id')
+router.route('/get_material_by_id/:id')
     .get(auth.protect, materialMiddleWare.findMaterialById,
          materialMiddleWare.canSeeMaterial, materialControllers.getMaterialById);
 

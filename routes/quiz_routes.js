@@ -11,7 +11,7 @@ router.route('/createQuiz')
 router.route('/getAllQuizzes')
     .get(auth.protect,quizMiddleWare.getGroup ,quizControllers.getAllQuizzes);
 
-router.route('/getQuizById/:quizId')
+router.route('/get_quiz_by_id/:quizId')
     .get(auth.protect, quizMiddleWare.quizExists,quizMiddleWare.canSeeQuiz ,quizControllers.getQuizById);
 
 router.route('/startQuiz/:quizId')
@@ -28,6 +28,10 @@ router.route('/submitQuiz/:quizId')
         .post(auth.protect, quizMiddleWare.quizExists, quizMiddleWare.canSeeQuiz ,
         quizMiddleWare.submittedBefore, quizMiddleWare.verifySubmissionPDF ,quizControllers.submitQuiz)
 
-// get by topic id
+router.route('/modifyQuiz/:quizId')
+        .patch(auth.adminProtect, quizMiddleWare.quizExists,quizMiddleWare.canAccessQuiz ,quizControllers.modifyQuiz)
+
+router.route('/deleteQuiz/:quizId')
+        .delete(auth.adminProtect, quizMiddleWare.quizExists,quizMiddleWare.canAccessQuiz ,quizControllers.deleteQuiz)
 
 module.exports = router;

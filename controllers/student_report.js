@@ -54,6 +54,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
     if(topicId === 0) {
       topic = await topicDl.getStudentLastTopic();
     }
+    else{
     if (topicId) {
       topic = await topicDl.getTopicById(topicId);
       if (!topic) {
@@ -75,6 +76,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
         message: "Topic ID is required"
       });
     }
+  }
     
 
     

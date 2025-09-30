@@ -11,7 +11,7 @@ router.route('/createQuiz')
 router.route('/getAllQuizzes')
     .get(auth.protect,quizMiddleWare.getGroup ,quizControllers.getAllQuizzes);
 
-router.route('/getQuizById/:quizId')
+router.route('/get_quiz_by_id/:quizId')
     .get(auth.protect, quizMiddleWare.quizExists,quizMiddleWare.canSeeQuiz ,quizControllers.getQuizById);
 
 router.route('/startQuiz/:quizId')

@@ -34,9 +34,9 @@ router.route('/showSubmission/:id')
 router.route('/getQuizTrend')
     .get(auth.studentProtect,studentControllers.getQuizTrend);   
 
-router.get('/getMyWeeklyReport/:topicId',auth.studentProtect,getMyWeeklyReport);
+router.get('/getMyWeeklyReport{/:topicId}',auth.studentProtect,getMyWeeklyReport);
 
-router.get('/getMyWeeklyReport',auth.studentProtect,getMyWeeklyReport);
+
 
 
 module.exports = router;

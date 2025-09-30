@@ -36,7 +36,7 @@ const getStudentSubmissionForQuiz = async (studentId, quizId) => {
 
 const getMyWeeklyReport = asyncWrapper(async (req, res) => {
   sanitizeInput(req.params);
-  const { topicId } = req.body;
+  const { topicId } = req.params;
   const studentId = req.student.id;
 
   try {

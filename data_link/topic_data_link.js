@@ -13,6 +13,12 @@ function getTopicById(topicId) {
     return Topic.findOne({ where: { topicId } });
 }
 
+function getStudentLastTopic() {
+    return Topic.findOne({where:{group: req.student.group},
+        order: [['createdAt', 'DESC']]
+    });
+}
+
 async function getAllTopicsByGroup(group) {
   return await Topic.findAll({
     include: [{
@@ -33,5 +39,6 @@ module.exports = {
     createTopic,
     getTopicById,
     getAllTopicsByGroup,
-    getAllTopics
+    getAllTopics,
+    getStudentLastTopic
 };

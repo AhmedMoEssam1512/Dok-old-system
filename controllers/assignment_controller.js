@@ -23,10 +23,10 @@ const createAssignment = asyncWrapper(async (req, res) => {
     (mark, document, startDate, endDate, semester, publisher,topicId, title, description) //7aga
     return res.status(201).json({
         status: "success" ,
-        data: { message: "assignment created successfully", assignmentId: createdAssignment.assignId },
+        data: { message: "assignment created successfully", id: createdAssignment.assignId },
     });
 });
-
+////// start fixing responses from here
 const getAllAssignments = asyncWrapper(async (req, res) => {
   const group = req.user.group;
   const studentId = req.user.id; // adjust if different in your auth payload

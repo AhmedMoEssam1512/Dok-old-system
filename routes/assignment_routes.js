@@ -12,7 +12,7 @@ router.route('/createAssignment')
 router.route('/getAllAssignments')
     .get(auth.protect, quizMiddleware.getGroup, assignControllers.getAllAssignments)
 
-router.route('/getAssignmentById/:assignId')
+router.route('/get_assignment_by_id/:assignId')
     .get(auth.protect,assignMiddleWare.assignExists,assignMiddleWare.canSeeAssign,assignControllers.getAssignmentById)
 
 router.route('/submitAssignment/:assignId')

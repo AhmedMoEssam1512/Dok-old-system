@@ -22,6 +22,11 @@ router.route('/submitAssignment/:assignId')
 router.route('/getUnsubmittedAssignments')
     .get(auth.studentProtect, assignControllers.getUnsubmittedAssignments)
 
-// get by topic id
+router.route('/deleteAssignment/:assignId')
+    .delete(auth.adminProtect, assignMiddleWare.assignExists,assignMiddleWare.authorisedToModify, assignControllers.deleteAssignment)
+    
+router.route('/modifyAssignment/:assignId')
+    .patch(auth.adminProtect, assignMiddleWare.assignExists,assignMiddleWare.authorisedToModify, assignControllers.modifyAssignment)
+
 
 module.exports = router;

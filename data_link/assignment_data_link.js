@@ -75,7 +75,12 @@ async function getAssignmentsByTopicId(topicId) {
   return await Assignment.findAll({
     where: { topicId },
     attributes: [['assignId', 'id'], 'title'], // only return id and name
+    order: [['startDate', 'DESC']]
   });
+}
+
+function findAssignmentAndDelete(assignId){
+    return Assignment.destroy({where: {assignId}});
 }
 
 // async function getAllAssignmentsByGroup(group) {
@@ -94,5 +99,5 @@ module.exports={
     findSubmissionByQuizAndStudent,
     findSubmissionByAssignmentAndStudent,
     getAssignmentsByTopicId,
-    
+    findAssignmentAndDelete
 }

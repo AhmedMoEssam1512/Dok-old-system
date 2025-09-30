@@ -87,10 +87,25 @@ const submittedBefore = asyncWrapper(async (req, res, next) => {
     next();
 })
 
+const authorisedToModify = asyncWrapper(async (req, res, next) => {
+    const userGroup = req.admin.group ;
+    const assignData = req.assignData;
+    const publisher = await admin.findAdminById(assignData.publisher);
+    if (!publisher) {
+        return next(new AppError("Publisher not found", httpStatus.NOT_FOUND));
+    }
+    if (publisher.group !== 'all' && publisher.group !== userGroup&& userGroup !== 'all') {
+        return next(new AppError("You do not have permission to modify/delete this Assignment", httpStatus.FORBIDDEN));
+    }
+    console.log("User has permission to modify/delete the assignment");
+    next();
+});
+
 
 module.exports = {
     checkField,
     assignExists,
     canSeeAssign,
     submittedBefore,
+    authorisedToModify
 }

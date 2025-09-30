@@ -146,13 +146,39 @@ const getUnsubmittedAssignments = asyncWrapper(async (req, res, next) => {
   });
 });
 
-// get by topic id
+const deleteAssignment = asyncWrapper(async (req, res, next) => {
+    const { assignId } = req.params;
+    await assignment.findAssignmentAndDelete(assignId);
+    return res.status(200).json({
+        status: "success",
+        data: { message: "Assignment deleted successfully" }
+    });
+});
+
+const modifyAssignment = asyncWrapper(async (req, res, next) => {
+  sanitizeInput(req.body);
+  const { assignId } = req.params;
+  const {title, description} = req.body;
+  const modidfied = await Assignment.update(
+    { title, description },
+    { where: { assignId } }
+  );
+  if (modidfied[0] === 0) {
+    return next(new AppError("No changes made or assignment not found", httpStatus.NOT_FOUND));
+  }
+  return res.status(200).json({
+    status: "success",
+    data: { message: "Assignment modified successfully" }
+  });
+});
+
 
 module.exports={
     createAssignment,
     getAllAssignments,
     getAssignmentById,
     submitAssignment,
-    getUnsubmittedAssignments
+    getUnsubmittedAssignments,
+    deleteAssignment,
+    modifyAssignment
 }
-

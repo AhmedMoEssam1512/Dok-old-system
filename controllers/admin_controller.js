@@ -235,11 +235,11 @@ const showAllSubmissions = asyncWrapper(async (req, res) => {
 const markSubmission = asyncWrapper(async (req, res) => {
     const found = req.found;
     const studentSub = await student.findStudentById(found.studentId)   ;
-    const {marked,score } = req.body
-    found.score = score;
+    const { marked, score } = req.body
+    found.score = parseInt(score);
     found.marked = marked;
     found.markedAt = new Date();
-    studentSub.totalScore += score;
+    studentSub.totalScore = parseInt (score) + parseInt(studentSub.totalScore);
     await studentSub.save();
     await found.save();
     return res.status(200).json({

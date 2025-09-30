@@ -30,6 +30,12 @@ async function getAllTopicsByGroup(group) {
   });
 }
 
+async function getTopicByAssistantId(topicId,assistantId) {
+  return Topic.findOne({
+      where: { topicId: parseInt(topicId, 10), publisher: assistantId }
+    });
+}
+
 
 function getAllTopics() {
     return Topic.findAll();
@@ -40,5 +46,6 @@ module.exports = {
     getTopicById,
     getAllTopicsByGroup,
     getAllTopics,
-    getStudentLastTopic
+    getStudentLastTopic,
+    getTopicByAssistantId
 };

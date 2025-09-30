@@ -127,7 +127,12 @@ async function findAllStudentsForProfile(assistantId) {
   });
 }
 
-
+async function getStudentsByAssistant(assistantId) {
+  return await Student.findAll({
+      where: { assistantId: String(assistantId) },
+      attributes: ['studentId', 'studentName', 'totalScore']
+    });
+}
 
 
 module.exports={
@@ -143,5 +148,6 @@ module.exports={
     getTotalNumberOfStudents,
     showLeaderBoard,
     getStudentScore,
-    getStudentRank
+    getStudentRank,
+    getStudentsByAssistant
 }

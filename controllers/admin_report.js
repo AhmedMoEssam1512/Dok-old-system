@@ -1,9 +1,14 @@
 const { Op } = require('sequelize');
 const Student = require('../models/student_model');
+const student = require('../data_link/student_data_link.js');
 const Assignment = require('../models/assignment_model');
+const assignment = require('../data_link/assignment_data_link.js');
 const Quiz = require('../models/quiz_model');
+const quiz = require('../data_link/quiz_data_link.js');
 const Submission = require('../models/submission_model');
+const submission = require('../data_link/submission_data_link.js');
 const Topic = require('../models/topic_model');
+const topicDl = require('../data_link/topic_data_link.js');
 const {sanitizeInput}= require('../utils/sanitize.js');
 
 const getGradingSystem = () => {
@@ -32,9 +37,7 @@ const createReport = async (req, res) => {
     const assistantId = req.admin.id;
 
     // 🔍 Validate topic exists and belongs to this assistant
-    const topic = await Topic.findOne({
-      where: { topicId: parseInt(topicId, 10), publisher: assistantId }
-    });
+    const topic = await topicDl.getTopicByAssistantId(topicId,assistantId);
 
     if (!topic) {
       return res.status(404).json({
@@ -44,20 +47,17 @@ const createReport = async (req, res) => {
 
     // 👥 Get all students assigned to this assistant
     // Note: your Student.assistantId is STRING, so convert assistantId to string
-    const students = await Student.findAll({
-      where: { assistantId: String(assistantId) },
-      attributes: ['studentId', 'studentName', 'totalScore']
-    });
+    const students = await student.getStudentsByAssistant(assistantId);
 
     // 📝 Fetch all assignments and quizzes for this topic
     const [assignments, quizzes] = await Promise.all([
       Assignment.findAll({
         where: { topicId: topic.topicId },
-        attributes: ['assignId', 'title', 'mark']
+        attributes: [['assignId', 'id'], 'title', 'mark']
       }),
       Quiz.findAll({
         where: { topicId: topic.topicId },
-        attributes: ['quizId', 'title', 'mark']
+        attributes: [['quizId','id'], 'title', 'mark']
       })
     ]);
 

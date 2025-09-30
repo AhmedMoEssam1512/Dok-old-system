@@ -7,6 +7,7 @@ const Topic = sequelize.define('Topic', {
   topicName: { type: DataTypes.STRING, allowNull: false },
   // topicStartDate: { type: DataTypes.DATE, allowNull: true},
   // topicEndDate: { type: DataTypes.DATE, allowNull: true },
+  group: { type: DataTypes.STRING, allowNull: false },
   semester: { type: DataTypes.STRING, allowNull: false },
   publisher: { type: DataTypes.INTEGER, allowNull: false },
   subject: { type: DataTypes.STRING, allowNull: false },

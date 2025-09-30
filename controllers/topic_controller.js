@@ -21,8 +21,8 @@ const createTopic = asyncWrapper(async (req, res) => {
     const publisher = req.admin.id;
     const group = req.admin.group;
     console.log("publisher id:", publisher)
-    console.log("Creating topic with data:", { topicName, semester, subject });
-    const newTopic = await topic.createTopic( topicName, semester, publisher, subject );
+    console.log("Creating topic with data:", { topicName, semester, subject, group });
+    const newTopic = await topic.createTopic( topicName, semester, publisher, subject, group);
     return res.status(201).json({
         status: "success",
        message: "Topic created successfully",

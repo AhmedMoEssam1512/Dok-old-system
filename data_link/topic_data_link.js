@@ -5,8 +5,8 @@ const Topic = require('../models/topic_model');
 // wah
 Topic.belongsTo(Admin, { foreignKey: 'publisher', as: 'publisherAdmin' });
 
-function createTopic(topicName, semester, publisher,subject) {
-    return Topic.create({ topicName, semester, publisher, subject});
+function createTopic(topicName, semester, publisher,subject,group) {
+    return Topic.create({ topicName, semester, publisher, subject, group });
 }
 
 function getTopicById(topicId) {

@@ -14,12 +14,13 @@ const { sanitizeInput } = require('../utils/sanitize.js');
 const checkFields = asyncWrapper(async (req, res, next) => {
     sanitizeInput(req.body);
     const {mark,quizPdf,date,semester,durationInMin} = req.body;
-
-    if (mark == null || quizPdf == null || date == null || semester == null || durationInMin == null) {
+    const nmark = parseFloat(mark);
+    const ndurationInMin = parseInt(durationInMin);
+    if (nmark == null || quizPdf == null || date == null || semester == null || ndurationInMin == null) {
         return next(new AppError("All fields are required", httpStatus.BAD_REQUEST));
     }
     console.log("chack 1 done, all fields present")
-    if (typeof mark !== 'number' || mark < 0) {
+    if (typeof nmark !== 'number' || nmark < 0) {
         return next(new AppError("Mark must be a non-negative number", httpStatus.BAD_REQUEST));
     }
     console.log("chack 2 done, mark valid")
@@ -42,7 +43,7 @@ const checkFields = asyncWrapper(async (req, res, next) => {
     }
     console.log("chack 5 done, semester valid")
 
-    if (typeof durationInMin !== 'number' || durationInMin <= 0) {
+    if (typeof ndurationInMin !== 'number' || ndurationInMin <= 0) {
         return next(new AppError("Duration must be a positive number", httpStatus.BAD_REQUEST));
     }
     console.log("chack 6 done, duration valid")

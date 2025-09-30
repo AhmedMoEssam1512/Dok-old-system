@@ -13,12 +13,13 @@ const { sanitizeInput } = require('../utils/sanitize.js');
 const checkField = asyncWrapper(async (req, res, next) => {
     sanitizeInput(req.body);
     const {mark, document,  endDate, semester, topicId, title, description}= req.body;
-    if (mark == null || document == null || semester == null || endDate == null || topicId == null || title == null || description == null) {
+    const nmark = Number(mark);
+    if (nmark == null || document == null || semester == null || endDate == null || topicId == null || title == null || description == null) {
         return next(new AppError("All fields are required", httpStatus.BAD_REQUEST));
     }
     console.log("chack 1 done, all fields present")
 
-    if (typeof mark !== 'number' || mark < 0) {
+    if (typeof nmark !== 'number' || nmark < 0) {
         return next(new AppError("Mark must be a non-negative number", httpStatus.BAD_REQUEST));
     }
     console.log("chack 2 done, mark valid")

@@ -54,7 +54,7 @@ router.route('/markSubmission/:id')
 router.route('/createReport/:topicId')
     .get(auth.adminProtect, report.createReport);
 
-router.route('/makeReportForStudent/:studentId')
+router.route('/makeReportForStudent/:studentId{/:topicId}')
     .get(auth.adminProtect, adminMiddleWare.checkAuthurityByID, getMyWeeklyReport);
 
 module.exports = router;

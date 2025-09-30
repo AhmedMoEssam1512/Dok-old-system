@@ -63,6 +63,10 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
       topic = await Topic.findOne({
         where: { topicId }
       });
+      const adminf = await admin.getAdminById(topic.publisher);
+      if(req.user.group !== adminf.group){
+        return next(new AppError("You do not have permission to view this topic", httpStatus.FORBIDDEN));
+      }
     } else {
       topic = await Topic.findOne({where:{group: req.user.group},
         order: [['createdAt', 'DESC']]

@@ -133,8 +133,34 @@ const submitQuiz = asyncWrapper(async (req, res, next) => {
     });
 });
 
+const modifyQuiz = asyncWrapper(async (req, res, next) => {
+    sanitizeInput(req.body);
+    const { title, description } = req.body;
+    const { quizId } = req.params;
 
-// get by topic id
+    const quizData = await quiz.getQuizById(quizId);
+    const modified = await Quiz.update({ title, description }, { where: { quizId } });
+    if (!quizData) {
+        return next(new AppError("Quiz not found", httpStatus.NOT_FOUND));
+    }
+    if (modified[0] === 0) {
+        return next(new AppError("No changes made or quiz not found", httpStatus.NOT_FOUND));
+    }
+    return res.status(200).json({
+        status: "success",
+        data: { message: "Quiz modified successfully" }
+    });
+});
+
+const deleteQuiz = asyncWrapper(async (req, res, next) => {
+    const { quizId } = req.params;
+    await quiz.findQuizAndDelete(quizId);
+    return res.status(200).json({
+        status: "success",
+        data: { message: "Quiz deleted successfully" }
+    });
+});
+
 
 module.exports = {
     createQuiz  ,
@@ -143,5 +169,7 @@ module.exports = {
     startQuiz,
     getActiveQuiz,
     submitActiveQuiz,
-    submitQuiz
+    submitQuiz,
+    modifyQuiz,
+    deleteQuiz
 };

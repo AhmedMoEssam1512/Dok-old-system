@@ -55,6 +55,10 @@ async function getQuizzesByTopicId(topicId) {
   });
 }
 
+function findQuizAndDelete(quizId) {
+    return Quiz.destroy({ where: { quizId } });
+}
+
 
 module.exports = {
      createQuiz,
@@ -64,5 +68,6 @@ module.exports = {
     updateQuizDates,
     createSubmission,
     findSubmissionByQuizAndStudent,
-    getQuizzesByTopicId
+    getQuizzesByTopicId,
+    findQuizAndDelete
 };

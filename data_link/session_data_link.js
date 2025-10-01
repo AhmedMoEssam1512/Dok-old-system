@@ -5,6 +5,7 @@ const {verify} = require("jsonwebtoken");
 const Admin = require('../models/admin_model');
 const { Op, fn, col } = require("sequelize")
 const Attendance = require('../models/attendance_model');
+const { get } = require('../routes/session_routes');
 
 
 function findSessionById(sessionId){
@@ -57,7 +58,7 @@ function recordAttendance(studentId, sessionId) {
     });
 }
 
-async function getAllAttendanceForSession(sessionId){
+async function getAllAttendanceForASession(sessionId){
     return await Attendance.findAll({
         where: { sessionId },
         attributes : {include : [['attId','id']]},
@@ -71,5 +72,6 @@ module.exports={
 //    findAllUpcomingSessionByGroup,
     getActiveSessionByGroup,
     hasAttendedSession,
-    recordAttendance
+    recordAttendance,
+    getAllAttendanceForASession
 }

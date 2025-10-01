@@ -8,7 +8,7 @@ const studentMiddleWare = require('../middleware/student_middleware');
 const sessionMiddleWare = require('../middleware/session_middleware');
 
 router.route('/attendSession')
-    .post(auth.studentProtect,sessionMiddleWare.canAccessActiveSession,  sessionControllers.attendSession);
+    .post(auth.studentProtect,sessionMiddleWare.activeSessionExists,  sessionControllers.attendSession);
 
 // router.route('/createSession')
 //     .post(auth.adminProtect, sessionControllers.createSession);
@@ -29,7 +29,7 @@ router.route('/endSession')
     .patch(auth.adminProtect, sessionControllers.endSession);
 
 router.route('/getAllAttendanceForSession/:sessionId')
-    .get(auth.adminProtect, sessionMiddleWare.sessionFound, sessionMiddleWare.canAccessSession, studentControllers.getAllAttendanceForSession);
+    .get(auth.adminProtect, sessionMiddleWare.sessionFound, sessionMiddleWare.canAccessSession, sessionControllers.getAllAttendanceForSession);
 
 
 module.exports = router;

@@ -5,7 +5,6 @@ const {verify} = require("jsonwebtoken");
 const Admin = require('../models/admin_model');
 const { Op, fn, col } = require("sequelize")
 const Attendance = require('../models/attendance_model');
-const { get } = require('../routes/session_routes');
 
 
 function findSessionById(sessionId){

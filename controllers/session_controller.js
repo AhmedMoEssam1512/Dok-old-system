@@ -88,7 +88,7 @@ const getAllAttendanceForSession=asyncWrapper(async (req, res, next) => {
     sanitizeInput(req.params);
     const adminGroup = req.admin.group;
     const sessionToGet = req.sessionData;
-    const attendanceRecords = await session.getAllAttendanceForSession(sessionToGet.sessionId);
+    const attendanceRecords = await session.getAllAttendanceForASession(sessionToGet.sessionId);
     return res.status(200).json({
         status: "success",
         results: attendanceRecords.length,

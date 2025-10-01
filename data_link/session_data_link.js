@@ -96,23 +96,16 @@ async function findAllSessionsByStudentGroup(group, studentId) {
       },
       {
         model: Attendance,
-        attributes: [], // We don't need to select any columns from Attendance
+        attributes: [], 
         where: { studentId: studentId },
-        required: false // ← LEFT JOIN (important!)
+        required: false // LEFT JOIN
       }
     ],
     attributes: {
       include: [
         [
-          sequelize.fn(
-            'CASE',
-            sequelize.when(
-              sequelize.col('Attendances.attId'),
-              true
-            ),
-            false
-          ),
-          'attended' // ← This becomes session.attended
+          sequelize.literal(`CASE WHEN "Attendances"."attId" IS NOT NULL THEN true ELSE false END`),
+          'attended'
         ]
       ]
     }

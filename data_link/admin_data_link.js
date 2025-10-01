@@ -80,14 +80,15 @@ function getAdminById(adminId){
     });
 }
 
-function createSession(number, semester, dateAndTime, adminId, link) {
+function createSession(topicId, group, semester, dateAndTime, day) {
     return Session.create({
-        number,
+        topicId,
         semester,
         dateAndTime,
-        adminId,
-        link
+        group,
+        day
     })};
+    
 
 function checkAssistantGroup(group){
     return Admin.findAll({

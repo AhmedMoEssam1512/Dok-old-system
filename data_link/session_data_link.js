@@ -30,9 +30,19 @@ async function findAllUpcomingSessionByGroup(group) {
     });
 }
 
+function getActiveSessionByGroup(group) {
+    return Session.findOne({
+        where: {
+            group,
+            finished: false
+        },
+        order: [['dateAndTime', 'DESC']]
+    });
+}
 
 module.exports={
     findSessionById,
     UpdateSession,
-    findAllUpcomingSessionByGroup
+    findAllUpcomingSessionByGroup,
+    getActiveSessionByGroup
 }

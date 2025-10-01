@@ -4,6 +4,8 @@ const {where} = require("sequelize");
 const {verify} = require("jsonwebtoken");
 const Admin = require('../models/admin_model');
 const { Op, fn, col } = require("sequelize")
+const Attendance = require('../models/attendance_model');
+
 
 function findSessionById(sessionId){
     return Session.findOne({where : { sessionId } });
@@ -38,9 +40,36 @@ function getActiveSessionByGroup(group) {
     });
 }
 
+function hasAttendedSession(studentId, sessionId) {
+    return Attendance.findOne({
+        where: {
+            studentId,
+            sessionId
+        }
+    });
+}
+
+function recordAttendance(studentId, sessionId) {
+    return Attendance.create({
+        studentId,
+        sessionId,
+        recordedAt: new Date()
+    });
+}
+
+async function getAllAttendanceForSession(sessionId){
+    return await Attendance.findAll({
+        where: { sessionId },
+        attributes : {include : [['attId','id']]},
+        order: [['recordedAt', 'ASC']]
+    });
+}
+
 module.exports={
     findSessionById,
     UpdateSession,
 //    findAllUpcomingSessionByGroup,
-    getActiveSessionByGroup
+    getActiveSessionByGroup,
+    hasAttendedSession,
+    recordAttendance
 }

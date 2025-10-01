@@ -59,12 +59,8 @@ const sessionStarted = asyncWrapper(async (req, res, next) => {
 const canAccessSession = asyncWrapper(async (req, res, next) => {
     sanitizeInput(req.params);
     const userGroup = req.admin.group;
-    const sessionData = await session.findSessionById(req.params.sessionId);
-    const publisher = await admin.findAdminById(sessionData.adminId);
-    if (!publisher) {
-        return next(new AppError("Publisher not found", httpStatus.NOT_FOUND));
-    }
-    if (publisher.group !== 'all' && publisher.group !== userGroup&& userGroup !== 'all') {
+    const sessionData = req.sessionData;
+    if (sessionData.group !== 'all' && sessionData.group !== userGroup&& userGroup !== 'all') {
         return next(new AppError("You do not have permission to access this session", httpStatus.FORBIDDEN));
     }
     console.log("User has permission to access the session");
@@ -90,10 +86,7 @@ const canAccessActiveSession = asyncWrapper(async (req, res, next) => {
 
 const activeSessionExists = asyncWrapper(async (req, res, next) => {
     const userGroup = req.student.group;
-    let activeSession = await getCache(`activeSession:${userGroup}`);
-    if (!activeSession) {
-        activeSession = await getCache("activeSession:all");
-    }
+    const activeSession = await session.getActiveSessionByGroup(userGroup);
     if (!activeSession) {
         return next(new AppError("No active session found for your group", httpStatus.NOT_FOUND));
     }

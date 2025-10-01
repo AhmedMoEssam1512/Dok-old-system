@@ -65,30 +65,36 @@ const endSession = asyncWrapper(async (req, res, next) => {
     });
 })
 
-// const attendSession = asyncWrapper(async (req, res, next) => {
-//     sanitizeInput(req.params);
-//     const sessionId = req.activeSession?.sessionId || req.params.sessionId;
-//     if (!sessionId) {
-//         return next(new AppError("Session ID missing", httpStatus.BAD_REQUEST));
-//     }
+const attendSession = asyncWrapper(async (req, res, next) => {
+    sanitizeInput(req.params);
+    const stud = req.student;
+    const currSession = req.activeSession;
+    const isAttended = await session.hasAttendedSession(stud.id, currSession.sessionId);
+    if (isAttended) {
+        return res.status(200).json({
+            status: "success",
+            data: { message: "Re-attending this session" }
+        });
+    }
+    await session.recordAttendance(stud.id, currSession.sessionId);
+    return res.status(200).json({
+        status: "success",
+        data: { message: "Attendance recorded successfully" }
+    });
+});
 
-//     const decoded = jwt.verify(
-//         req.headers.authorization.split(' ')[1],
-//         process.env.JWT_SECRET
-//     );
-//     const studentId = decoded.id;
 
-//     const studentData = await student.findStudentById(studentId);
-//     const sem = studentData.semester;
-
-//     await student.createAttendance(studentId, sessionId, sem);
-
-//     return res.status(200).json({
-//         status: "success",
-//         data: { message: "Attendance recorded successfully" }
-//     });
-// });
-
+const getAllAttendanceForSession=asyncWrapper(async (req, res, next) => {
+    sanitizeInput(req.params);
+    const adminGroup = req.admin.group;
+    const sessionToGet = req.sessionData;
+    const attendanceRecords = await session.getAllAttendanceForSession(sessionToGet.sessionId);
+    return res.status(200).json({
+        status: "success",
+        results: attendanceRecords.length,
+        data: { attendanceRecords }
+    });
+});
 
 
 // // const startSession = asyncWrapper(async (req, res) => {
@@ -143,9 +149,10 @@ const endSession = asyncWrapper(async (req, res, next) => {
 
 
 module.exports = {
-   // attendSession,
+    attendSession,
     startSession,
     endSession,
+    getAllAttendanceForSession,
     // getActiveSession,
     // getUpcomingSession
 }

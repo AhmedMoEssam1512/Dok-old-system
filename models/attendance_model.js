@@ -6,7 +6,6 @@ const Attendance = sequelize.define('Attendance', {
     autoIncrement: true  },
   studentId: DataTypes.STRING,
   recordedAt: DataTypes.DATE,
-  semester: DataTypes.STRING,
   sessionId: DataTypes.STRING
 }, { tableName: 'attendance', timestamps: false });
 

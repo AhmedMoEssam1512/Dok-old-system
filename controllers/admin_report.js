@@ -7,6 +7,9 @@ const Submission = require('../models/submission_model');
 const Topic = require('../models/topic_model');
 const topicDl = require('../data_link/topic_data_link.js');
 const { sanitizeInput } = require('../utils/sanitize.js');
+const Session = require('../models/session_model');
+const Attendance = require('../models/attendance_model');
+const sessionDl= require('../data_link/session_data_link.js');
 
 const getGradingSystem = () => {
   return {
@@ -42,6 +45,8 @@ const createReport = async (req, res) => {
     if (topic.group !== req.admin.group) {
       return res.status(403).json({ error: 'You are not authorized to access this topic.' });
     }
+
+    const totalSessions = await sessionDl.countTotalSessionsByTopic(topicId); 
 
     // 👥 Get all students assigned to this assistant
     const students = await student.getStudentsByAssistant(assistantId);
@@ -146,10 +151,13 @@ const createReport = async (req, res) => {
         };
       });
 
+      const sessionsTheStudentAttended = sessionDl.countAttendedSessionsByTopic(topicId, st.studentId);
+
       return {
         studentName: st.studentName,
         totalScore: st.totalScore,
-        detailedScores: [...assignmentResults, ...quizResults]
+        detailedScores: [...assignmentResults, ...quizResults],
+        sessionsAttended : sessionsTheStudentAttended
       };
     });
 
@@ -160,7 +168,8 @@ const createReport = async (req, res) => {
       semester: topic.semester,
       publisher: assistantId,
       role: 'assistant',
-      students: studentReports
+      students: studentReports,
+      totalSessions: totalSessions,
     });
 
   } catch (error) {

@@ -73,7 +73,8 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
     }
   
     
-
+    const topicSessions = await topicDl.countTotalSessionsByTopic(topic.topicId);
+    const attendedSessions = await sessionDl.countAttendedSessionsByTopic(topic.topicId, studentId);
     
     // Get assignments in this topic
     const assignments = await assignment.getAssignmentsByTopicId(topic.topicId);
@@ -87,7 +88,9 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
       topicTitle: topic.topicName, // adjust if it's actually "title" in your DB
       studentName: studentData.studentName,
       semester: topic.semester,
-      materials: []
+      materials: [],
+      totalSessions: topicSessions,
+      sessionsAttended: attendedSessions
     };
 
     const now = new Date();

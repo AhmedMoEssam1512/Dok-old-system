@@ -112,6 +112,30 @@ async function findAllSessionsByStudentGroup(group, studentId) {
   });
 }
 
+
+async function countAttendedSessionsByTopic(studentId, topicId) {
+  const count = await Attendance.count({
+    include: [
+      {
+        model: Session,
+        where: { topicId }, // Only sessions with this topicId
+        attributes: [] // We don't need session data, just the join
+      }
+    ],
+    where: {
+      studentId
+    }
+  });
+  return count;
+}
+
+async function countTotalSessionsByTopic(topicId) {
+  const count = await Session.count({
+    where: { topicId }
+  });
+  return count;
+}
+
 module.exports={
     findSessionById,
     UpdateSession,
@@ -121,5 +145,7 @@ module.exports={
     recordAttendance,
     getAllAttendanceForASession,
     findAllSessionsByAdminGroup,
-    findAllSessionsByStudentGroup
+    findAllSessionsByStudentGroup,
+    countAttendedSessionsByTopic,
+    countTotalSessionsByTopic
 }

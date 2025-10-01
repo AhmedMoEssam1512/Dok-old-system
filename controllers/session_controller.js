@@ -22,12 +22,13 @@ const startSession = asyncWrapper(async (req, res) => {
   const adminId = req.admin.id;
   const sgroup = req.body?.group && req.body.group.trim() !== ""   ? req.body.group   : req.admin.group;
   console.log("Admin Group:", sgroup); // Debugging line
+
   const adminN = await admin.findAdminById(adminId);
   const adminName = adminN.name;
   const today = new Date();
   const dayName = days[today.getDay()];
   const currTopic = await topicDl.getStudentLastTopic(sgroup);
-  await admin.createSession(currTopic.topicId,sgroup, currTopic.semester, today, dayName);
+  const newSession = await admin.createSession(currTopic.topicId,sgroup, currTopic.semester, today, dayName);
 
    sse.notifyStudents(admin.group, {
         event: "New Session Date",
@@ -39,7 +40,14 @@ const startSession = asyncWrapper(async (req, res) => {
       });
   return res.status(201).json({
     status: "success",
-    data: { message: "Session created successfully" }
+     message: "Session created successfully",
+    data: { id: newSession.sessionId,
+        topicId: newSession.topicId,
+        group: newSession.group,
+        semester: newSession.semester,
+        dateAndTime: newSession.dateAndTime,
+        day: newSession.day
+     }
   })});
 
 

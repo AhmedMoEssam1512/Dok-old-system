@@ -2,6 +2,7 @@ const sequelize = require('../config/database');
 const Student = require('../models/student_model.js');
 const student = require('../data_link/student_data_link');
 const admin = require('../data_link/admin_data_link.js');
+const Admin = require('../models/admin_model.js');
 const session = require('../data_link/session_data_link.js');
 const bcrypt = require('bcrypt');
 const AppError = require('../utils/app.error');
@@ -16,10 +17,11 @@ const topicDl = require('../data_link/topic_data_link.js');
 
 const startSession = asyncWrapper(async (req, res) => {
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    sanitizeInput(req.body);
+   // sanitizeInput(req.body);
   const { group } = req.body;
   const adminId = req.admin.id;
-  const sgroup = group || req.admin.group; 
+  const sgroup = req.body?.group && req.body.group.trim() !== ""   ? req.body.group   : req.admin.group;
+  console.log("Admin Group:", sgroup); // Debugging line
   const adminN = await admin.findAdminById(adminId);
   const adminName = adminN.name;
   const today = new Date();
@@ -27,13 +29,12 @@ const startSession = asyncWrapper(async (req, res) => {
   const currTopic = await topicDl.getStudentLastTopic(sgroup);
   await admin.createSession(currTopic.topicId,sgroup, currTopic.semester, today, dayName);
 
-   sse.notifyStudents(adminGroup, {
+   sse.notifyStudents(admin.group, {
         event: "New Session Date",
         message: `Group ${sgroup}, a date for the upcoming session has been dropped by ${adminName}. Please check your dashboard.`,
         post: {
-            number: number,
-            semester: semester,
-            dateAndTime: dateAndTime,
+            dateAndTime: today,
+            topic: currTopic.title,
         },
       });
   return res.status(201).json({
@@ -44,7 +45,7 @@ const startSession = asyncWrapper(async (req, res) => {
 
 const endSession = asyncWrapper(async (req, res, next) => {
     const adminGroup = req.admin.group;
-    const currSession = session.getActiveSessionByGroup(adminGroup);
+    const currSession = await session.getActiveSessionByGroup(adminGroup);
     if (!currSession) {
         return next(new AppError("No active session found for your group", httpStatus.NOT_FOUND));
     }

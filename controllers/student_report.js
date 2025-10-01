@@ -89,9 +89,9 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
       topicTitle: topic.topicName, // adjust if it's actually "title" in your DB
       studentName: studentData.studentName,
       semester: topic.semester,
-      materials: [],
       totalSessions: topicSessions,
-      sessionsAttended: attendedSessions
+      sessionsAttended: attendedSessions,
+      materials: [],
     };
 
     const now = new Date();

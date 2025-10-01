@@ -102,74 +102,71 @@ const createReport = async (req, res) => {
     const grading = getGradingSystem();
 
     // 👨‍🎓 Generate report for each student
-    const studentReports = students.map(st => {
-      // Assignments
-      const assignmentResults = assignments.map(ass => {
-        const rawScore = submissionsMap[`${st.studentId}-assignment-${ass.assignId}`];
-        const maxMark = ass.mark || 0;
+    const studentReports = await Promise.all(
+      students.map(async (st) => {
+        // Assignments
+        const assignmentResults = assignments.map(ass => {
+          const rawScore = submissionsMap[`${st.studentId}-assignment-${ass.assignId}`];
+          const maxMark = ass.mark || 0;
+          const displayedScore = (rawScore == null) ? "unmarked" : rawScore;
+          const percentage = (rawScore != null && maxMark > 0)
+            ? parseFloat(((rawScore / maxMark) * 100).toFixed(2))
+            : 'N/A';
 
-        const displayedScore = (rawScore === null || rawScore === undefined)
-          ? "unmarked"
-          : rawScore;
+          return {
+            type: 'assignment',
+            id: ass.assignId,
+            title: ass.title,
+            maxMark,
+            score: displayedScore,
+            percentage,
+            grade: percentage !== 'N/A' ? grading.calculateGrade(percentage) : 'N/A'
+          };
+        });
 
-        const percentage = (rawScore !== null && rawScore !== undefined && maxMark > 0)
-          ? parseFloat(((rawScore / maxMark) * 100).toFixed(2))
-          : 'N/A';
+        // Quizzes
+        const quizResults = quizzes.map(qz => {
+          const rawScore = submissionsMap[`${st.studentId}-quiz-${qz.quizId}`];
+          const maxMark = qz.mark || 0;
+          const displayedScore = (rawScore == null) ? "unmarked" : rawScore;
+          const percentage = (rawScore != null && maxMark > 0)
+            ? parseFloat(((rawScore / maxMark) * 100).toFixed(2))
+            : 'N/A';
+
+          return {
+            type: 'quiz',
+            id: qz.quizId,
+            title: qz.title,
+            maxMark,
+            score: displayedScore,
+            percentage,
+            grade: percentage !== 'N/A' ? grading.calculateGrade(percentage) : 'N/A'
+          };
+        });
+
+        // ✅ Now this works!
+        const sessionsTheStudentAttended = await sessionDl.countAttendedSessionsByTopic(
+          st.studentId,
+          topicId
+        );
 
         return {
-          type: 'assignment',
-          id: ass.assignId,
-          title: ass.title,
-          maxMark: maxMark,
-          score: displayedScore,
-          percentage: percentage,
-          grade: percentage !=='N/A'? grading.calculateGrade(percentage):'N/A'
+          studentName: st.studentName,
+          totalScore: st.totalScore,
+          sessionsAttended: sessionsTheStudentAttended,
+          detailedScores: [...assignmentResults, ...quizResults],
         };
-      });
-
-      // Quizzes
-      const quizResults = quizzes.map(qz => {
-        const rawScore = submissionsMap[`${st.studentId}-quiz-${qz.quizId}`];
-        const maxMark = qz.mark || 0;
-
-        const displayedScore = (rawScore === null || rawScore === undefined)
-          ? "unmarked"
-          : rawScore;
-
-        const percentage = (rawScore !== null && rawScore !== undefined && maxMark > 0)
-          ? parseFloat(((rawScore / maxMark) * 100).toFixed(2))
-          : 'N/A';
-
-        return {
-          type: 'quiz',
-          id: qz.quizId,
-          title: qz.title,
-          maxMark: maxMark,
-          score: displayedScore,
-          percentage: percentage,
-          grade: percentage !=='N/A'? grading.calculateGrade(percentage):'N/A'
-        };
-      });
-
-      const sessionsTheStudentAttended = sessionDl.countAttendedSessionsByTopic( st.studentId,topicId);
-
-      return {
-        studentName: st.studentName,
-        totalScore: st.totalScore,
-        sessionsAttended : sessionsTheStudentAttended,
-        detailedScores: [...assignmentResults, ...quizResults],
-      };
-    });
-
+      })
+    );
     // 📤 Final response
     return res.json({
       id: topic.topicId,
       topicName: topic.topicName,
+      totalSessions: totalSessions,
       semester: topic.semester,
       publisher: assistantId,
       role: 'assistant',
       students: studentReports,
-      totalSessions: totalSessions,
     });
 
   } catch (error) {

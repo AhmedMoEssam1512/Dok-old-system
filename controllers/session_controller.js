@@ -17,17 +17,17 @@ const topicDl = require('../data_link/topic_data_link.js');
 const startSession = asyncWrapper(async (req, res) => {
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     sanitizeInput(req.body);
-  const { group } = req.body;
   const adminId = req.admin.id;
-  const sgroup = group || req.admin.group; 
+  const sgroup = req.body.group || req.admin.group;
+  console.log(sgroup); 
   const adminN = await admin.findAdminById(adminId);
   const adminName = adminN.name;
   const today = new Date();
   const dayName = days[today.getDay()];
   const currTopic = await topicDl.getStudentLastTopic(sgroup);
-  await admin.createSession(currTopic.topicId,sgroup, currTopic.semester, today, dayName);
+  const newSession = await admin.createSession(currTopic.topicId,sgroup, currTopic.semester, today, dayName);
 
-   sse.notifyStudents(adminGroup, {
+   sse.notifyStudents(sgroup, {
         event: "New Session Date",
         message: `Group ${sgroup}, a date for the upcoming session has been dropped by ${adminName}. Please check your dashboard.`,
         post: {
@@ -38,7 +38,14 @@ const startSession = asyncWrapper(async (req, res) => {
       });
   return res.status(201).json({
     status: "success",
-    data: { message: "Session created successfully" }
+     message: "Session created successfully",
+    data: { id: newSession.sessionId,
+        topicId: newSession.topicId,
+        group: newSession.group,
+        semester: newSession.semester,
+        dateAndTime: newSession.dateAndTime,
+        day: newSession.day
+     }
   })});
 
 

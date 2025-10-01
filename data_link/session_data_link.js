@@ -5,6 +5,10 @@ const {verify} = require("jsonwebtoken");
 const Admin = require('../models/admin_model');
 const { Op, fn, col } = require("sequelize")
 const Attendance = require('../models/attendance_model');
+const Topic = require('../models/topic_model');
+Session.belongsTo(Topic, { foreignKey: 'topicId' });
+Session.hasMany(Attendance, { foreignKey: 'sessionId' });
+Attendance.belongsTo(Session, { foreignKey: 'sessionId' });
 
 
 function findSessionById(sessionId){
@@ -65,6 +69,56 @@ async function getAllAttendanceForASession(sessionId){
     });
 }
 
+async function findAllSessionsByAdminGroup(group) {
+  return await Session.findAll({
+    where: { group },
+    order: [['dateAndTime', 'DESC']],
+    include: [
+      {
+        model: Topic,
+        attributes: ['topicName', 'subject'], // only select what you need
+        required: true // ensures only sessions with a valid topic are returned
+      }
+    ]
+  });
+}
+
+
+async function findAllSessionsByStudentGroup(group, studentId) {
+  return await Session.findAll({
+    where: { group },
+    order: [['dateAndTime', 'DESC']],
+    include: [
+      {
+        model: Topic,
+        attributes: ['topicName', 'subject'],
+        required: true
+      },
+      {
+        model: Attendance,
+        attributes: [], // We don't need to select any columns from Attendance
+        where: { studentId: studentId },
+        required: false // ← LEFT JOIN (important!)
+      }
+    ],
+    attributes: {
+      include: [
+        [
+          sequelize.fn(
+            'CASE',
+            sequelize.when(
+              sequelize.col('Attendances.attId'),
+              true
+            ),
+            false
+          ),
+          'attended' // ← This becomes session.attended
+        ]
+      ]
+    }
+  });
+}
+
 module.exports={
     findSessionById,
     UpdateSession,
@@ -72,5 +126,7 @@ module.exports={
     getActiveSessionByGroup,
     hasAttendedSession,
     recordAttendance,
-    getAllAttendanceForASession
+    getAllAttendanceForASession,
+    findAllSessionsByAdminGroup,
+    findAllSessionsByStudentGroup
 }

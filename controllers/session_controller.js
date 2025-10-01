@@ -96,41 +96,58 @@ const getAllAttendanceForSession=asyncWrapper(async (req, res, next) => {
     });
 });
 
+const getAllSessions = asyncWrapper(async (req, res, next) => {
+    const userGroup = req.user.group;
+    const userType = req.user.type; // 'student' or 'admin'
+    const userId = req.user.id;
+    let sessions; 
+    if (userType === 'admin') {
+        sessions = await session.findAllSessionsByAdminGroup(userGroup);
+    } else if (userType === 'student') {
+        sessions = await session.findAllSessionsByStudentGroup(userGroup, userId);
+    }
+    return res.status(200).json({
+        status: "success",
+        results: sessions.length,
+        data: { sessions }
+    });
 
-// // const startSession = asyncWrapper(async (req, res) => {
-// //     sanitizeInput(req.params);
-// //     const { sessionId } = req.params;
-// //     const adminGroup = req.admin.group;
+})
+
+// const startSession = asyncWrapper(async (req, res) => {
+//     sanitizeInput(req.params);
+//     const { sessionId } = req.params;
+//     const adminGroup = req.admin.group;
     
-// //     const sessionsData = await session.findSessionById(sessionId);
-// //     if (!sessionsData) {
-// //         return next(new AppError("Session not found", httpStatus.NOT_FOUND));
-// //     }
+//     const sessionsData = await session.findSessionById(sessionId);
+//     if (!sessionsData) {
+//         return next(new AppError("Session not found", httpStatus.NOT_FOUND));
+//     }
 
-// //     // Update session start time
-// //     await session.UpdateSession(sessionId, new Date());
+//     // Update session start time
+//     await session.UpdateSession(sessionId, new Date());
 
-// //     const cacheKey = `activeSession:${adminGroup}`;
+//     const cacheKey = `activeSession:${adminGroup}`;
 
-// //     // ✅ no need to remap keys
-// //     await setCache(cacheKey, sessionsData, 9000);
+//     // ✅ no need to remap keys
+//     await setCache(cacheKey, sessionsData, 9000);
 
-// //     // Notify students
-// //     sse.notifyStudents(adminGroup, {
-// //         event: "Session Started",
-// //         message: `Group ${adminGroup}, the session has started. Please join using the provided link.`,
-// //         post: {
-// //             sessionId: sessionsData.sessionId, // 👈 already exists
-// //             link: sessionsData.link,
-// //             dateAndTime: sessionsData.dateAndTime
-// //         },
-// //     });
+//     // Notify students
+//     sse.notifyStudents(adminGroup, {
+//         event: "Session Started",
+//         message: `Group ${adminGroup}, the session has started. Please join using the provided link.`,
+//         post: {
+//             sessionId: sessionsData.sessionId, // 👈 already exists
+//             link: sessionsData.link,
+//             dateAndTime: sessionsData.dateAndTime
+//         },
+//     });
 
-// //     return res.status(200).json({
-// //         status: "success",
-// //         data: { message: "Session started and students notified" }
-// //     });
-// // });
+//     return res.status(200).json({
+//         status: "success",
+//         data: { message: "Session started and students notified" }
+//     });
+// });
 
 // const getActiveSession = asyncWrapper(async (req, res, next) => {
 //     const activeSession = req.activeSession;
@@ -153,6 +170,7 @@ module.exports = {
     startSession,
     endSession,
     getAllAttendanceForSession,
+    getAllSessions,
     // getActiveSession,
     // getUpcomingSession
 }

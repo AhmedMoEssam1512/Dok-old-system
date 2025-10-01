@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth_middleware');
 const sessionControllers = require('../controllers/session_controller');
-const { establishAdminConnection } = require('../controllers/SSE_connection');
 const studentControllers = require('../controllers/student_controller');
 const studentMiddleWare = require('../middleware/student_middleware');
 const sessionMiddleWare = require('../middleware/session_middleware');
@@ -31,5 +30,7 @@ router.route('/endSession')
 router.route('/getAllAttendanceForSession/:sessionId')
     .get(auth.adminProtect, sessionMiddleWare.sessionFound, sessionMiddleWare.canAccessSession, sessionControllers.getAllAttendanceForSession);
 
+router.route('/getAllSessions')
+    .get(auth.protect, sessionControllers.getAllSessions);
 
 module.exports = router;

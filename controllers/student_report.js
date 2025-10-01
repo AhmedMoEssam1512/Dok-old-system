@@ -20,6 +20,7 @@ const quiz = require('../data_link/quiz_data_link.js');
 const Topic = require('../models/topic_model');
 const topicDl = require('../data_link/topic_data_link.js');
 const { sanitizeInput } = require('../utils/sanitize.js');
+const sessionDl = require('../data_link/session_data_link.js');
 
 // Helper: normalize null/undefined values to "N/A"
 const normalize = (value) => (value === null || value === undefined ? "N/A" : value);
@@ -73,7 +74,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
     }
   
     
-    const topicSessions = await topicDl.countTotalSessionsByTopic(topic.topicId);
+    const topicSessions = await sessionDl.countTotalSessionsByTopic(topic.topicId);
     const attendedSessions = await sessionDl.countAttendedSessionsByTopic(topic.topicId, studentId);
     
     // Get assignments in this topic

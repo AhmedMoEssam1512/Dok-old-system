@@ -114,19 +114,19 @@ async function findAllSessionsByStudentGroup(group, studentId) {
 
 
 async function countAttendedSessionsByTopic(studentId, topicId) {
-  const count = await Attendance.count({
+  const attendances = await Attendance.findAll({
+    where: { studentId },
     include: [
       {
         model: Session,
-        where: { topicId }, // Only sessions with this topicId
-        attributes: [] // We don't need session data, just the join
+        where: { topicId },
+        attributes: [] // don't select session fields
       }
     ],
-    where: {
-      studentId
-    }
+    attributes: ['attId'], // only select primary key (minimize data)
+    raw: true // optional: faster, returns plain objects
   });
-  return count;
+  return attendances.length;
 }
 
 async function countTotalSessionsByTopic(topicId) {

@@ -114,7 +114,7 @@ const createReport = async (req, res) => {
 
         const percentage = (rawScore !== null && rawScore !== undefined && maxMark > 0)
           ? parseFloat(((rawScore / maxMark) * 100).toFixed(2))
-          : 0;
+          : 'N/A';
 
         return {
           type: 'assignment',
@@ -123,7 +123,7 @@ const createReport = async (req, res) => {
           maxMark: maxMark,
           score: displayedScore,
           percentage: percentage,
-          grade: grading.calculateGrade(percentage)
+          grade: percentage !=='N/A'? grading.calculateGrade(percentage):'N/A'
         };
       });
 
@@ -138,7 +138,7 @@ const createReport = async (req, res) => {
 
         const percentage = (rawScore !== null && rawScore !== undefined && maxMark > 0)
           ? parseFloat(((rawScore / maxMark) * 100).toFixed(2))
-          : 0;
+          : 'N/A';
 
         return {
           type: 'quiz',
@@ -147,7 +147,7 @@ const createReport = async (req, res) => {
           maxMark: maxMark,
           score: displayedScore,
           percentage: percentage,
-          grade: grading.calculateGrade(percentage)
+          grade: percentage !=='N/A'? grading.calculateGrade(percentage):'N/A'
         };
       });
 

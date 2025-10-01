@@ -75,7 +75,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
   
     
     const topicSessions = await sessionDl.countTotalSessionsByTopic(topic.topicId);
-    const attendedSessions = await sessionDl.countAttendedSessionsByTopic(topic.topicId, studentId);
+    const attendedSessions = await sessionDl.countAttendedSessionsByTopic( studentId, topic.topicId);
     
     // Get assignments in this topic
     const assignments = await assignment.getAssignmentsByTopicId(topic.topicId);

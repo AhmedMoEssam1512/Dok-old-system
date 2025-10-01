@@ -151,13 +151,13 @@ const createReport = async (req, res) => {
         };
       });
 
-      const sessionsTheStudentAttended = sessionDl.countAttendedSessionsByTopic(topicId, st.studentId);
+      const sessionsTheStudentAttended = sessionDl.countAttendedSessionsByTopic( st.studentId,topicId);
 
       return {
         studentName: st.studentName,
         totalScore: st.totalScore,
+        sessionsAttended : sessionsTheStudentAttended,
         detailedScores: [...assignmentResults, ...quizResults],
-        sessionsAttended : sessionsTheStudentAttended
       };
     });
 

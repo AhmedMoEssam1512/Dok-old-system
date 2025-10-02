@@ -136,6 +136,37 @@ async function countTotalSessionsByTopic(topicId) {
   return count;
 }
 
+async function getSessionsByTopic(topicId, studentId) {
+  const sessions = await Session.findAll({
+    where: { topicId },
+    order: [['dateAndTime', 'ASC']],
+    include: [
+      {
+        model: Attendance,
+        where: { studentId },
+        required: false, // LEFT JOIN, so even missed sessions are included
+        attributes: []
+      }
+    ],
+    attributes: {
+      include: [
+        [
+          sequelize.literal(`CASE WHEN "Attendances"."attId" IS NOT NULL THEN true ELSE false END`),
+          'attended'
+        ]
+      ]
+    }
+  });
+
+  return sessions.map(s => ({
+    sessionId: s.sessionId,
+    title: s.title,
+    date: s.dateAndTime,
+    status: s.getDataValue('attended') ? 'Attended' : 'Missed'
+  }));
+}
+
+
 module.exports={
     findSessionById,
     UpdateSession,
@@ -147,5 +178,6 @@ module.exports={
     findAllSessionsByAdminGroup,
     findAllSessionsByStudentGroup,
     countAttendedSessionsByTopic,
-    countTotalSessionsByTopic
+    countTotalSessionsByTopic,
+    getSessionsByTopic
 }

@@ -80,7 +80,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
     // Default quiz grade
     let quizGrade = "N/A";
 
-    // Build base report object with quizGrade above materials
+    // Build base report object
     const reportData = {
       id: topic.topicId,
       topicTitle: topic.topicName,
@@ -90,11 +90,16 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
       sessionsAttended: attendedSessions,
       totalAssignments: assignments.length,
       submittedAssignments: 0,
-      quizGrade,   // <-- quizGrade before materials
+      quizGrade,
       materials: [],
+      sessions: [] // 👈 sessions go here
     };
 
     const now = new Date();
+
+    // ==================== ADD SESSIONS SECTION ====================
+    reportData.sessions = await sessionDl.getSessionsByTopic(topic.topicId, studentId);
+    // ===============================================================
 
     // Process assignments
     for (let index = 0; index < assignments.length; index++) {
@@ -125,7 +130,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
       });
     }
 
-    // Process quizzes (one per topic)
+    // Process quizzes
     for (let index = 0; index < quizzes.length; index++) {
       const quizItem = quizzes[index];
       const submission = await getStudentSubmissionForQuiz(studentId, quizItem.quizId);
@@ -190,6 +195,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
     });
   }
 });
+
 
 
 

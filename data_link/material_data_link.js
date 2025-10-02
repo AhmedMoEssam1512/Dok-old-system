@@ -37,7 +37,8 @@ async function getAllMaterialsByGroup(group) {
             },
             { model: Topic, attributes: ['subject'] }
         ],
-        attributes:{include : [['materialId', 'id']]} });
+        attributes:{include : [['materialId', 'id']]} ,
+        order: [['materialId', 'DESC']]});
     }
 
 async function getMaterialsByTopicId(topicId) {

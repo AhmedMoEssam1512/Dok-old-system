@@ -64,7 +64,7 @@ function getGroupById(studentId){
 }
 
 function showSubmissions(studentId){
-    return Submission.findAll({where:{studentId}})
+    return Submission.findAll({where:{studentId}, order: [['subId', 'DESC']]});
 }
 
 function getTotalNumberOfStudents(){

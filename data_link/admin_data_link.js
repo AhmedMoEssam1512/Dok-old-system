@@ -130,12 +130,12 @@ function findAdminById(adminID ){
 
 function getUnmarkedSubmissionsByAdminId(assistantId){
     console.log(assistantId);
-    return Submission.findAll({where: { assistantId ,score : null}});
+    return Submission.findAll({where: { assistantId ,score : null}, order: [['subId', 'DESC']]});
 }
 
 function getAllUnmarkedSubmissions(){
     console.log("all sent")
-    return Submission.findAll({where: { score : null}})
+    return Submission.findAll({where: { score : null}, order: [['subId', 'DESC']]});
 }
 
 function findSubmissionById(subId) {
@@ -149,11 +149,12 @@ function findSubmissionById(subId) {
     });
 }
 function getAllSubmissions(){
-    return Submission.findAll({})
+    console.log("getting all submissions")
+    return Submission.findAll({order: [['subId', 'DESC']]});
 }
 
 function getAllSubmissionsById(assistantId){
-    return Submission.findAll({where: { assistantId }})
+    return Submission.findAll({where: { assistantId } , order: [['subId', 'DESC']]});
 }
 
 module.exports={

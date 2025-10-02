@@ -16,7 +16,7 @@ function createAssignment(mark, document, startDate, endDate, semester, publishe
 
 async function getAllAssignments() {
   return Assignment.findAll({
-    include: { model: Topic, attributes: ['subject',['assignId', 'id']] }
+    include: { model: Topic, attributes: ['subject',['assignId', 'id']], order: [['assignId', 'DESC']] },
   });
 }
 
@@ -46,7 +46,7 @@ async function getAllAssignmentsByGroup(group) {
                 attributes: []
             }
         ],
-        order: [['startDate', 'DESC']] 
+        order: [['assignId', 'DESC']] 
     });
 }
 function getAssignmentById(assignId){
@@ -76,7 +76,7 @@ async function getAssignmentsByTopicId(topicId) {
   return await Assignment.findAll({
     where: { topicId },
     attributes: ['assignId',['assignId', 'id'], 'title'], // only return id and name
-    order: [['startDate', 'DESC']]
+    order: [['assignId', 'DESC']]
   });
 }
 

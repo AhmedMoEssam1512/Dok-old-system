@@ -27,7 +27,8 @@ async function getAllTopicsByGroup(group) {
       where: { group: group },
       attributes: []          // don’t pull extra admin fields unless needed
     }],
-    attributes: {include : [['topicId', 'id']]}
+    attributes: {include : [['topicId', 'id']]},
+    order: [['createdAt', 'DESC']]
   });
 }
 
@@ -39,9 +40,12 @@ async function getTopicByAssistantId(topicId,assistantId) {
 
 
 function getAllTopics() {
-    return Topic.findAll(
-        { attributes: {include : [['topicId', 'id']]} }
-    );
+  return Topic.findAll({
+    attributes: {
+      include: [['topicId', 'id']]
+    },
+    order: [['createdAt', 'DESC']] // make sure topicId is a real column in your model
+  });
 }
 
 module.exports = {

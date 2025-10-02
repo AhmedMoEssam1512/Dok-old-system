@@ -14,7 +14,7 @@ function createQuiz(mark,publisher,quizPdf,date,semester,durationInMin,topicId, 
 function getAllQuizzes(){
     return Quiz.findAll({attributes : {include: [
         ['quizId', 'id'],
-    ]}});
+    ]}, order: [['quizId', 'DESC']]});
 };
 
 async function getAllQuizzesForGroup(group) {
@@ -31,7 +31,8 @@ async function getAllQuizzesForGroup(group) {
         }
       }
     ],
-    attributes: {include : [['quizId', 'id']] }
+    attributes: {include : [['quizId', 'id']] },
+    order: [['quizId', 'DESC']]
   });
 }
 
@@ -51,13 +52,13 @@ function createSubmission(quizId, studentId,assistantId ,answers, semester) {
 }
 
 function findSubmissionByQuizAndStudent(quizId,studentId){
-    return Submission.findOne({where :{quizId,studentId,type:"quiz"}})
+    return Submission.findOne({where :{quizId,studentId,type:"quiz"}, order: [['subDate', 'DESC']]});
 }
 
 async function getQuizzesByTopicId(topicId) {
     return await Quiz.findAll({
     where: { topicId },
-    attributes: ['quizId',['quizId', 'id'], 'title'], // only return id and name
+    attributes: ['quizId',['quizId', 'id'], 'title'], order: ['quizId','DESC'] // only return id and name
   });
 }
 

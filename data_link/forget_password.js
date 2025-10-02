@@ -1,3 +1,4 @@
+const sequelize = require('../config/database');
 const Student = require('../models/student_model');
 const Admin = require('../models/admin_model');
 const OTP = require('../models/otp');
@@ -96,6 +97,18 @@ function deleteOTP(email,otp){
   })
 }
 
+async function deleteOtpBySemester(semester) {
+  return OTP.destroy({
+    where: {
+      email: {
+        [Op.in]: sequelize.literal(`(
+          SELECT "studentEmail" FROM student WHERE semester = ${sequelize.escape(semester)}
+        )`)
+      }
+    }
+  });
+}
+
 module.exports = {
   findUserByEmail,
   HasOTP,
@@ -107,5 +120,6 @@ module.exports = {
   addOTP,
   deleteOTP,
   findOTP,
-  findOTPByEmail
+  findOTPByEmail,
+  deleteOtpBySemester
 }

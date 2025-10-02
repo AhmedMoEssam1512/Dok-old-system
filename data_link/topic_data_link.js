@@ -48,11 +48,16 @@ function getAllTopics() {
   });
 }
 
+function deleteTopicBySemester(semester) {
+    return Topic.destroy({ where: { semester } });
+}
+
 module.exports = {
     createTopic,
     getTopicById,
     getAllTopicsByGroup,
     getAllTopics,
     getStudentLastTopic,
-    getTopicByAssistantId
+    getTopicByAssistantId,
+    deleteTopicBySemester
 };

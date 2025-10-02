@@ -42,7 +42,7 @@ const studentRegister = asyncWrapper(async (req, res) => {
     groupl,
     semester
   );
-  await student.registerStudent(studentEmail, group);
+  await student.registerStudent(studentEmail, group, semester);
 
   // Notify only assistants in the same group
   notifyAssistants(group, {
@@ -181,6 +181,7 @@ const getQuizTrend = asyncWrapper(async (req, res) => {
 
   return res.status(200).json({ status: 'success', data: { points, chartPoints } });
 })
+
 
 module.exports = {
     studentRegister,

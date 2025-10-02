@@ -66,6 +66,9 @@ function findQuizAndDelete(quizId) {
     return Quiz.destroy({ where: { quizId } });
 }
 
+function deleteQuizBySemester(semester) {
+    return Quiz.destroy({ where: { semester } });
+}
 
 module.exports = {
      createQuiz,
@@ -76,5 +79,6 @@ module.exports = {
     createSubmission,
     findSubmissionByQuizAndStudent,
     getQuizzesByTopicId,
-    findQuizAndDelete
+    findQuizAndDelete,
+    deleteQuizBySemester
 };

@@ -91,6 +91,10 @@ function findAssignmentAndDelete(assignId){
 //   });
 // }
 
+function deleteAssignmentBySemester(semester) {
+    return Assignment.destroy({ where: { semester } });
+}
+
 module.exports={
     createAssignment,
     getAllAssignments,
@@ -100,5 +104,6 @@ module.exports={
     findSubmissionByQuizAndStudent,
     findSubmissionByAssignmentAndStudent,
     getAssignmentsByTopicId,
-    findAssignmentAndDelete
+    findAssignmentAndDelete,
+    deleteAssignmentBySemester
 }

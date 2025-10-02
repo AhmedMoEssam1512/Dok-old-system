@@ -29,9 +29,17 @@ async function getSubmissionForQuiz(studentId,quizId){
   });
 }
 
+function deleteSubmissionBySemester(semester){
+    return Submission.destroy({
+        where: {
+            semester
+        }
+    });
+}
+
 module.exports = { 
     getSubmissionForAssignment,
-    getSubmissionForQuiz
-
+    getSubmissionForQuiz,
+    deleteSubmissionBySemester
 }
 

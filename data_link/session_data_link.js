@@ -166,6 +166,23 @@ async function getSessionsByTopic(topicId, studentId) {
   }));
 }
 
+async function deleteAttendanceBySemester(semester) {
+  return Attendance.destroy({
+    where: {
+      sessionId: {
+        [Op.in]: sequelize.literal(`(
+          SELECT "sessionId" FROM "session" WHERE semester = ${sequelize.escape(semester)}
+        )`)
+      }
+    }
+  });
+}
+
+
+function deleteSessionsBySemester(semester){
+    return Session.destroy({ where: { semester } });
+}
+
 
 module.exports={
     findSessionById,
@@ -179,5 +196,7 @@ module.exports={
     findAllSessionsByStudentGroup,
     countAttendedSessionsByTopic,
     countTotalSessionsByTopic,
-    getSessionsByTopic
+    getSessionsByTopic,
+    deleteAttendanceBySemester,
+    deleteSessionsBySemester
 }

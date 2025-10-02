@@ -12,10 +12,10 @@ function findStudentByEmail(studentEmail){
     return Student.findOne({where : { studentEmail } })
 }
 
-function registerStudent(studentEmail, group){
+function registerStudent(studentEmail, group, semester){
     return Registration.create({
         studentEmail,
-        group});
+        group, semester});
 }
 
 function createStudent(studentName,studentEmail,password,parentEmail,birthDate,
@@ -134,6 +134,18 @@ async function getStudentsByAssistant(assistantId) {
     });
 }
 
+function deleteRegistrationBySemester(semester) {
+    return Registration.destroy({ where: { semester } });
+}
+
+function deleteRejectionsBySemester(semester) {
+    return Rejection.destroy({ where: { semester } });
+}
+
+function deleteStudentBySemester(semester) {
+    return Student.destroy({ where: { semester } });
+}
+
 
 module.exports={
     findStudentByEmail,
@@ -149,5 +161,8 @@ module.exports={
     showLeaderBoard,
     getStudentScore,
     getStudentRank,
-    getStudentsByAssistant
+    getStudentsByAssistant,
+    deleteRegistrationBySemester,
+    deleteRejectionsBySemester,
+    deleteStudentBySemester
 }

@@ -65,6 +65,18 @@ async function getMaterialByTopicId(topicId) {
   });
 }
 
+async function deleteMaterialBySemester(semester) {
+  return Material.destroy({
+    where: {
+      topicId: {
+        [Op.in]: sequelize.literal(`(
+          SELECT "topicId" FROM "topic" WHERE semester = ${sequelize.escape(semester)}
+        )`)
+      }
+    }
+  });
+}
+
 
 module.exports = {
     createMaterial,
@@ -73,5 +85,6 @@ module.exports = {
     getMaterialsByTopicId,
     updateMaterial,
     deleteMaterial,
-    getMaterialByTopicId
+    getMaterialByTopicId,
+    deleteMaterialBySemester
 };

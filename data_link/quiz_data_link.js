@@ -58,7 +58,7 @@ function findSubmissionByQuizAndStudent(quizId,studentId){
 async function getQuizzesByTopicId(topicId) {
     return await Quiz.findAll({
     where: { topicId },
-    attributes: ['quizId',['quizId', 'id'], 'title'], order: ['quizId','DESC'] // only return id and name
+    attributes: ['quizId',['quizId', 'id'], 'title'], order: [['quizId','DESC']] // only return id and name
   });
 }
 

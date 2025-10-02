@@ -52,7 +52,6 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
 
     // Get topic details
     let topic;
-    
     if (topicId) {
       topic = await topicDl.getTopicById(topicId);
       if (!topic) {
@@ -67,30 +66,31 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
           message: "You are not authorized to access this topic"
         });
       }
-
     } else {
-      
       topic = await topicDl.getStudentLastTopic(req.student.group);
     }
-  
-    
-    const topicSessions = await sessionDl.countTotalSessionsByTopic(topic.topicId);
-    const attendedSessions = await sessionDl.countAttendedSessionsByTopic( studentId, topic.topicId);
-    
-    // Get assignments in this topic
-    const assignments = await assignment.getAssignmentsByTopicId(topic.topicId);
 
-    // Get quizzes in this topic
+    const topicSessions = await sessionDl.countTotalSessionsByTopic(topic.topicId);
+    const attendedSessions = await sessionDl.countAttendedSessionsByTopic(studentId, topic.topicId);
+
+    // Get assignments & quizzes
+    const assignments = await assignment.getAssignmentsByTopicId(topic.topicId);
     const quizzes = await quiz.getQuizzesByTopicId(topic.topicId);
 
-    // Create report data
+    // Default quiz grade
+    let quizGrade = "N/A";
+
+    // Build base report object with quizGrade above materials
     const reportData = {
-      id:topic.topicId,
-      topicTitle: topic.topicName, // adjust if it's actually "title" in your DB
+      id: topic.topicId,
+      topicTitle: topic.topicName,
       studentName: studentData.studentName,
       semester: topic.semester,
       totalSessions: topicSessions,
       sessionsAttended: attendedSessions,
+      totalAssignments: assignments.length,
+      submittedAssignments: 0,
+      quizGrade,   // <-- quizGrade before materials
       materials: [],
     };
 
@@ -98,8 +98,8 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
 
     // Process assignments
     for (let index = 0; index < assignments.length; index++) {
-      const assignment = assignments[index];
-      const submission = await getStudentSubmissionForAssignment(studentId, assignment.assignId);
+      const assignmentItem = assignments[index];
+      const submission = await getStudentSubmissionForAssignment(studentId, assignmentItem.assignId);
 
       let status = "Missing";
       if (submission) {
@@ -108,30 +108,27 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
         } else {
           status = "Submitted (Pending Review)";
         }
-      } else {
-        if (assignment.endDate && new Date(assignment.endDate) > now) {
-          status = "Unsubmitted (Still Open)";
-        }
+        reportData.submittedAssignments++;
+      } else if (assignmentItem.endDate && new Date(assignmentItem.endDate) > now) {
+        status = "Unsubmitted (Still Open)";
       }
 
-      const assignmentData = {
+      reportData.materials.push({
         type: 'assignment',
-        id: assignment.assignId,
+        id: assignmentItem.assignId,
         columnName: `Hw${index + 1}`,
-        title: assignment.title,
-        maxPoints: assignment.mark, // your Assignment model uses "mark"
+        title: assignmentItem.title,
+        maxPoints: assignmentItem.mark,
         status,
         score: submission ? normalize(submission.score) : "N/A",
         feedback: submission ? normalize(submission.feedback) : "N/A"
-      };
-
-      reportData.materials.push(assignmentData);
+      });
     }
 
-    // Process quizzes
+    // Process quizzes (one per topic)
     for (let index = 0; index < quizzes.length; index++) {
-      const quiz = quizzes[index];
-      const submission = await getStudentSubmissionForQuiz(studentId, quiz.quizId);
+      const quizItem = quizzes[index];
+      const submission = await getStudentSubmissionForQuiz(studentId, quizItem.quizId);
 
       let percentage = "N/A";
       let grade = "N/A";
@@ -144,36 +141,40 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
           status = "Submitted (Pending Review)";
         }
 
-        if (submission.score !== null && submission.score !== undefined) {
-          percentage = (submission.score / quiz.mark) * 100;
+        const score = submission.score !== null && submission.score !== undefined ? Number(submission.score) : null;
+        const maxMark = quizItem.mark !== null && quizItem.mark !== undefined ? Number(quizItem.mark) : null;
+
+        if (score !== null && maxMark !== null && maxMark > 0) {
+          percentage = Number(((score / maxMark) * 100).toFixed(2));
 
           if (percentage >= 80) grade = 'A*';
           else if (percentage >= 70) grade = 'A';
           else if (percentage >= 60) grade = 'B';
           else if (percentage >= 50) grade = 'C';
           else grade = 'U';
+
+          quizGrade = grade; // update top-level quiz grade
         }
-      } else {
-        if (quiz.endDate && new Date(quiz.endDate) > now) {
-          status = "Unsubmitted (Still Open)";
-        }
+      } else if (quizItem.endDate && new Date(quizItem.endDate) > now) {
+        status = "Unsubmitted (Still Open)";
       }
 
-      const quizData = {
+      reportData.materials.push({
         type: 'quiz',
-        id: quiz.quizId,
+        id: quizItem.quizId,
         columnName: `Quiz${index + 1}`,
-        title: quiz.title,
-        maxPoints: quiz.mark,
+        title: quizItem.title,
+        maxPoints: quizItem.mark,
         status,
         score: submission ? normalize(submission.score) : "N/A",
-        percentage: normalize(percentage),
-        grade: normalize(grade),
+        percentage,
+        grade,
         feedback: submission ? normalize(submission.feedback) : "N/A"
-      };
-
-      reportData.materials.push(quizData);
+      });
     }
+
+    // update reportData with final quizGrade
+    reportData.quizGrade = quizGrade;
 
     return res.status(200).json({
       status: "success",
@@ -189,6 +190,9 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
     });
   }
 });
+
+
+
 
 module.exports = {
   getMyWeeklyReport

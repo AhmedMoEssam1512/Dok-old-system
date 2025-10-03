@@ -20,13 +20,7 @@ function getStudentLastTopic(group) {
 }
 
 async function getAllTopicsByGroup(group) {
-  return await Topic.findAll({
-    include: [{
-      model: Admin,
-      as: "publisherAdmin",   // make sure you define the alias in associations
-      where: { group: group },
-      attributes: []          // don’t pull extra admin fields unless needed
-    }],
+  return await Topic.findAll({where: { group },
     attributes: {include : [['topicId', 'id']]},
     order: [['createdAt', 'DESC']]
   });

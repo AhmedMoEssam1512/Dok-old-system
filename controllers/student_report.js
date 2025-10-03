@@ -79,7 +79,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
 
     // Default quiz grade
     let quizGrade = "N/A";
-    let quiz;
+    let quiz= null;
 
     // Build base report object
     const reportData = {

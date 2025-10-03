@@ -79,7 +79,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
 
     // Default quiz grade
     let quizGrade = "N/A";
-    let quiz= null;
+    let quizData= null;
 
     // Build base report object
     const reportData = {
@@ -92,7 +92,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
       totalAssignments: assignments.length,
       submittedAssignments: 0,
       quizGrade,
-      quiz,
+      quizData,
       materials: [],
       sessions: [] // 👈 sessions go here
     };
@@ -126,6 +126,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
         columnName: `Hw${index + 1}`,
         title: assignmentItem.title,
         maxPoints: assignmentItem.mark,
+        date: assignmentItem.startDate,
         status,
         score: submission ? normalize(submission.score) : "N/A",
         feedback: submission ? normalize(submission.feedback) : "N/A"
@@ -166,7 +167,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
         status = "Unsubmitted (Still Open)";
       }
 
-      quiz ={
+      quizData ={
         type: 'quiz',
         id: quizItem.quizId,
         columnName: `Quiz${index + 1}`,

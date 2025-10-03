@@ -56,7 +56,7 @@ const createReport = async (req, res) => {
 
     const quizzes = await Quiz.findOne({
       where: { topicId: topic.topicId },
-      attributes: ['quizId', 'mark']
+      attributes: ['quizId', 'mark','title']
     });
 
     // ✅ Use 0 instead of null
@@ -136,6 +136,7 @@ const createReport = async (req, res) => {
       return res.json({
       topicId: topic.topicId,
       topicName: topic.topicName,
+      quizTitle: quizzes.title,
       quizTotalScore ,
       numberOfAssignments,
       students: studentReports

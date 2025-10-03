@@ -183,7 +183,8 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
 
     // update reportData with final quizGrade
     reportData.quizGrade = quizGrade;
-
+    reportData.quizData = quizData;
+    
     return res.status(200).json({
       status: "success",
       message: "Weekly report generated successfully",

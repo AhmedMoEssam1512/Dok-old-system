@@ -2,7 +2,7 @@ const SSE = require('../utils/sseClients');
 const asyncWrapper = require("../middleware/asyncwrapper");
 const student = require('../data_link/student_data_link.js');
 
-const establishAdminConnection = asyncWrapper(async (req, res, next) => {
+const establishAdminConnection = async (req, res, next) => {
   if (!req.admin) {
     return res.status(401).json({ message: "Unauthorized: No admin found" });
   }
@@ -12,22 +12,22 @@ const establishAdminConnection = asyncWrapper(async (req, res, next) => {
   res.setHeader("Cache-Control", "no-cache, no-transform");
   res.setHeader("Connection", "keep-alive");
   res.flushHeaders?.();
-
+  const adminFound  = await admin.findAdminById(req.admin.id);
   // Confirm connection event
   res.write("event: connected\n");
   res.write(`data: ${JSON.stringify({
     message: "SSE connection established",
     admin: {
       id: req.admin.id,
-      email: req.admin.email,
-      name: req.admin.name,
-      role: req.admin.role,
+      email: adminFound.email,
+      name: adminFound.name,
+      role: adminFound.role,
       group: req.admin.group,
     },
   })}\n\n`);
 
   // Add admin to the SSE clients pool
-  SSE.addAdminClient(res, req.admin.email, req.admin.name, req.admin.role, req.admin.group);
+  SSE.addAdminClient(res, adminFound.email, adminFound.name, adminFound.role, req.admin.group);
 
   // Heartbeat to keep connection alive
   const hb = setInterval(() => {
@@ -39,9 +39,9 @@ const establishAdminConnection = asyncWrapper(async (req, res, next) => {
     clearInterval(hb);
     SSE.removeClient(res); // 👈 you need this function in your pool manager
   });
-});
+};
 
-const establishStudentConnection = asyncWrapper(async (req, res) => {
+const establishStudentConnection = async (req, res) => {
   console.log("🔍 Incoming SSE request for student...");
 
   if (!req.student) {
@@ -50,10 +50,9 @@ const establishStudentConnection = asyncWrapper(async (req, res) => {
   }
 
   console.log("✅ Student object from req:", req.student);
-
-  const found = await student.findStudentByEmail(req.student.email);
+  const found = await student.findStudentById(req.student.id);
   if (!found) {
-    console.log("❌ Student not found in DB:", req.student.email);
+    console.log("❌ Student not found in DB:", req.student.id);
     return res.status(404).json({ message: "Student not found in DB" });
   }
 
@@ -94,7 +93,7 @@ const establishStudentConnection = asyncWrapper(async (req, res) => {
   });
 
   console.log(`✅ SSE established and waiting for student ${found.studentEmail}`);
-});
+};
 
 
 module.exports = {

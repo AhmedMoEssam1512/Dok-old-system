@@ -154,7 +154,8 @@ const createReport = async (req, res) => {
           studentName: st.studentName,
           totalScore: st.totalScore,
           sessionsAttended: sessionsTheStudentAttended,
-          detailedScores: [...assignmentResults, ...quizResults],
+          quizResults: quizResults,
+          assignments: [...assignmentResults],
         };
       })
     );

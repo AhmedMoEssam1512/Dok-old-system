@@ -121,9 +121,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
       }
 
       reportData.materials.push({
-        type: 'assignment',
         id: assignmentItem.assignId,
-        columnName: `Hw${index + 1}`,
         title: assignmentItem.title,
         maxPoints: assignmentItem.mark,
         date: assignmentItem.startDate,

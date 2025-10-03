@@ -32,6 +32,10 @@ const adminProtect = async (req, res, next) => {
     if (decoded.type !== 'admin') {
       return next(new AppError('Not authorized as admin', 401));
     }
+    const admin = await Admin.findByPk(decoded.id);
+    if (!admin) {
+      return next(new AppError('Admin not found', 401));
+    }
     req.admin = decoded;
     console.log("admin protect finished") // attach payload
     next();
@@ -104,6 +108,23 @@ const protect = asyncWrapper(async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userType = decoded.type;
+    
+    let user;
+    if (userType === 'admin') {
+      user = await Admin.findByPk(decoded.id);
+      if (!user) {
+        return next(new AppError('Admin not found', 401));
+      }
+    } else if (userType === 'student') {
+      user = await Student.findByPk(decoded.id);
+      if (!user) {
+        return next(new AppError('Student not found', 401));
+      }
+      if (user.banned) {
+        return next(new AppError('Your account has been banned. ', 401));
+      } 
+    }
     req.user = decoded; // attach payload
     console.log("protect finished")
     next();

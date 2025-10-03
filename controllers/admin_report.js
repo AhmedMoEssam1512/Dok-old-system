@@ -46,29 +46,28 @@ const createReport = async (req, res) => {
       return res.status(403).json({ error: 'You are not authorized to access this topic.' });
     }
 
-    const totalSessions = await sessionDl.countTotalSessionsByTopic(topicId); 
-
     // 👥 Get all students assigned to this assistant
     const students = await student.getStudentsByAssistant(assistantId);
+    // Fetch assignments WITH title
+    const assignments = await Assignment.findAll({
+      where: { topicId: topic.topicId },
+      attributes: ['assignId', 'title', 'mark'] // ✅ ADDED 'title'
+    });
 
-    // 📝 Fetch all assignments and quizzes for this topic (keep real IDs!)
-    const [assignments, quizzes] = await Promise.all([
-      Assignment.findAll({
-        where: { topicId: topic.topicId },
-        attributes: ['assignId', 'title', 'mark']
-      }),
-      Quiz.findAll({
-        where: { topicId: topic.topicId },
-        attributes: ['quizId', 'title', 'mark']
-      })
-    ]);
+    const quizzes = await Quiz.findOne({
+      where: { topicId: topic.topicId },
+      attributes: ['quizId', 'mark']
+    });
+
+    // ✅ Use 0 instead of null
+    const quizTotalScore = quizzes?.mark ?? 0;
+    const numberOfAssignments = assignments.length;
 
     const studentIds = students.map(s => s.studentId);
-    const assignmentIds = assignments.map(a => a.assignId);
-    const quizIds = quizzes.map(q => q.quizId);
 
     // 📤 Build submission query conditions
     let submissionConditions = [];
+    const assignmentIds = assignments.map(a => a.assignId);
     if (assignmentIds.length > 0) {
       submissionConditions.push({
         type: 'assignment',
@@ -76,96 +75,70 @@ const createReport = async (req, res) => {
         studentId: { [Op.in]: studentIds }
       });
     }
-    if (quizIds.length > 0) {
+    if (quizzes) {
       submissionConditions.push({
         type: 'quiz',
-        quizId: { [Op.in]: quizIds },
+        quizId: quizzes.quizId,
         studentId: { [Op.in]: studentIds }
       });
     }
 
     let submissions = [];
-    if (submissionConditions.length > 0) {
+     if (submissionConditions.length > 0) {
       submissions = await Submission.findAll({
         where: { [Op.or]: submissionConditions },
         attributes: ['studentId', 'type', 'assId', 'quizId', 'score']
       });
     }
 
+
     // 🗂️ Create a lookup map for O(1) access
-    const submissionsMap = {};
-    submissions.forEach(sub => {
-      const key = `${sub.studentId}-${sub.type}-${sub.type === 'assignment' ? sub.assId : sub.quizId}`;
-      submissionsMap[key] = sub.score;
+    const submissionsMap = {};  submissions.forEach(sub => {
+      if (sub.type === 'assignment') {
+        submissionsMap[`A-${sub.studentId}-${sub.assId}`] = sub.score;
+      } else if (sub.type === 'quiz') {
+        submissionsMap[`Q-${sub.studentId}`] = sub.score; // only one quiz
+      }
     });
 
     const grading = getGradingSystem();
 
     // 👨‍🎓 Generate report for each student
-    const studentReports = await Promise.all(
-      students.map(async (st) => {
-        // Assignments
-        const assignmentResults = assignments.map(ass => {
-          const rawScore = submissionsMap[`${st.studentId}-assignment-${ass.assignId}`];
-          const maxMark = ass.mark || 0;
-          const displayedScore = (rawScore == null) ? "unmarked" : rawScore;
-          const percentage = (rawScore != null && maxMark > 0)
-            ? parseFloat(((rawScore / maxMark) * 100).toFixed(2))
-            : 'N/A';
+    const studentReports = students.map(st => {
+      // 🔹 Quiz data
+      const quizScore = submissionsMap[`Q-${st.studentId}`];
+      let percentage = 'N/A';
+      let grade = 'N/A';
+      if (quizScore != null && quizTotalScore > 0) {
+        percentage = parseFloat(((quizScore / quizTotalScore) * 100).toFixed(2));
+        grade = grading.calculateGrade(percentage);
+      }
 
-          return {
-            id: ass.assignId,
-            title: ass.title,
-            maxMark,
-            score: displayedScore,
-            percentage,
-            grade: percentage !== 'N/A' ? grading.calculateGrade(percentage) : 'N/A'
-          };
-        });
+      // 🔹 Assignment summary: count submitted
+      const assignmentList = assignments.map(ass => ({
+        id: ass.assignId,
+        title: ass.title,
+        status: submissionsMap[`A-${st.studentId}-${ass.assignId}`] != null 
+        ? "done" 
+        : "missing"
+      }));
 
-        // Quizzes
-        const quizResults = quizzes.map(qz => {
-          const rawScore = submissionsMap[`${st.studentId}-quiz-${qz.quizId}`];
-          const maxMark = qz.mark || 0;
-          const displayedScore = (rawScore == null) ? "unmarked" : rawScore;
-          const percentage = (rawScore != null && maxMark > 0)
-            ? parseFloat(((rawScore / maxMark) * 100).toFixed(2))
-            : 'N/A';
-
-          return {
-            id: qz.quizId,
-            title: qz.title,
-            maxMark,
-            score: displayedScore,
-            percentage,
-            grade: percentage !== 'N/A' ? grading.calculateGrade(percentage) : 'N/A'
-          };
-        });
-
-        // ✅ Now this works!
-        const sessionsTheStudentAttended = await sessionDl.countAttendedSessionsByTopic(
-          st.studentId,
-          topicId
-        );
-
-        return {
-          studentName: st.studentName,
-          totalScore: st.totalScore,
-          sessionsAttended: sessionsTheStudentAttended,
-          quizResults: quizResults,
-          assignments: [...assignmentResults],
-        };
-      })
-    );
+      return {
+        studentName: st.studentName,
+        quizScore: quizScore ?? 'N/A',
+        percentage,
+        grade,
+        assignments: assignmentList // e.g., "2/3"
+      };
+    });
+    
     // 📤 Final response
-    return res.json({
-      id: topic.topicId,
+      return res.json({
+      topicId: topic.topicId,
       topicName: topic.topicName,
-      totalSessions: totalSessions,
-      semester: topic.semester,
-      publisher: assistantId,
-      role: 'assistant',
-      students: studentReports,
+      quizTotalScore ,
+      numberOfAssignments,
+      students: studentReports
     });
 
   } catch (error) {

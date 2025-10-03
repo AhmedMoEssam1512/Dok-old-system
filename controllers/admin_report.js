@@ -124,7 +124,10 @@ const createReport = async (req, res) => {
       }));
 
       return {
+        id: st.studentId,
+        email: st.studentEmail,
         studentName: st.studentName,
+        banned: st.banned,
         quizScore: quizScore ?? 'N/A',
         percentage,
         grade,

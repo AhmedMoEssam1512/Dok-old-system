@@ -114,7 +114,6 @@ const createReport = async (req, res) => {
             : 'N/A';
 
           return {
-            type: 'assignment',
             id: ass.assignId,
             title: ass.title,
             maxMark,
@@ -134,7 +133,6 @@ const createReport = async (req, res) => {
             : 'N/A';
 
           return {
-            type: 'quiz',
             id: qz.quizId,
             title: qz.title,
             maxMark,

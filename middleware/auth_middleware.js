@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const Admin = require('../models/admin_model');
+const Student = require('../models/student_model');
 const AppError = require('../utils/app.error');
 const httpStatus = require('../utils/http.status');
 const asyncWrapper = require('./asyncwrapper');
@@ -63,6 +64,13 @@ const studentProtect = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     if (decoded.type !== 'student') {
       return next(new AppError('Not authorized as student', 401));
+    }
+    const student = await Student.findByPk(decoded.id);
+    if (!student) {
+      return next(new AppError('Student not found', 401));
+    }
+    if (student.banned) {
+      return next(new AppError('Your account has been banned. ', 401));
     }
     req.student = decoded; // attach payload
     console.log("student protect finished") 

@@ -79,6 +79,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
 
     // Default quiz grade
     let quizGrade = "N/A";
+    let quiz;
 
     // Build base report object
     const reportData = {
@@ -91,6 +92,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
       totalAssignments: assignments.length,
       submittedAssignments: 0,
       quizGrade,
+      quiz,
       materials: [],
       sessions: [] // 👈 sessions go here
     };
@@ -108,7 +110,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
 
       let status = "Missing";
       if (submission) {
-        if (submission.marked === "yes") {
+        if (submission.marked ) {
           status = "Marked";
         } else {
           status = "Submitted (Pending Review)";
@@ -140,7 +142,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
       let status = "Missing";
 
       if (submission) {
-        if (submission.marked === "yes") {
+        if (submission.marked) {
           status = "Marked";
         } else {
           status = "Submitted (Pending Review)";
@@ -164,7 +166,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
         status = "Unsubmitted (Still Open)";
       }
 
-      reportData.materials.push({
+      quiz ={
         type: 'quiz',
         id: quizItem.quizId,
         columnName: `Quiz${index + 1}`,
@@ -175,7 +177,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
         percentage,
         grade,
         feedback: submission ? normalize(submission.feedback) : "N/A"
-      });
+      };
     }
 
     // update reportData with final quizGrade

@@ -113,7 +113,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
         if (submission.marked ) {
           status = "Marked";
         } else {
-          status = "Submitted (Pending Review)";
+          status = "Pending Review";
         }
         reportData.submittedAssignments++;
       } else if (assignmentItem.endDate && new Date(assignmentItem.endDate) > now) {
@@ -146,7 +146,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
         if (submission.marked) {
           status = "Marked";
         } else {
-          status = "Submitted (Pending Review)";
+          status = "Pending Review";
         }
 
         const score = submission.score !== null && submission.score !== undefined ? Number(submission.score) : null;

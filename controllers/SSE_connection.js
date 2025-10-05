@@ -1,6 +1,7 @@
 const SSE = require('../utils/sseClients');
 const asyncWrapper = require("../middleware/asyncwrapper");
 const student = require('../data_link/student_data_link.js');
+const admin = require('../data_link/admin_data_link.js');
 
 const establishAdminConnection = async (req, res, next) => {
   if (!req.admin) {
@@ -31,6 +32,7 @@ const establishAdminConnection = async (req, res, next) => {
 
   // Heartbeat to keep connection alive
   const hb = setInterval(() => {
+    console.log("💓 Heartbeat sent to admin");
     res.write(": ping\n\n");
   }, 25000);
 
@@ -82,6 +84,7 @@ const establishStudentConnection = async (req, res) => {
 
   // Heartbeat to keep connection alive
   const hb = setInterval(() => {
+    console.log("💓 Heartbeat sent to student");
     res.write(": ping\n\n");
   }, 25000);
 

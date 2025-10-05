@@ -38,10 +38,9 @@ function notifyAssistants(group, payload) {
 
   sseClients.forEach((client) => {
     if (client.role === "assistant" && client.group === group) {
-      try {
+        try {
         client.res.write(message);
       } catch (err) {
-        // Cleanup broken connection
         removeClient(client.res);
         client.res.end();
       }

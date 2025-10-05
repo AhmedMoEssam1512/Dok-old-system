@@ -1,37 +1,60 @@
 const sequelize = require('../config/database');
+const { Sequelize } = require('sequelize'); // make sure to import Sequelize
 const { Op } = require("sequelize");
 const Quiz = require('../models/quiz_model');
 const Admin = require('../models/admin_model');
 const Submission = require('../models/submission_model');
+const Topic = require('../models/topic_model');
 
 Quiz.belongsTo(Admin, { foreignKey: "publisher" });
+Quiz.belongsTo(Topic, { foreignKey: "topicId", as: 'topic' });
 
-
-function createQuiz(mark,publisher,quizPdf,date,semester,durationInMin,topicId, title){
-    return Quiz.create({mark,publisher,quizPdf,date,semester,durationInMin, topicId, title, createdAt: Date.now()});
+function createQuiz(mark,publisher,date,semester,durationInMin,topicId, title){
+  //nmark,publisher,date,semester,ndurationInMin, topicId, title
+    return Quiz.create({mark,publisher,date,semester,durationInMin, topicId, title, createdAt: Date.now()});
 }; // nice comment
 
 function getAllQuizzes(){
     return Quiz.findAll({attributes : {include: [
         ['quizId', 'id'],
-    ]}, order: [['quizId', 'DESC']]});
+    ]},
+    include: [
+      {
+        model: Topic,
+        as: 'topic', // only needed if you used 'as' in association
+        attributes: ['subject'] // or ['name'], depending on your column
+      }
+    ],
+     order: [['quizId', 'DESC']]});
 };
+
 
 async function getAllQuizzesForGroup(group) {
   return await Quiz.findAll({
+    attributes: {
+      include: [
+        ['quizId', 'id'],
+        [Sequelize.col('Admin.group'), 'group'],      // flatten group
+        [Sequelize.col('topic.subject'), 'subject']   // flatten subject
+      ]
+    },
     include: [
       {
         model: Admin,
-        attributes: ["group"],
+        attributes: [], // don't include Admin as nested object
         where: {
           [Op.or]: [
             { group: group },
             { group: "all" }
           ]
         }
+      },
+      {
+        model: Topic,
+        as: 'topic',
+        attributes: [] // don't include topic as nested object
       }
     ],
-    attributes: {include : [['quizId', 'id']] },
     order: [['quizId', 'DESC']]
   });
 }

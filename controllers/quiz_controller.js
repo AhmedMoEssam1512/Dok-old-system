@@ -75,7 +75,7 @@ const startQuiz = asyncWrapper(async (req, res) => {
     setCache(cacheKey, quizData, (quizData.durationInMin * 60) + 600);
 
     sse.notifyStudents(adminGroup, {
-        event: "Quiz is starting",
+        event: "quiz_start",
         message: `Quiz to group ${adminGroup} is gonna start now. Please check your dashboard.`,
         
       });

@@ -33,7 +33,7 @@ const postOnFeed = asyncWrapper(async (req, res) => {
 
   // Notify students
   sse.notifyStudents(adminGroup, {
-    event: "feed_posted",
+    event: "feed_new",
     message: `New feed post from admin ${adminName}`,
     post: {
       id: newPost.id,

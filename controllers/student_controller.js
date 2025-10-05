@@ -46,7 +46,7 @@ const studentRegister = asyncWrapper(async (req, res) => {
 
   // Notify only assistants in the same group
   notifyAssistants(group, {
-    event: "student_registered",
+    event: "student_register",
     message: `New student ${studentName} registered`,
     Student: { id : Student.studentId, studentName, studentEmail, group }
   });

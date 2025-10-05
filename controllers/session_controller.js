@@ -30,8 +30,8 @@ const startSession = asyncWrapper(async (req, res) => {
   const currTopic = await topicDl.getStudentLastTopic(sgroup);
   const newSession = await admin.createSession(currTopic.topicId,sgroup, currTopic.semester, today, dayName);
 
-   sse.notifyStudents(admin.group, {
-        event: "New Session Date",
+   sse.notifyStudents(sgroup, {
+        event: "session_update",
         message: `Group ${sgroup}, a date for the upcoming session has been dropped by ${adminName}. Please check your dashboard.`,
         post: {
             dateAndTime: today,

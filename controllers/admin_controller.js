@@ -39,7 +39,9 @@ const showPendingRegistration = asyncWrapper(async (req, res) => {
       id : student.studentId,
       name: student.studentName,
       email: student.studentEmail,
-      group: student.group
+      group: student.group,
+      phoneNumber: student.studentPhoneNumber,
+      semester: student.semester
     }))
 }})});
 

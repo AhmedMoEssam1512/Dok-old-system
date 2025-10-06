@@ -19,8 +19,16 @@ const Assignment = require('../models/assignment_model.js');
 const Quiz = require('../models/quiz_model.js');
 const Topic = require('../models/topic_model.js');
 const { Op } = require('sequelize');
-
 const {sanitizeInput}= require('../utils/sanitize.js');
+
+Submission.belongsTo(Student, { foreignKey: 'studentId', as: 'student' });
+Submission.belongsTo(Assignment, { foreignKey: 'assId', as: 'assignment' });
+Submission.belongsTo(Quiz, { foreignKey: 'quizId', as: 'quiz' });
+// Assignment.belongsTo(Topic, { foreignKey: 'topicId', as: 'topic' });
+// Quiz.belongsTo(Topic, { foreignKey: 'topicId', as: 'topic' });
+// Topic.hasMany(Assignment, { foreignKey: 'topicId', as: 'assignments' });
+// Topic.hasMany(Quiz, { foreignKey: 'topicId', as: 'quizzes' });
+
 
 const TARegister = asyncWrapper(async (req, res) => {
     sanitizeInput(req.body);

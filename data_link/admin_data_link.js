@@ -128,7 +128,7 @@ function findAdminById(adminID ){
     });
 }
 
-function findadminByPhoneNumber(phoneNumber){
+function findAdminByPhoneNumber(phoneNumber){
     return Admin.findOne({where : { phoneNumber } })
 }
 
@@ -185,5 +185,5 @@ module.exports={
     getAllSubmissions,
     getAllSubmissionsById,
     getAdminById,
-    findadminByPhoneNumber
+    findAdminByPhoneNumber
 }

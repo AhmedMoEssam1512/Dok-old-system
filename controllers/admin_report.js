@@ -42,9 +42,9 @@ const createReport = async (req, res) => {
         error: 'Topic not found or not owned by this assistant.'
       });
     }
-    // if (topic.group !== req.admin.group) {
-    //   return res.status(403).json({ error: 'You are not authorized to access this topic.' });
-    // }
+    if (topic.group !== req.admin.group) {
+      return res.status(403).json({ error: 'You are not authorized to access this topic.' });
+    }
 
     // 👥 Get all students assigned to this assistant
     const students = await student.getStudentsByAssistant(assistantId);

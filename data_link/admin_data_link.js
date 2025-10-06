@@ -184,5 +184,6 @@ module.exports={
     findSubmissionById,
     getAllSubmissions,
     getAllSubmissionsById,
-    getAdminById
+    getAdminById,
+    findadminByPhoneNumber
 }

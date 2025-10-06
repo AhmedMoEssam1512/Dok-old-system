@@ -168,5 +168,6 @@ module.exports={
     getStudentsByAssistant,
     deleteRegistrationBySemester,
     deleteRejectionsBySemester,
-    deleteStudentBySemester
+    deleteStudentBySemester,
+    findStudentByPhoneNumber
 }

@@ -42,7 +42,7 @@ const studentRegister = asyncWrapper(async (req, res) => {
     groupl,
     semester
   );
-  await student.registerStudent(studentEmail, group, semester);
+  await student.registerStudent(studentEmail, group, semester,studentPhoneNumber);
 
   // Notify only assistants in the same group
   notifyAssistants(group, {

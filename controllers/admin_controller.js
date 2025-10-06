@@ -21,9 +21,7 @@ const Topic = require('../models/topic_model.js');
 const { Op } = require('sequelize');
 const {sanitizeInput}= require('../utils/sanitize.js');
 
-Submission.belongsTo(Student, { foreignKey: 'studentId', as: 'student' });
-Submission.belongsTo(Assignment, { foreignKey: 'assId', as: 'assignment' });
-Submission.belongsTo(Quiz, { foreignKey: 'quizId', as: 'quiz' });
+
 // Assignment.belongsTo(Topic, { foreignKey: 'topicId', as: 'topic' });
 // Quiz.belongsTo(Topic, { foreignKey: 'topicId', as: 'topic' });
 // Topic.hasMany(Assignment, { foreignKey: 'topicId', as: 'assignments' });
@@ -201,6 +199,23 @@ const showStudentProfile= asyncWrapper(async (req, res) => {
 });
 
 const showUnmarkedSubmissions = asyncWrapper(async (req, res) => {
+// Define associations safely (only once)
+  if (!Submission.associations.student) {
+    Submission.belongsTo(Student, { foreignKey: 'studentId', as: 'student' });
+  }
+  if (!Submission.associations.assignment) {
+    Submission.belongsTo(Assignment, { foreignKey: 'assId', as: 'assignment' });
+  }
+  if (!Submission.associations.quiz) {
+    Submission.belongsTo(Quiz, { foreignKey: 'quizId', as: 'quiz' });
+  }
+  if (!Assignment.associations.topic) {
+    Assignment.belongsTo(Topic, { foreignKey: 'topicId', as: 'topic' });
+  }
+  if (!Quiz.associations.topic) {
+    Quiz.belongsTo(Topic, { foreignKey: 'topicId', as: 'topic' });
+    const adminId = req.admin.id;
+  }
   const adminId = req.admin.id;
 
   // Define base WHERE condition for "unmarked" submissions
@@ -300,8 +315,6 @@ const showUnmarkedSubmissions = asyncWrapper(async (req, res) => {
         submissions: enrichedSubmissions
       }
     });
-
- 
 });
 
 const findSubmissionById = asyncWrapper(async (req, res) => {

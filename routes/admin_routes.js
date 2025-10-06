@@ -11,7 +11,7 @@ const {phoneNumberexists} = require('../middleware/student_middleware');
 const topicMiddleWare = require('../middleware/topic_middleware');  
 
 router.route('/adminRegister')
-    .post(adminMiddleWare.adminFound,phoneNumberexists,adminMiddleWare.passwordEncryption,adminControllers.TARegister);
+    .post(adminMiddleWare.adminFound/*,phoneNumberexists*/,adminMiddleWare.passwordEncryption,adminControllers.TARegister);
 
 router.route('/adminSSE')
     .get(auth.adminProtect, establishAdminConnection);

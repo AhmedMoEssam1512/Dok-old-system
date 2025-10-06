@@ -19,6 +19,9 @@ router.route('/adminSSE')
 router.route('/pendingRegistrations')
     .get(auth.adminProtect, adminControllers.showPendingRegistration);
 
+router.route('/getpendingCount')
+    .get(auth.adminProtect, adminControllers.getPendingCount);
+
 router.route('/verifyStudent/:studentEmail')
     .patch(auth.adminProtect, adminMiddleWare.studentFound, adminControllers.verifyStudent);
 

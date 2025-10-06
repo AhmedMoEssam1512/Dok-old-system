@@ -24,12 +24,15 @@ const createMaterial = asyncWrapper(async (req, res, next) => {
     const foundTopic = await topic.getTopicById(topicId);
     console.log("Creating material with data:", { title, description, document, topicId, publisher, uploadDate });
     const newMaterial = await material.createMaterial(title, description, document, topicId, publisher, uploadDate);
-    newMaterial.subject = foundTopic.subject; // Add subject to response
+    // ✅ Create a new response object that includes subject
+    const materialWithSubject = {
+        ...newMaterial.toJSON ? newMaterial.toJSON() : newMaterial, // Handle ORM instances
+        subject: foundTopic.subject
+    };
     return res.status(201).json({
         status: "success",
         message: "Material created successfully",
-        data: { newMaterial,
-           }
+        data: { newMaterial: materialWithSubject }
     })
 });
 

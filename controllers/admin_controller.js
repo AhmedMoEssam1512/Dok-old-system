@@ -28,6 +28,18 @@ const TARegister = asyncWrapper(async (req, res) => {
     });
 });
 
+const getPendingCount = asyncWrapper(async (req, res) => {
+  const TAGroup = req.admin.group;  
+  const students = await admin.findNotVerifiedStudentsByTaGroup(TAGroup);
+  return res.status(200).json({
+      status: "success",
+      message: `Pending registration count`,
+      data: { 
+        count : students.length
+    }})
+}
+);
+
 const showPendingRegistration = asyncWrapper(async (req, res) => {
   const TAGroup = req.admin.group;
     const students = await admin.findNotVerifiedStudentsByTaGroup(TAGroup);
@@ -254,6 +266,7 @@ const markSubmission = asyncWrapper(async (req, res) => {
 module.exports = {
     TARegister,
     showPendingRegistration,
+    getPendingCount,
     showStudentInGroup,
     verifyStudent,
     removeStudent,

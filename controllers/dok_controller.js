@@ -25,7 +25,7 @@ const {sanitizeInput} = require('../utils/sanitize.js');
 
 const DOK_signUp= asyncWrapper( async (req, res) => {
     sanitizeInput(req.body);
-    const { email, name, password, phonenumber, role = "teacher", permission = "all" } = req.body;
+    const { email, name, password, phoneNumber, role = "teacher", permission = "all" } = req.body;
 
     // hash password
     const encryptedPassword = await bcrypt.hash(String(password), 10);
@@ -36,7 +36,7 @@ const DOK_signUp= asyncWrapper( async (req, res) => {
       email,
       name,
       password: encryptedPassword,
-      phoneNumber: phonenumber,
+      phoneNumber: phoneNumber,
       group: "all", // matches model field
       role,
       permission,

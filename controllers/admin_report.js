@@ -63,6 +63,7 @@ const createReport = async (req, res) => {
     // ✅ Use 0 instead of null
     const quizTotalScore = quizzes?.mark ?? 0;
     const numberOfAssignments = assignments.length;
+    const quizTitle = quizzes?.title ?? 'N/A';
 
     const studentIds = students.map(s => s.studentId);
     console.log("Student IDs:", studentIds.length);  
@@ -145,6 +146,7 @@ const createReport = async (req, res) => {
         assignments: assignmentList // e.g., "2/3"
       };
     });
+    console.log("report done")
     
     // 📤 Final response
       return res.status(200).json({
@@ -153,7 +155,7 @@ const createReport = async (req, res) => {
       data : {
         topicId: topic.topicId,
         topicName: topic.topicName,
-        quizTitle: quizzes.title,
+        quizTitle,
         quizTotalScore ,
         numberOfAssignments,
         students: studentReports

@@ -54,7 +54,7 @@ router.route('/markSubmission/:id')
         subMiddleWare.marked,subMiddleWare.checkData, adminControllers.markSubmission );
 
 router.route('/createReport/:topicId')
-    .get(auth.adminProtect,topicMiddleWare.canSeeTopic,report.createReport);
+    .get(auth.adminProtect,topicMiddleWare.findTopicById,topicMiddleWare.canSeeTopic,report.createReport);
 
 router.route('/makeReportForStudent/:studentId{/:topicId}')
     .get(auth.adminProtect, adminMiddleWare.checkAuthurityByID, getMyWeeklyReport);

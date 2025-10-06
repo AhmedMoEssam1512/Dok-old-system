@@ -255,6 +255,7 @@ const showUnmarkedSubmissions = asyncWrapper(async (req, res) => {
       ],
       order: [['subDate', 'DESC']]
     });
+    console.log("Assignment Subs: ", assignmentSubs.length);
 
     // 🔍 Fetch unmarked quiz submissions
     const quizSubs = await Submission.findAll({
@@ -280,8 +281,10 @@ const showUnmarkedSubmissions = asyncWrapper(async (req, res) => {
       ],
       order: [['subDate', 'DESC']]
     });
+    console.log("Quiz Subs: ", quizSubs.length);
 
     const allSubmissions = [...assignmentSubs, ...quizSubs];
+    console.log("All Subs: ", allSubmissions.length);
 
     if (allSubmissions.length === 0) {
       return res.status(200).json({

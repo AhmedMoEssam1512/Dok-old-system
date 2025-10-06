@@ -29,6 +29,14 @@ async function getSubmissionForQuiz(studentId,quizId){
   });
 }
 
+function getSubmissionsByStudentId(studentId){
+    return Submission.findAll({
+        where: {
+            studentId
+        }
+    });
+}
+
 function deleteSubmissionBySemester(semester){
     return Submission.destroy({
         where: {
@@ -40,6 +48,7 @@ function deleteSubmissionBySemester(semester){
 module.exports = { 
     getSubmissionForAssignment,
     getSubmissionForQuiz,
-    deleteSubmissionBySemester
+    deleteSubmissionBySemester,
+    getSubmissionsByStudentId
 }
 

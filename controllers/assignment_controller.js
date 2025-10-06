@@ -10,6 +10,7 @@ const Admin = require('../models/admin_model.js');
 const Student = require('../models/student_model.js');
 const submission = require('../data_link/assignment_data_link.js');
 const Submission = require('../models/submission_model.js');
+const submissions = require('../data_link/submission_data_link.js');  
 const Topic = require('../models/topic_model.js');
 const topic = require('../data_link/topic_data_link.js');
 const {sanitizeInput}= require('../utils/sanitize.js');
@@ -121,30 +122,39 @@ const getUnsubmittedAssignments = asyncWrapper(async (req, res, next) => {
   const studentId = req.student.id;
   const studentProfile = await student.findStudentById(studentId);
   const group = studentProfile.group;
-  const semester = studentProfile.semester;
 
-  // Fetch all assignments for the student's group
+  // Fetch all assignments for this group
   const allAssignments = await assignment.getAllAssignmentsByGroup(group);
 
-  // Filter out assignments that the student has already submitted
-  const unsubmittedAssignments = [];
-  for (const assignment of allAssignments) {
-    const existingSubmission = await submission.findSubmissionByAssignmentAndStudent(
-      assignment.assignId,
-      studentId
-    );
-    if (!existingSubmission) {
-      unsubmittedAssignments.push({ id: assignment.assignId, ...assignment });
-    }
-  }
+  // Fetch all submissions for this student
+  const studentSubmissions = await submissions.getSubmissionsByStudentId(studentId);
+
+  // Extract assignment IDs from submissions (use assId)
+  const submittedAssignmentIds = studentSubmissions.map(s => Number(s.assId));
+
+  // Map all assignments and mark submitted or not
+  const assignments = allAssignments.map(a => {
+    const assignmentPlain = a.get ? a.get({ plain: true }) : a;
+    const isSubmitted = submittedAssignmentIds.includes(Number(assignmentPlain.assignId));
+
+    // Remove the duplicate 'id' if it exists
+    const { id, ...rest } = assignmentPlain;
+
+    return {
+      ...rest,
+      submitted: isSubmitted ? 1 : 0
+    };
+  });
 
   return res.status(200).json({
     status: "success",
-    data: {
-      unsubmittedAssignments,
-    }
+    data: { assignments },
   });
 });
+
+
+
+
 
 const deleteAssignment = asyncWrapper(async (req, res, next) => {
     const { assignId } = req.params;

@@ -1,56 +1,59 @@
-const { Op } = require("sequelize"); // import Op
-const sequelize = require('../config/database');
+const { Op } = require("sequelize");
+const sequelize = require('../config/database'); // ✅ Only once
+
 const Feed = require('../models/feed_model.js');
 const Admin = require('../models/admin_model.js');
 
+// Association (usually better placed in a separate association file, but okay here)
 Feed.belongsTo(Admin, {
-  foreignKey: 'adminId', // Feed.adminId → Admin.id (or Admin.adminId?)
-  targetKey: 'adminId',       // or 'adminId' if Admin uses that as PK
-  as: 'admin'            // This lets you access feed.admin.name
+  foreignKey: 'adminId',
+  targetKey: 'adminId',
+  as: 'admin'
 });
 
-async function getAllFeeds(){
-    return Feed = await Feed.findAll({
-  include: [{
-    model: Admin,
-    attributes: [], // don't include admin as object
-  }],
-  attributes: {
-    include: [
-      [sequelize.col('Admin.name'), 'adminName'] // add admin name as flat field
-    ]
-  }
-});
+async function getAllFeeds() {
+  return await Feed.findAll({
+    include: [{
+      model: Admin,
+      as: 'admin',
+      attributes: [] // exclude nested admin object
+    }],
+    attributes: {
+      include: [
+        [sequelize.col('admin.name'), 'adminName'] // uses alias 'admin'
+      ]
+    }
+  });
 }
 
-
-function getFeedByAssistantIdAndSemester(adminId, semester){
-    return Feed.findAll({
-        where: { adminId, semester},
-        order: [['dateAndTime', 'DESC']]
-    });
+function getFeedByAssistantIdAndSemester(adminId, semester) {
+  return Feed.findAll({
+    where: { adminId, semester },
+    order: [['dateAndTime', 'DESC']]
+  });
 }
 
-function destroyOldFeeds(cutoffDate){
-    return Feed.destroy({
-        where: {
-            dateAndTime: {
-                [Op.lte]: cutoffDate   // use Op directly
-            }
-        }
-    });
+function destroyOldFeeds(cutoffDate) {
+  return Feed.destroy({
+    where: {
+      dateAndTime: {
+        [Op.lte]: cutoffDate
+      }
+    }
+  });
 }
 
 function createPost(text, semester, adminId) {
-    return Feed.create({    
-        text,
-        semester,
-        adminId
-    })};
+  return Feed.create({
+    text,
+    semester,
+    adminId
+  });
+}
 
 module.exports = {
-    getAllFeeds,
-    destroyOldFeeds,
-    getFeedByAssistantIdAndSemester,
-    createPost
+  getAllFeeds,
+  destroyOldFeeds,
+  getFeedByAssistantIdAndSemester,
+  createPost
 };

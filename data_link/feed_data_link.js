@@ -1,22 +1,38 @@
 const { Op } = require("sequelize"); // import Op
 const sequelize = require('../config/database');
-const feed = require('../models/feed_model.js');
+const Feed = require('../models/feed_model.js');
+const Admin = require('../models/admin_model.js');
 
-function getAllFeeds(){
-    return feed.findAll({
-        order: [['dateAndTime', 'DESC']]
-    });
+Feed.belongsTo(Admin, {
+  foreignKey: 'adminId', // Feed.adminId → Admin.id (or Admin.adminId?)
+  targetKey: 'adminId',       // or 'adminId' if Admin uses that as PK
+  as: 'admin'            // This lets you access feed.admin.name
+});
+
+async function getAllFeeds(){
+    return Feed = await Feed.findAll({
+  include: [{
+    model: Admin,
+    attributes: [], // don't include admin as object
+  }],
+  attributes: {
+    include: [
+      [sequelize.col('Admin.name'), 'adminName'] // add admin name as flat field
+    ]
+  }
+});
 }
 
+
 function getFeedByAssistantIdAndSemester(adminId, semester){
-    return feed.findAll({
+    return Feed.findAll({
         where: { adminId, semester},
         order: [['dateAndTime', 'DESC']]
     });
 }
 
 function destroyOldFeeds(cutoffDate){
-    return feed.destroy({
+    return Feed.destroy({
         where: {
             dateAndTime: {
                 [Op.lte]: cutoffDate   // use Op directly
@@ -26,7 +42,7 @@ function destroyOldFeeds(cutoffDate){
 }
 
 function createPost(text, semester, adminId) {
-    return feed.create({    
+    return Feed.create({    
         text,
         semester,
         adminId

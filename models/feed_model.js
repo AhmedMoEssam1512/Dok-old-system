@@ -7,7 +7,7 @@ const Feed = sequelize.define('Feed', {
   text: DataTypes.STRING,
   dateAndTime: {type : DataTypes.DATE, defaultValue: DataTypes.NOW },
   semester: DataTypes.STRING,
-  adminId: DataTypes.STRING
+  adminId: DataTypes.INTEGER
 }, { tableName: 'feed', timestamps: false });
 
 module.exports = Feed;

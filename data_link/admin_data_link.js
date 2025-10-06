@@ -128,6 +128,10 @@ function findAdminById(adminID ){
     });
 }
 
+function findadminByPhoneNumber(phoneNumber){
+    return Admin.findOne({where : { phoneNumber } })
+}
+
 function getUnmarkedSubmissionsByAdminId(assistantId){
     console.log(assistantId);
     return Submission.findAll({where: { assistantId ,score : null}, order: [['subId', 'DESC']]});

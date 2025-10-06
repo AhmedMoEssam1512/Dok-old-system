@@ -25,6 +25,25 @@ const studentFound= asyncWrapper(async (req, res, next) => {
     next();
 })
 
+const phoneNumberexists = asyncWrapper(async (req, res, next) => {
+    sanitizeInput(req.body);
+    const { phoneNumber } = req.body;
+    if(!phoneNumber){
+        return next(new AppError("Phone number is required", 400));
+    }
+    const stdFound = await student.findStudentByPhoneNumber(phoneNumber);
+    if (stdFound) {
+        const error = AppError.create("Phone number already exists", 400, httpStatus.Error);
+        return next(error);
+    }
+    const adFound = await admin.findAdminByPhoneNumber(phoneNumber);
+    if (adFound) {
+        const error = AppError.create("Phone number already exists", 400, httpStatus.Error);
+        return next(error);
+    }
+    next();
+})
+
 const attendedSessionBefore = asyncWrapper(async (req, res, next) => {
     sanitizeInput(req.params);
     const { sessionId } = req.params;
@@ -57,4 +76,5 @@ module.exports = {
     studentFound,
     attendedSessionBefore,
     canSeeSubmission,
+    phoneNumberexists,
 }

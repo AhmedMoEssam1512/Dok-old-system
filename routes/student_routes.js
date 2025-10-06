@@ -11,7 +11,7 @@ const { establishStudentConnection } = require('../controllers/SSE_connection');
 const { getMyWeeklyReport } = require('../controllers/student_report');
 
 router.route('/studentRegister')
-    .post(studentMiddleWare.studentFound,adminMiddleWare.passwordEncryption,studentControllers.studentRegister);
+    .post(studentMiddleWare.studentFound,studentMiddleWare.phoneNumberexists,adminMiddleWare.passwordEncryption,studentControllers.studentRegister);
 
 router.route('/studentSSEConnection')
     .get(auth.studentProtect, establishStudentConnection);

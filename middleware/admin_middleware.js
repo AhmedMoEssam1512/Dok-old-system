@@ -14,7 +14,7 @@ const student = require('../data_link/student_data_link.js');
 const admin = require('../data_link/admin_data_link.js');
 
 const adminFound= asyncWrapper(async (req, res, next) => {
-    const { email, studentEmail } = req.body;
+    const { email } = req.body;
     const adFound = await admin.findAdminByEmail(email);
     if (adFound) {
         const error = AppError.create("Email already exists", 400, httpStatus.Error);
@@ -25,6 +25,7 @@ const adminFound= asyncWrapper(async (req, res, next) => {
         const error = AppError.create("Email already exists", 400, httpStatus.Error);
         return next(error);
     }
+
     next();
 })
 

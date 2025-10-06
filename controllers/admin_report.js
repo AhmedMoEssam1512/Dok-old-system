@@ -24,7 +24,7 @@ const getGradingSystem = () => {
 };
 
 const createReport = async (req, res) => {
-  try {
+  //try {
     sanitizeInput(req.params);
     const { topicId } = req.params;
 
@@ -145,10 +145,10 @@ const createReport = async (req, res) => {
       students: studentReports
     });
 
-  } catch (error) {
-    console.error('Report generation error:', error);
-    return res.status(500).json({ error: 'Failed to generate report.' });
-  }
+  // } catch (error) {
+  //   console.error('Report generation error:', error);
+  //   return res.status(500).json({ error: 'Failed to generate report.' });
+  // }
 };
 
 module.exports = { createReport };

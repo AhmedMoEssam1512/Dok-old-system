@@ -35,13 +35,14 @@ const showPendingRegistration = asyncWrapper(async (req, res) => {
         status: "success",
         message: `Pending registration from students`,
         data: { 
-  data: students.map(student => ({
-      id : student.studentId,
-      name: student.studentName,
-      email: student.studentEmail,
-      group: student.group,
-      phoneNumber: student.studentPhoneNumber,
-      semester: student.semester
+          count : students.length,
+          data: students.map(student => ({
+            id : student.studentId,
+            name: student.studentName,
+            email: student.studentEmail,
+            group: student.group,
+            phoneNumber: student.studentPhoneNumber,
+            semester: student.semester
     }))
 }})});
 

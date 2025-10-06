@@ -36,15 +36,15 @@ const createReport = async (req, res) => {
     const assistantId = req.admin.id;
 
     // 🔍 Validate topic exists and belongs to this assistant
-    const topic = await topicDl.getTopicByAssistantId(topicId, assistantId);
+    const topic = await topicDl.getTopicById(topicId);
     if (!topic) {
       return res.status(404).json({
         error: 'Topic not found or not owned by this assistant.'
       });
     }
-    if (topic.group !== req.admin.group) {
-      return res.status(403).json({ error: 'You are not authorized to access this topic.' });
-    }
+    // if (topic.group !== req.admin.group) {
+    //   return res.status(403).json({ error: 'You are not authorized to access this topic.' });
+    // }
 
     // 👥 Get all students assigned to this assistant
     const students = await student.getStudentsByAssistant(assistantId);

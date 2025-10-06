@@ -8,6 +8,7 @@ const subMiddleWare = require('../middleware/submission_middleware');
 const report = require('../controllers/admin_report');
 const {getMyWeeklyReport} = require('../controllers/student_report');
 const {phoneNumberexists} = require('../middleware/student_middleware');
+const topicMiddleWare = require('../middleware/topic_middleware');  
 
 router.route('/adminRegister')
     .post(adminMiddleWare.adminFound,phoneNumberexists,adminMiddleWare.passwordEncryption,adminControllers.TARegister);
@@ -53,7 +54,7 @@ router.route('/markSubmission/:id')
         subMiddleWare.marked,subMiddleWare.checkData, adminControllers.markSubmission );
 
 router.route('/createReport/:topicId')
-    .get(auth.adminProtect, report.createReport);
+    .get(auth.adminProtect,topicMiddleWare.canSeeTopic,report.createReport);
 
 router.route('/makeReportForStudent/:studentId{/:topicId}')
     .get(auth.adminProtect, adminMiddleWare.checkAuthurityByID, getMyWeeklyReport);

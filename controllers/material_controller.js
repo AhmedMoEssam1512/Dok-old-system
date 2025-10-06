@@ -21,12 +21,15 @@ const createMaterial = asyncWrapper(async (req, res, next) => {
     const {title, description, document, topicId} = req.body;
     const publisher = req.admin.id;
     const uploadDate = new Date();
+    const foundTopic = await topic.getTopicById(topicId);
     console.log("Creating material with data:", { title, description, document, topicId, publisher, uploadDate });
     const newMaterial = await material.createMaterial(title, description, document, topicId, publisher, uploadDate);
+    newMaterial.subject = foundTopic.subject; // Add subject to response
     return res.status(201).json({
         status: "success",
         message: "Material created successfully",
-        data: {  newMaterial   }
+        data: { newMaterial,
+           }
     })
 });
 

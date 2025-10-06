@@ -14,6 +14,12 @@ const admin = require('../data_link/admin_data_link.js');
 const student = require('../data_link/student_data_link.js');
 const feed = require('../data_link/admin_data_link.js');
 const sse = require('../utils/sseClients.js');
+const Submission = require('../models/submission_model.js');
+const Assignment = require('../models/assignment_model.js');
+const Quiz = require('../models/quiz_model.js');
+const Topic = require('../models/topic_model.js');
+const { Op } = require('sequelize');
+
 const {sanitizeInput}= require('../utils/sanitize.js');
 
 const TARegister = asyncWrapper(async (req, res) => {

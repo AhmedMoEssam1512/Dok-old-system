@@ -187,29 +187,107 @@ const showStudentProfile= asyncWrapper(async (req, res) => {
 });
 
 const showUnmarkedSubmissions = asyncWrapper(async (req, res) => {
-    const adminId = req.admin.id;
-    const adminProfile = await admin.findAdminById(adminId);
-    console.log(adminId);
-    const pendingSubmissions = (adminId === 1
-        ? await admin.getAllUnmarkedSubmissions()
-        : await admin.getUnmarkedSubmissionsByAdminId(adminId));
+  const adminId = req.admin.id;
+
+  // Define base WHERE condition for "unmarked" submissions
+  // Assuming "unmarked" means `marked` column is NULL (since it stores the marked PDF)
+  const where = {
+    marked: null // because `marked` is a STRING column for the PDF path
+  };
+
+  // Restrict to admin's own submissions unless super admin (id === 1)
+  if (adminId !== 1) {
+    where.assistantId = adminId;
+  }
+
+    const pendingSubmissions = await Submission.findAll({
+      where,
+      include: [
+        {
+          model: Student,
+          as: 'student',
+          attributes: ['studentName', 'group']
+        },
+        {
+          model: Assignment,
+          as: 'assignment',
+          attributes: ['title'],
+          required: false,
+          include: [
+            {
+              model: Topic,
+              as: 'topic',
+              attributes: ['subject'],
+              required: false
+            }
+          ]
+        },
+        {
+          model: Quiz,
+          as: 'quiz',
+          attributes: ['title'],
+          required: false,
+          include: [
+            {
+              model: Topic,
+              as: 'topic',
+              attributes: ['subject'],
+              required: false
+            }
+          ]
+        }
+      ],
+      order: [['subDate', 'DESC']]
+    });
 
     if (!pendingSubmissions || pendingSubmissions.length === 0) {
-        return res.status(200).json({ message: "No unmarked submissions found" });
+      return res.status(200).json({
+        status: 'success',
+        message: 'No unmarked submissions found'
+      });
     }
-    return res.status(200).json({
-        status: "success",
-        message: `Unmarked submissions for admin ${adminProfile.name}`,
-        data: {
-            submissions: pendingSubmissions.map(submission => ({
-                id: submission.subId,
-                studentId: submission.studentId,
-                quizId: submission.quizId,
-                assignmentId: submission.assId,
-                submittedAt: submission.createdAt
-            }))
-        }
+
+    const adminProfile = await admin.findAdminById(adminId);
+
+    const enrichedSubmissions = pendingSubmissions.map(sub => {
+      let content = {};
+      let subject = 'N/A';
+
+      if (sub.type === 'assignment' && sub.assignment) {
+        content = {
+          assignmentId: sub.assId,
+          assignmentTitle: sub.assignment.title
+        };
+        subject = sub.assignment.topic?.subject || 'N/A';
+      } else if (sub.type === 'quiz' && sub.quiz) {
+        content = {
+          quizId: sub.quizId,
+          quizTitle: sub.quiz.title
+        };
+        subject = sub.quiz.topic?.subject || 'N/A';
+      }
+
+      return {
+        id: sub.subId,
+        studentId: sub.studentId,
+        studentName: sub.student?.studentName || 'N/A',
+        studentGroup: sub.student?.group || 'N/A',
+        type: sub.type,
+        submittedAt: sub.subDate,
+        subject,
+        ...content
+      };
     });
+
+    return res.status(200).json({
+      status: 'success',
+      message: `Unmarked submissions for admin ${adminProfile.name}`,
+      data: {
+        submissions: enrichedSubmissions
+      }
+    });
+
+ 
 });
 
 const findSubmissionById = asyncWrapper(async (req, res) => {

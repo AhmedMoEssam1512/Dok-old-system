@@ -24,7 +24,7 @@ const getGradingSystem = () => {
 };
 
 const createReport = async (req, res) => {
-  //try {
+ // try {
     sanitizeInput(req.params);
     const { topicId } = req.params;
 
@@ -36,7 +36,7 @@ const createReport = async (req, res) => {
     const assistantId = req.admin.id;
 
     // 🔍 Validate topic exists and belongs to this assistant
-    const topic = await topicDl.getTopicById(topicId);
+    const topic = await topicDl.getTopicByAssistantId(topicId, assistantId);
     if (!topic) {
       return res.status(404).json({
         error: 'Topic not found or not owned by this assistant.'
@@ -45,7 +45,6 @@ const createReport = async (req, res) => {
     if (topic.group !== req.admin.group) {
       return res.status(403).json({ error: 'You are not authorized to access this topic.' });
     }
-    console.log("Topic found");
 
     // 👥 Get all students assigned to this assistant
     const students = await student.getStudentsByAssistant(assistantId);
@@ -54,24 +53,17 @@ const createReport = async (req, res) => {
       where: { topicId: topic.topicId },
       attributes: ['assignId', 'title', 'mark'] // ✅ ADDED 'title'
     });
-    console.log("Assignments found:", assignments.length);
+
     const quizzes = await Quiz.findOne({
       where: { topicId: topic.topicId },
       attributes: ['quizId', 'mark','title']
     });
-    console.log("Quiz found:", quizzes ? quizzes.title : 'None');
+
     // ✅ Use 0 instead of null
     const quizTotalScore = quizzes?.mark ?? 0;
     const numberOfAssignments = assignments.length;
-    const quizTitle = quizzes?.title ?? 'N/A';
 
     const studentIds = students.map(s => s.studentId);
-    console.log("Student IDs:", studentIds.length);  
-    // if (studentIds.length === 0) {
-    //   return res.status(400).json({
-    //     status: "Error",
-    //     message: "No students assigned to this assistant this semester"
-    // });}
 
     // 📤 Build submission query conditions
     let submissionConditions = [];
@@ -83,7 +75,6 @@ const createReport = async (req, res) => {
         studentId: { [Op.in]: studentIds }
       });
     }
-    console.log("Assignment submission condition:", submissionConditions.length); 
     if (quizzes) {
       submissionConditions.push({
         type: 'quiz',
@@ -91,7 +82,6 @@ const createReport = async (req, res) => {
         studentId: { [Op.in]: studentIds }
       });
     }
-    console.log("Quiz submission condition:", submissionConditions.length);
 
     let submissions = [];
      if (submissionConditions.length > 0) {
@@ -100,7 +90,7 @@ const createReport = async (req, res) => {
         attributes: ['studentId', 'type', 'assId', 'quizId', 'score']
       });
     }
-    console.log("Submissions found:", submissions.length);  
+
 
     // 🗂️ Create a lookup map for O(1) access
     const submissionsMap = {};  submissions.forEach(sub => {
@@ -110,13 +100,11 @@ const createReport = async (req, res) => {
         submissionsMap[`Q-${sub.studentId}`] = sub.score; // only one quiz
       }
     });
-    console.log("Submissions map size:", Object.keys(submissionsMap).length);
 
     const grading = getGradingSystem();
-    console.log("Grading system ready");
+
     // 👨‍🎓 Generate report for each student
     const studentReports = students.map(st => {
-      console.log("Processing student:", st.studentId);
       // 🔹 Quiz data
       const quizScore = submissionsMap[`Q-${st.studentId}`];
       let percentage = 'N/A';
@@ -125,12 +113,12 @@ const createReport = async (req, res) => {
         percentage = parseFloat(((quizScore / quizTotalScore) * 100).toFixed(2));
         grade = grading.calculateGrade(percentage);
       }
-      console.log("quiz grade added for each student");
+
       // 🔹 Assignment summary: count submitted
       const assignmentList = assignments.map(ass => ({
         id: ass.assignId,
         title: ass.title,
-        status: submissionsMap[`A-${st.studentId}-${ass?.assignId}`] != null 
+        status: submissionsMap[`A-${st.studentId}-${ass.assignId}`] != null 
         ? "done" 
         : "missing"
       }));
@@ -146,21 +134,15 @@ const createReport = async (req, res) => {
         assignments: assignmentList // e.g., "2/3"
       };
     });
-    console.log("report done")
     
     // 📤 Final response
-      return res.status(200).json({
-      status: "success",
-      message : "report ready",
-      data : {
-        topicId: topic.topicId,
-        topicName: topic.topicName,
-        quizTitle,
-        quizTotalScore ,
-        numberOfAssignments,
-        students: studentReports
-      }
-        
+      return res.json({
+      topicId: topic.topicId,
+      topicName: topic.topicName,
+      quizTitle: quizzes?.title ?? 'No quiz',
+      quizTotalScore ,
+      numberOfAssignments,
+      students: studentReports
     });
 
   // } catch (error) {

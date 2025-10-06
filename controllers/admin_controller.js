@@ -199,7 +199,9 @@ const showStudentProfile= asyncWrapper(async (req, res) => {
 });
 
 const showUnmarkedSubmissions = asyncWrapper(async (req, res) => {
-// Define associations safely (only once)
+  const adminId = req.admin.id;
+
+  // 🔒 Safely define associations only once (without editing model files)
   if (!Submission.associations.student) {
     Submission.belongsTo(Student, { foreignKey: 'studentId', as: 'student' });
   }
@@ -214,23 +216,24 @@ const showUnmarkedSubmissions = asyncWrapper(async (req, res) => {
   }
   if (!Quiz.associations.topic) {
     Quiz.belongsTo(Topic, { foreignKey: 'topicId', as: 'topic' });
-    const adminId = req.admin.id;
   }
-  const adminId = req.admin.id;
 
-  // Define base WHERE condition for "unmarked" submissions
-  // Assuming "unmarked" means `marked` column is NULL (since it stores the marked PDF)
-  const where = {
-    marked: null // because `marked` is a STRING column for the PDF path
+  // 🎯 "Unmarked" = marked is NULL or empty string
+  const unmarkedCondition = {
+    [Op.or]: [
+      { marked: null },
+      { marked: '' }
+    ]
   };
 
-  // Restrict to admin's own submissions unless super admin (id === 1)
-  if (adminId !== 1) {
-    where.assistantId = adminId;
-  }
+  // Build base where clause
+  const baseWhere = adminId === 1
+    ? unmarkedCondition
+    : { ...unmarkedCondition, assistantId: adminId };
 
-    const pendingSubmissions = await Submission.findAll({
-      where,
+    // 🔍 Fetch unmarked assignment submissions
+    const assignmentSubs = await Submission.findAll({
+      where: { ...baseWhere, type: 'assignment' },
       include: [
         {
           model: Student,
@@ -241,27 +244,11 @@ const showUnmarkedSubmissions = asyncWrapper(async (req, res) => {
           model: Assignment,
           as: 'assignment',
           attributes: ['title'],
-          required: false,
           include: [
             {
               model: Topic,
               as: 'topic',
-              attributes: ['subject'],
-              required: false
-            }
-          ]
-        },
-        {
-          model: Quiz,
-          as: 'quiz',
-          attributes: ['title'],
-          required: false,
-          include: [
-            {
-              model: Topic,
-              as: 'topic',
-              attributes: ['subject'],
-              required: false
+              attributes: ['subject']
             }
           ]
         }
@@ -269,7 +256,34 @@ const showUnmarkedSubmissions = asyncWrapper(async (req, res) => {
       order: [['subDate', 'DESC']]
     });
 
-    if (!pendingSubmissions || pendingSubmissions.length === 0) {
+    // 🔍 Fetch unmarked quiz submissions
+    const quizSubs = await Submission.findAll({
+      where: { ...baseWhere, type: 'quiz' },
+      include: [
+        {
+          model: Student,
+          as: 'student',
+          attributes: ['studentName', 'group']
+        },
+        {
+          model: Quiz,
+          as: 'quiz',
+          attributes: ['title'],
+          include: [
+            {
+              model: Topic,
+              as: 'topic',
+              attributes: ['subject']
+            }
+          ]
+        }
+      ],
+      order: [['subDate', 'DESC']]
+    });
+
+    const allSubmissions = [...assignmentSubs, ...quizSubs];
+
+    if (allSubmissions.length === 0) {
       return res.status(200).json({
         status: 'success',
         message: 'No unmarked submissions found'
@@ -278,7 +292,7 @@ const showUnmarkedSubmissions = asyncWrapper(async (req, res) => {
 
     const adminProfile = await admin.findAdminById(adminId);
 
-    const enrichedSubmissions = pendingSubmissions.map(sub => {
+    const enrichedSubmissions = allSubmissions.map(sub => {
       let content = {};
       let subject = 'N/A';
 
@@ -308,14 +322,19 @@ const showUnmarkedSubmissions = asyncWrapper(async (req, res) => {
       };
     });
 
+    // Sort combined list by submission date (newest first)
+    enrichedSubmissions.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+
     return res.status(200).json({
       status: 'success',
       message: `Unmarked submissions for admin ${adminProfile.name}`,
-      data: {
+       data: {
         submissions: enrichedSubmissions
       }
     });
+
 });
+
 
 const findSubmissionById = asyncWrapper(async (req, res) => {
     const found = req.found;

@@ -12,10 +12,10 @@ function findStudentByEmail(studentEmail){
     return Student.findOne({where : { studentEmail } })
 }
 
-function registerStudent(studentEmail, group, semester){
+function registerStudent(studentEmail, group, semester,phoneNumber){
     return Registration.create({
         studentEmail,
-        group, semester});
+        group, semester, phoneNumber});
 }
 
 function createStudent(studentName,studentEmail,password,parentEmail,birthDate,

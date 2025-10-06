@@ -127,8 +127,8 @@ const createReport = async (req, res) => {
       console.log("quiz grade added for each student");
       // 🔹 Assignment summary: count submitted
       const assignmentList = assignments.map(ass => ({
-        id: ass? ass.assignId : "no data",
-        title: ass? ass.title : "no data",
+        id: ass.assignId,
+        title: ass.title,
         status: submissionsMap[`A-${st.studentId}-${ass?.assignId}`] != null 
         ? "done" 
         : "missing"
@@ -153,7 +153,7 @@ const createReport = async (req, res) => {
       data : {
         topicId: topic.topicId,
         topicName: topic.topicName,
-        quizTitle: quizzes? quizzes.title : "no data",
+        quizTitle: quizzes.title,
         quizTotalScore ,
         numberOfAssignments,
         students: studentReports

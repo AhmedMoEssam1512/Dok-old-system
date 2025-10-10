@@ -7,11 +7,10 @@ const { establishAdminConnection } = require('../controllers/SSE_connection');
 const subMiddleWare = require('../middleware/submission_middleware');
 const report = require('../controllers/admin_report');
 const {getMyWeeklyReport} = require('../controllers/student_report');
-const {phoneNumberexists} = require('../middleware/student_middleware');
 const topicMiddleWare = require('../middleware/topic_middleware');  
 
 router.route('/adminRegister')
-    .post(adminMiddleWare.adminFound/*,phoneNumberexists*/,adminMiddleWare.passwordEncryption,adminControllers.TARegister);
+    .post(adminMiddleWare.adminFound,adminMiddleWare.adminPhoneNumberExists,adminMiddleWare.passwordEncryption,adminControllers.TARegister);
 
 router.route('/adminSSE')
     .get(auth.adminProtect, establishAdminConnection);

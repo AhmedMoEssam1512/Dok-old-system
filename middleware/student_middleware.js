@@ -27,16 +27,16 @@ const studentFound= asyncWrapper(async (req, res, next) => {
 
 const phoneNumberexists = asyncWrapper(async (req, res, next) => {
     sanitizeInput(req.body);
-    const { phoneNumber } = req.body;
-    if(!phoneNumber){
+    const { studentPhoneNumber } = req.body;
+    if(!studentPhoneNumber){
         return next(new AppError("Phone number is required", 400));
     }
-    const stdFound = await student.findStudentByPhoneNumber(phoneNumber);
+    const stdFound = await student.findStudentByPhoneNumber(studentPhoneNumber);
     if (stdFound) {
         const error = AppError.create("Phone number already exists", 400, httpStatus.Error);
         return next(error);
     }
-    const adFound = await admin.findAdminByPhoneNumber(phoneNumber);
+    const adFound = await admin.findAdminByPhoneNumber(studentPhoneNumber);
     if (adFound) {
         const error = AppError.create("Phone number already exists", 400, httpStatus.Error);
         return next(error);

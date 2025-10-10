@@ -70,6 +70,22 @@ const checkAuthurity = asyncWrapper(async (req, res, next) => {
     next();
 });
 
+const adminPhoneNumberExists = asyncWrapper(async (req, res, next) => {
+    const { phoneNumber } = req.body;
+    const adFound = await admin.findAdminByPhoneNumber(phoneNumber);
+    if (adFound) {
+        const error = AppError.create("Phone number already exists", 400, httpStatus.Error);
+        return next(error);
+    }
+    const stdFound = await student.findStudentByPhoneNumber(phoneNumber);
+    console.log("stdFound : ", stdFound)
+    if (stdFound) {
+        const error = AppError.create("Phone number already exists", 400, httpStatus.Error);
+        return next(error);
+    }
+    next();
+} );
+
 const checkAuthurityByID = asyncWrapper(async (req, res, next) => {
     const admin = req.admin; // must be set earlier by findAndCheckAdmin
    const { studentId } = req.params;
@@ -110,5 +126,6 @@ module.exports = {
     studentFound,
     checkAuthurity,
     checkAuthurityByID,
-    canReject
+    canReject,
+    adminPhoneNumberExists
 }

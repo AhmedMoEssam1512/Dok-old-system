@@ -38,8 +38,8 @@ function findStudentById(studentId){
     return Student.findOne({where : { studentId } })
 }
 
-function findStudentByPhoneNumber(phoneNumber){
-    return Student.findOne({where : { studentPhoneNumber: phoneNumber } })
+function findStudentByPhoneNumber(studentPhoneNumber){
+    return Student.findOne({where : { studentPhoneNumber} })
 }
 
 function createAttendance(studentId, sessionId, semester) {

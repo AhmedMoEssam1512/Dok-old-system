@@ -8,7 +8,7 @@ const OTP = sequelize.define("OTP", {
   verified: { type: DataTypes.BOOLEAN, defaultValue: false }
 }, {
   tableName: "otp",
-  timestamps: false
+  timestamps: true
 });
 
 module.exports = OTP;

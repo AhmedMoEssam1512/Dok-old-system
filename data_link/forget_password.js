@@ -41,8 +41,13 @@ function findOTP(email,otp){
 }
 
 function findOTPByEmail(email){
-  return OTP.findOne({ 
-    where: { email} 
+  return OTP.findOne({
+    where: {
+      email,
+      verified: true,                // only verified OTPs
+      expiresAt: { [Op.gt]: new Date() } // not expired
+    },
+    order: [["createdAt", "DESC"]]  // latest first
   });
 }
 
@@ -88,11 +93,10 @@ async function addOTP(email,otp){
     });
 }
 
-function deleteOTP(email,otp){
+function deleteOTP(email){
   return OTP.destroy({
     where: {
-      email,
-      otp
+      email
     }
   })
 }

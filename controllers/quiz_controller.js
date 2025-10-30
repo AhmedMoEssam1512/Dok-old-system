@@ -6,7 +6,9 @@ const Quiz = require('../models/quiz_model.js');
 const quiz = require('../data_link/quiz_data_link.js');
 const admin = require('../data_link/admin_data_link.js');
 const student = require('../data_link/student_data_link.js');
+const submission = require('../data_link/submission_data_link.js');
 const Admin = require('../models/admin_model.js');
+const Submission = require('../models/submission_model.js')
 const Student = require('../models/student_model.js');
 const sse = require('../utils/sseClients.js');
 const { getCache } = require("../utils/cache");
@@ -35,28 +37,45 @@ const getAllQuizzes = asyncWrapper(async (req, res) => {
     console.log("Fetching quizzes for group:", group);
 
     // Get all quizzes based on group
-    const quizzes = group === 'all'
-        ? await quiz.getAllQuizzes()
-        : await quiz.getAllQuizzesForGroup(group);
-
-    // Filter only quizzes that have already passed
-    // const now = new Date();
-    // const passedQuizzes = quizzes.filter(q => new Date(q.date) < now);
+    const quizzes = group === 'all' ? await quiz.getAllQuizzes() : await quiz.getAllQuizzesForGroup(group);
+     const quizzesWithSubmission = [];
+  if (req.user.type === "student") {
+       
+        
+        for (const q of quizzes) {
+            console.log(`Checking submission for student ${req.user.id} and quiz ${q.quizId}`);
+            const submitted = await submission.getSubmissionForQuiz(req.user.id, q.quizId);
+            
+            // Convert to plain object and add submitted property
+            quizzesWithSubmission.push({
+                ...q.toJSON(), // or q.get({ plain: true }) or q.dataValues
+                submitted: !!submitted
+            });
+        }
+        
+    }
 
     return res.status(200).json({
         status: "success",
         results: quizzes.length,
-        data: { quizzes: quizzes }
+        data: { quizzes: quizzesWithSubmission }
     })
 });
 
+
 const getQuizById = asyncWrapper(async (req, res, next) => {
     const quizData = req.quizData;
+    const submitteed = await submission.getSubmissionForQuiz(req.user.id,quizData.quizId);
+     const quizWithSubmission = {
+        ...quizData.toJSON(), // or quizData.get({ plain: true }) or quizData.dataValues
+        submitted: !!submitteed
+    };
     return res.status(200).json({
         status: "success",
-        data: { quizData }
+        data: { quizData: quizWithSubmission }
     });
 });
+
 
 const startQuiz = asyncWrapper(async (req, res) => {
     sanitizeInput(req.params);

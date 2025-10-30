@@ -32,6 +32,10 @@ router.route('/showMySubmission')
 router.route('/showSubmission/:id')
     .get(auth.studentProtect,submissionMiddleware.subExist ,studentMiddleWare.canSeeSubmission,studentControllers.showASubmission);
 
+router.route('/showMarkedSubmission/:id')
+    .get(auth.studentProtect,submissionMiddleware.subExist, submissionMiddleware.subMarked ,studentMiddleWare.canSeeSubmission,studentControllers.getMarkForSubmission);
+
+
 router.route('/getQuizTrend')
     .get(auth.studentProtect,studentControllers.getQuizTrend);   
 

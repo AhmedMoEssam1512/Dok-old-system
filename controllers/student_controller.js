@@ -138,9 +138,34 @@ const showASubmission = asyncWrapper(async (req, res) => {
     const found = req.found;
     return res.status(200).json({
         status: "success",
-        data: {found}
+        data: {id : found.subId,
+            score: found.score,
+            answers: found.answers,
+            subDate: found.subDate,
+            studentId: found.studentId,
+            assistantId: found.assistantId,
+            type: found.type,
+            semester: found.semester,
+            quizId: found.quizId,
+            assId: found.assId,
+            markedAt: found.markedAt,
+        }
     })
 })
+
+const getMarkForSubmission = asyncWrapper(async (req, res) => {
+  const found = req.found;  
+  return res.status(200).json({
+      status: "success",
+      data: {id : found.subId,
+        assistant: found.assistantId,
+        score: found.score,
+        markedPdf : found.marked,
+        markedAt : found.markedAt,
+        feedback : found.feedback
+      }
+  })
+});
 
 // Student quiz trend: per-quiz points grouped by week, for line chart
 const getQuizTrend = asyncWrapper(async (req, res) => {
@@ -190,5 +215,6 @@ module.exports = {
     getMyFeed,
     showMySubmission,
     showASubmission,
-    getQuizTrend
+    getQuizTrend,
+    getMarkForSubmission
 }

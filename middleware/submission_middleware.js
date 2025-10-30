@@ -42,6 +42,15 @@ const marked = asyncWrapper(async (req,res, next) => {
     next();
 })
 
+const subMarked = asyncWrapper(async (req,res, next) => {
+    const found = req.found;
+    if(!found.marked){
+        return next(new AppError("Submission not marked yet", httpStatus.BAD_REQUEST));
+    }
+    next();
+})
+
+
 const checkData = asyncWrapper(async (req,res, next) => {
     sanitizeInput(req.body);
     const {marked,score } = req.body
@@ -82,4 +91,5 @@ module.exports ={
     canSeeSubmission,
     marked,
     checkData,
+    subMarked
 }

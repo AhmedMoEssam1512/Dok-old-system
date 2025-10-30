@@ -113,7 +113,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
       if (submission) {
         if (submission.marked ) {
           status = "Marked";
-          subId= submission.submissionId;
+          subId= submission.subId;
         } else {
           status = "Pending Review";
         }

@@ -92,12 +92,15 @@ const getAllAssignments = asyncWrapper(async (req, res) => {
 const getAssignmentById = asyncWrapper(async (req, res) => {
     const assignData = req.assignData;
     const topicf = await topic.getTopicById(assignData.topicId);
-    const submit = await submission.getSubmissionForAssignment(req.user.id,assignData.assignId)
+    const submitteed = await submission.getSubmissionForAssignment(req.user.id,assignData.assignId)
+     const assignWithSubmission = {
+        ...assignData.toJSON(), // or quizData.get({ plain: true }) or quizData.dataValues
+        submitted: !!submitteed
+    };
     return res.status(200).json({
         status: "success",
-        data: { assignData,
+        data: { assignData:assignWithSubmission,
           subject: topicf.subject,
-          submitted: submit? true : false
          }
     });
 })

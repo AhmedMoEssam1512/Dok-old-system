@@ -8,7 +8,7 @@ const admin = require('../data_link/admin_data_link.js');
 const student = require('../data_link/student_data_link.js');
 const Admin = require('../models/admin_model.js');
 const Student = require('../models/student_model.js');
-const submission = require('../data_link/assignment_data_link.js');
+const submission = require('../data_link/submission_data_link.js');
 const Submission = require('../models/submission_model.js');
 const submissions = require('../data_link/submission_data_link.js');  
 const Topic = require('../models/topic_model.js');
@@ -92,10 +92,12 @@ const getAllAssignments = asyncWrapper(async (req, res) => {
 const getAssignmentById = asyncWrapper(async (req, res) => {
     const assignData = req.assignData;
     const topicf = await topic.getTopicById(assignData.topicId);
+    const submit = await submission.getSubmissionForAssignment(req.user.id,assignData.assignId)
     return res.status(200).json({
         status: "success",
         data: { assignData,
-          subject: topicf.subject
+          subject: topicf.subject,
+          submitted: submit? true : false
          }
     });
 })

@@ -55,10 +55,12 @@ const getAllQuizzes = asyncWrapper(async (req, res) => {
         
     }
 
+    const data = req.user.type === "student" ? quizzesWithSubmission : quizzes;
+
     return res.status(200).json({
         status: "success",
         results: quizzes.length,
-        data: { quizzes: quizzesWithSubmission }
+        data: { quizzes: data }
     })
 });
 

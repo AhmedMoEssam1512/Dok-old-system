@@ -175,6 +175,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
         title: quizItem.title,
         maxPoints: quizItem.mark,
         status,
+        submissionId: submission ? submission.subId : "N/A",  
         score: submission ? normalize(submission.score) : "N/A",
         percentage,
         grade,

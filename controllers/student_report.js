@@ -112,6 +112,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
       if (submission) {
         if (submission.marked ) {
           status = "Marked";
+
         } else {
           status = "Pending Review";
         }
@@ -126,6 +127,7 @@ const getMyWeeklyReport = asyncWrapper(async (req, res) => {
         maxPoints: assignmentItem.mark,
         date: assignmentItem.startDate,
         status,
+        submissionId: submission ? submission.submissionId : "N/A",
         score: submission ? normalize(submission.score) : "N/A",
         feedback: submission ? normalize(submission.feedback) : "N/A"
       });

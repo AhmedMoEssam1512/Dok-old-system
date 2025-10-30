@@ -198,6 +198,13 @@ function getActiveSessionByGroup(group) {
   });
 }
 
+function getLastCreatedSessionByGroup(adminGroup){
+    return Session.findOne({
+        where: { group: adminGroup },
+        order: [['dateAndTime', 'DESC']]
+    });
+}
+
 module.exports={
     findSessionById,
     UpdateSession,
@@ -213,5 +220,6 @@ module.exports={
     getSessionsByTopic,
     deleteAttendanceBySemester,
     deleteSessionsBySemester,
-    getActiveSessionByGroup
+    getActiveSessionByGroup,
+    getLastCreatedSessionByGroup
 }

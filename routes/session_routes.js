@@ -34,6 +34,9 @@ router.route('/getAllSessions')
     .get(auth.protect, sessionControllers.getAllSessions);
   
 router.route('/getActiveSession')
-    .get(auth.adminProtect, sessionControllers.getActiveSession);    
+    .get(auth.adminProtect, sessionControllers.getActiveSession);
+    
+router.route('/getLastCreatedSession')
+    .get(auth.adminProtect, sessionControllers.getLastCreatedSession);    
 
 module.exports = router;

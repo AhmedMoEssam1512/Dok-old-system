@@ -32,5 +32,8 @@ router.route('/getAllAttendanceForSession/:sessionId')
 
 router.route('/getAllSessions')
     .get(auth.protect, sessionControllers.getAllSessions);
+  
+router.route('/getActiveSession')
+    .get(auth.adminProtect, sessionControllers.getActiveSession);    
 
 module.exports = router;

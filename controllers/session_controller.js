@@ -114,6 +114,23 @@ const getAllSessions = asyncWrapper(async (req, res, next) => {
 
 })
 
+const getActiveSession = asyncWrapper(async (req, res, next) => {
+  const adminGroup = req.admin.group;
+  const activeSession = await session.getActiveSessionByGroup(adminGroup);
+
+  if (!activeSession) {
+    return res.status(404).json({
+      status: "error",
+      message: "No active sessions were found",
+    });
+  }
+  
+  return res.status(200).json({
+    status: "success",
+    data: { activeSession },
+  });
+});
+
 // const startSession = asyncWrapper(async (req, res) => {
 //     sanitizeInput(req.params);
 //     const { sessionId } = req.params;
@@ -171,6 +188,7 @@ module.exports = {
     endSession,
     getAllAttendanceForSession,
     getAllSessions,
+    getActiveSession
     // getActiveSession,
     // getUpcomingSession
 }

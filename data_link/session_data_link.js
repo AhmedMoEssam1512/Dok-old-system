@@ -183,6 +183,20 @@ function deleteSessionsBySemester(semester){
     return Session.destroy({ where: { semester } });
 }
 
+function getActiveSessionByGroup(group) {
+  const now = new Date();
+  const twoAndHalfHoursAgo = new Date(now.getTime() - 3 * 60 * 60 * 1000);
+  return Session.findOne({
+    where: {
+      finished: false,
+      group: group,
+      dateAndTime: {
+        [Op.between]: [twoAndHalfHoursAgo, now],
+      },
+    },
+    order: [['dateAndTime', 'DESC']],
+  });
+}
 
 module.exports={
     findSessionById,
@@ -198,5 +212,6 @@ module.exports={
     countTotalSessionsByTopic,
     getSessionsByTopic,
     deleteAttendanceBySemester,
-    deleteSessionsBySemester
+    deleteSessionsBySemester,
+    getActiveSessionByGroup
 }

@@ -109,11 +109,27 @@ const upcomingSession = asyncWrapper(async (req, res, next) => {
   next();
 });
 
+const preventMultipleActiveSessions = asyncWrapper(async (req, res, next) => {
+  const adminGroup = req.admin.group;
+  // Check for an unfinished session within last 2.5 hours
+  const AnExistingSession = await session.existingSession(adminGroup);
+  if (AnExistingSession) {
+    return next(
+      new AppError(
+        "A session is already active for this group. You cannot start another one until it finishes or expires.",
+        httpStatus.BAD_REQUEST
+      )
+    );
+  }
+  next();
+});
+
 module.exports = {
     sessionFound,
     sessionStarted,
     canAccessSession,
     canAccessActiveSession,
     activeSessionExists,
-    upcomingSession
+    upcomingSession,
+    preventMultipleActiveSessions
 }

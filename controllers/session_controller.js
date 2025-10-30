@@ -53,7 +53,7 @@ const startSession = asyncWrapper(async (req, res) => {
 
 const endSession = asyncWrapper(async (req, res, next) => {
     const adminGroup = req.admin.group;
-    const currSession = await session.getActiveSessionByGroup(adminGroup);
+    const currSession = await session.getActiveSessionByAGroup(adminGroup);
     if (!currSession) {
         return next(new AppError("No active session found for your group", httpStatus.NOT_FOUND));
     }

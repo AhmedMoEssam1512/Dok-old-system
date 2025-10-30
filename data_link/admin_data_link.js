@@ -161,6 +161,13 @@ function getAllSubmissionsById(assistantId){
     return Submission.findAll({where: { assistantId } , order: [['subId', 'DESC']]});
 }
 
+function getAdminNameById(adminId){
+    return Admin.findOne({
+        where: { adminId },
+        attributes: ['name']
+    });
+}
+
 module.exports={
     create,
     findNotVerifiedStudentsByTaGroup,
@@ -185,5 +192,6 @@ module.exports={
     getAllSubmissions,
     getAllSubmissionsById,
     getAdminById,
-    findAdminByPhoneNumber
+    findAdminByPhoneNumber,
+    getAdminNameById,
 }

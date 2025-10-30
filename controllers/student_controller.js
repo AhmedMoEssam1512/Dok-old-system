@@ -155,10 +155,13 @@ const showASubmission = asyncWrapper(async (req, res) => {
 
 const getMarkForSubmission = asyncWrapper(async (req, res) => {
   const found = req.found;  
+  const taName = await admin.getAdminNameById(found.assistantId);
+  console.log(taName.name);
   return res.status(200).json({
       status: "success",
       data: {id : found.subId,
-        assistant: found.assistantId,
+        assistant: taName.name,
+        assId : found.assistantId,
         score: found.score,
         markedPdf : found.marked,
         markedAt : found.markedAt,

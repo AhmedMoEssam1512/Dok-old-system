@@ -18,7 +18,7 @@ const topicDl = require('../data_link/topic_data_link.js');
 const startSession = asyncWrapper(async (req, res) => {
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
    // sanitizeInput(req.body);
-  const { group } = req.body;
+//   const { group } = user.Usergroup;
   const adminId = req.admin.id;
   const sgroup = req.body?.group && req.body.group.trim() !== ""   ? req.body.group   : req.admin.group;
   console.log("Admin Group:", sgroup); // Debugging line

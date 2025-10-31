@@ -107,8 +107,8 @@ const createReport = async (req, res) => {
     const studentReports = students.map(st => {
       // 🔹 Quiz data
       const quizScore = submissionsMap[`Q-${st.studentId}`];
-      let percentage = 'N/A';
-      let grade = 'N/A';
+      let percentage = 'missing';
+      let grade = 'missing';
       if (quizScore != null && quizTotalScore > 0) {
         percentage = parseFloat(((quizScore / quizTotalScore) * 100).toFixed(2));
         grade = grading.calculateGrade(percentage);
@@ -128,7 +128,7 @@ const createReport = async (req, res) => {
         email: st.studentEmail,
         studentName: st.studentName,
         banned: st.banned,
-        quizScore: quizScore ?? 'N/A',
+        quizScore: quizScore ?? 'missing',
         percentage,
         grade,
         assignments: assignmentList // e.g., "2/3"

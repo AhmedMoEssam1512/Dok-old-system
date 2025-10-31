@@ -185,13 +185,13 @@ function deleteSessionsBySemester(semester){
 
 function getActiveSessionByAGroup(group) {
   const now = new Date();
-  const twoAndHalfHoursAgo = new Date(now.getTime() - 3 * 60 * 60 * 1000);
+  const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000);
   return Session.findOne({
     where: {
       finished: false,
       group: group,
       dateAndTime: {
-        [Op.between]: [twoAndHalfHoursAgo, now],
+        [Op.between]: [twoHoursAgo, now],
       },
     },
     order: [['dateAndTime', 'DESC']],

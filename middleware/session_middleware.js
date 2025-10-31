@@ -86,7 +86,7 @@ const canAccessActiveSession = asyncWrapper(async (req, res, next) => {
 
 const activeSessionExists = asyncWrapper(async (req, res, next) => {
     const userGroup = req.student.group;
-    const activeSession = await session.getActiveSessionByGroup(userGroup);
+    const activeSession = await session.getActiveSessionByAGroup(userGroup);
     if (!activeSession) {
         return next(new AppError("No active session found for your group", httpStatus.NOT_FOUND));
     }

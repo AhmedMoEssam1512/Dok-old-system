@@ -78,7 +78,8 @@ const showPendingRegistration = asyncWrapper(async (req, res) => {
   data: admin.map(admin => ({
       name: admin.name,
       email: admin.email,
-      group: admin.group
+      group: admin.group,
+      phoneNumber: admin.phoneNumber
     }))
 }})})
 

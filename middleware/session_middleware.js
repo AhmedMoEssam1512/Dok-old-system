@@ -13,7 +13,6 @@ const { Op } = require("sequelize");
 const { sanitizeInput } = require('../utils/sanitize.js');
 
 const sessionFound = asyncWrapper(async (req, res, next) => {
-    sanitizeInput(req.params);
     const { sessionId } = req.params;
 
     const sessFound = await session.findSessionById(sessionId);
@@ -57,7 +56,6 @@ const sessionStarted = asyncWrapper(async (req, res, next) => {
 });
 
 const canAccessSession = asyncWrapper(async (req, res, next) => {
-    sanitizeInput(req.params);
     const userGroup = req.admin.group;
     const sessionData = req.sessionData;
     if (sessionData.group !== 'all' && sessionData.group !== userGroup&& userGroup !== 'all') {
@@ -87,7 +85,7 @@ const canAccessActiveSession = asyncWrapper(async (req, res, next) => {
 const activeSessionExists = asyncWrapper(async (req, res, next) => {
     const userGroup = req.student.group;
     const activeSession = await session.getActiveSessionByAGroup(userGroup);
-    if (!activeSession) {
+    if (activeSession===null) {
         return next(new AppError("No active session found for your group", httpStatus.NOT_FOUND));
     }
     console.log("Active session found:", activeSession);
@@ -111,7 +109,6 @@ const upcomingSession = asyncWrapper(async (req, res, next) => {
 
 const preventMultipleActiveSessions = asyncWrapper(async (req, res, next) => {
   const adminGroup = req.admin.group;
-  // Check for an unfinished session within last 2.5 hours
   const AnExistingSession = await session.existingSession(adminGroup);
   if (AnExistingSession) {
     return next(

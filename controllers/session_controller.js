@@ -66,7 +66,6 @@ const endSession = asyncWrapper(async (req, res, next) => {
 })
 
 const attendSession = asyncWrapper(async (req, res, next) => {
-    sanitizeInput(req.params);
     const stud = req.student;
     const currSession = req.activeSession;
     const isAttended = await session.hasAttendedSession(stud.id, currSession.sessionId);

@@ -145,10 +145,14 @@ const getUnsubmittedAssignments = asyncWrapper(async (req, res, next) => {
     // Remove the duplicate 'id' if it exists
     const { id, ...rest } = assignmentPlain;
 
-    return {
-      ...rest,
-      submitted: isSubmitted ? 1 : 0
-    };
+      return {
+          assignId: assignmentPlain.assignId,
+          title: assignmentPlain.title,
+          subject: assignmentPlain.subject,
+          topicId: assignmentPlain.topicId,
+          endDate: assignmentPlain.endDate,
+          submitted: isSubmitted ? 'true' : 'false'
+      };
   });
 
   return res.status(200).json({

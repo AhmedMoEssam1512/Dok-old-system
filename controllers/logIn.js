@@ -55,7 +55,7 @@ const logIn = asyncWrapper(async (req, res, next) => {
   if (studentUser) {
     const valid = await bcrypt.compare(String(password), studentUser.password);
     if (!valid) {
-      return next(AppError.create("Wrong password", 401, httpStatus.Error));
+      return next(AppError.create("Invalid email or password", 401, httpStatus.Error));
     }
 
     if (!studentUser.verified) {
@@ -93,7 +93,7 @@ const logIn = asyncWrapper(async (req, res, next) => {
   }
 
   // ------------------- NOT FOUND -------------------
-  return next(AppError.create("Email not found", 404, httpStatus.Error));
+  return next(AppError.create("Invalid email or password", 404, httpStatus.Error));
 });
 
  

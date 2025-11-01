@@ -27,6 +27,11 @@ async function getAllTopicsByGroup(group) {
 }
 
 async function getTopicByAssistantId(topicId,assistantId) {
+  if (assistantId === 1){
+    return Topic.findOne({
+      where: { topicId }
+    });
+  }
   return Topic.findOne({
       where: { topicId: parseInt(topicId, 10), publisher: assistantId }
     });
